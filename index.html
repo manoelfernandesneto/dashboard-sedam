@@ -4,60 +4,53 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <link rel="icon" href="data:,">
-<title>Sedam TAG 2026 - Gestão e Auditoria</title>
+<title>Auditoria TAG 2026 - SEDAM</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <style>
-body { background: radial-gradient(circle at top, #1e293b, #0f172a); color: #f8fafc; font-family: 'Inter', sans-serif; min-height: 100vh; margin: 0; }
-.card-glass { background: rgba(30, 41, 59, 0.6); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.1); transition: 0.3s; }
-.status-vencido { border-left: 4px solid #ef4444 !important; }
-.status-alerta { border-left: 4px solid #f59e0b !important; }
-.status-em-dia { border-left: 4px solid #10b981 !important; }
-.card-micro { padding: 0.75rem !important; min-height: 120px; }
-.btn-edit { opacity: 0; transition: 0.3s; }
-.card-glass:hover .btn-edit { opacity: 1; }
+body { background: #0f172a; color: #f8fafc; font-family: 'Inter', sans-serif; margin: 0; }
+.card-micro { background: rgba(30, 41, 59, 0.5); border: 1px solid rgba(255,255,255,0.05); padding: 0.5rem; transition: 0.2s; min-height: 90px; }
+.card-micro:hover { background: rgba(30, 41, 59, 0.9); border-color: #3b82f6; }
+.status-vencido { border-top: 3px solid #ef4444; }
+.status-alerta { border-top: 3px solid #f59e0b; }
+.status-em-dia { border-top: 3px solid #10b981; }
+.text-xs-audit { font-size: 0.65rem; line-height: 1rem; }
+.btn-correct { font-size: 0.55rem; padding: 2px 4px; background: rgba(59,130,246,0.2); border-radius: 4px; display: none; }
+.card-micro:hover .btn-correct { display: block; }
 </style>
 </head>
-<body class="p-4 md:p-8">
+<body class="p-2 md:p-4">
 <div id="login-screen" class="min-h-screen flex items-center justify-center">
-<div class="card-glass p-10 rounded-3xl w-full max-w-md shadow-2xl">
-<h1 class="text-3xl font-black text-center mb-8 text-blue-400">TAG SEDAM 2026</h1>
-<div class="space-y-4">
-<input type="text" id="userInput" placeholder="Usuário (ex: manoel)" class="w-full p-4 bg-slate-800 rounded-xl border-none text-white focus:ring-2 focus:ring-blue-500">
-<input type="password" id="passInput" placeholder="Senha" class="w-full p-4 bg-slate-800 rounded-xl border-none text-white focus:ring-2 focus:ring-blue-500">
-<button onclick="login()" class="w-full bg-blue-600 py-4 rounded-xl font-bold shadow-lg transition-all active:scale-95">Acessar Auditoria</button>
-</div>
-<p id="login-msg" class="text-center mt-6 text-xs text-red-400 font-medium"></p>
+<div class="bg-slate-900 p-8 rounded-2xl w-full max-w-xs border border-white/5 shadow-2xl">
+<h1 class="text-xl font-black text-center mb-6 text-blue-400">TAG AUDITORIA</h1>
+<input type="text" id="userInput" placeholder="Usuário" class="w-full p-3 mb-3 bg-slate-800 rounded-lg text-sm border-none text-white">
+<input type="password" id="passInput" placeholder="Senha" class="w-full p-3 mb-4 bg-slate-800 rounded-lg text-sm border-none text-white">
+<button onclick="login()" class="w-full bg-blue-600 hover:bg-blue-700 py-3 rounded-lg font-bold text-sm transition-all">ENTRAR</button>
+<p id="login-msg" class="text-center mt-4 text-[10px] text-red-400"></p>
 </div>
 </div>
-<div id="dashboard" class="hidden max-w-7xl mx-auto">
-<header class="flex flex-col md:flex-row justify-between items-center mb-10 gap-6">
+<div id="dashboard" class="hidden">
+<header class="flex justify-between items-center mb-4 px-2">
 <div>
-<h2 class="text-4xl font-black bg-gradient-to-r from-blue-400 to-emerald-400 bg-clip-text text-transparent">Painel de Controle Externo</h2>
-<p id="user-info" class="text-slate-400 font-medium mt-1 italic"></p>
+<h2 class="text-lg font-black text-blue-400">PAINEL DE CONTROLE TAG 2026</h2>
+<p id="user-info" class="text-[10px] text-slate-500 uppercase tracking-widest"></p>
 </div>
-<div class="flex items-center gap-4">
-<div class="text-right px-6 py-2 border-r border-white/10">
-<span class="block text-[10px] text-slate-500 uppercase font-bold tracking-tighter">Cumprimento Global</span>
-<span id="total-geral" class="text-3xl font-black text-blue-400">0%</span>
-</div>
-<button onclick="logout()" class="bg-red-500/10 text-red-400 px-6 py-2 rounded-xl font-bold hover:bg-red-500 transition-all">Sair</button>
+<div class="flex items-center gap-6">
+<div class="text-right"><span class="block text-[8px] text-slate-500 font-bold">CUMPRIMENTO GLOBAL</span><span id="total-geral" class="text-xl font-black text-emerald-400">0%</span></div>
+<button onclick="logout()" class="text-[10px] bg-red-500/10 text-red-400 px-3 py-1 rounded-md font-bold">SAIR</button>
 </div>
 </header>
-<div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
-<div class="lg:col-span-2 card-glass p-6 rounded-3xl shadow-xl">
-<h3 class="text-xl font-bold mb-6">Curva de Tendência TAG (%)</h3>
-<div class="h-[250px] w-full"><canvas id="mainChart"></canvas></div>
-</div>
-<div id="form-area" class="card-glass p-6 rounded-3xl shadow-xl hidden">
-<h3 class="text-xl font-bold mb-6 text-emerald-400">Lançamento Coordenador</h3>
-<select id="delib_id" class="w-full p-4 mb-4 bg-slate-800 rounded-xl text-sm"></select>
-<input type="number" id="percentual" placeholder="%" class="w-full p-4 mb-6 bg-slate-800 rounded-xl">
-<button onclick="salvarLancamento()" class="w-full bg-emerald-600 py-4 rounded-xl font-bold">Registrar</button>
+<div class="grid grid-cols-1 lg:grid-cols-4 gap-4 mb-4">
+<div class="lg:col-span-3 bg-slate-900/50 p-4 rounded-xl border border-white/5"><div class="h-[150px]"><canvas id="mainChart"></canvas></div></div>
+<div id="form-area" class="hidden bg-slate-900/50 p-4 rounded-xl border border-white/5">
+<h3 class="text-[10px] font-bold text-blue-400 mb-2 uppercase">Lançar Evolução (Maio)</h3>
+<select id="delib_id" class="w-full p-2 mb-2 bg-slate-800 rounded text-[10px] text-white border-none"></select>
+<input type="number" id="percentual" placeholder="%" class="w-full p-2 mb-2 bg-slate-800 rounded text-[10px] text-white border-none">
+<button onclick="salvarLancamento()" class="w-full bg-emerald-600 py-2 rounded text-[10px] font-bold">SALVAR</button>
 </div>
 </div>
-<div id="cards-container" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 xl:grid-cols-6 gap-3"></div>
+<div id="cards-container" class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 xl:grid-cols-10 2xl:grid-cols-12 gap-1.5"></div>
 </div>
 <script>
 const S_URL = 'https://zvtzbiqfwhggysiuiuxh.supabase.co';
@@ -65,11 +58,11 @@ const S_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJl
 const client = supabase.createClient(S_URL, S_KEY, { global: { headers: { 'apikey': S_KEY } } });
 let userProfile = null;
 async function login() {
-let email = document.getElementById('userInput').value.trim().toLowerCase();
-const password = document.getElementById('passInput').value;
-if(!email.includes('@')) email += '@sedam.com';
-const { data, error } = await client.auth.signInWithPassword({ email, password });
-if(error) document.getElementById('login-msg').innerText = "Falha: " + error.message; else init(data.user.id);
+let e = document.getElementById('userInput').value.trim().toLowerCase();
+const p = document.getElementById('passInput').value;
+if(!e.includes('@')) e += '@sedam.com';
+const { data, error } = await client.auth.signInWithPassword({ email: e, password: p });
+if(error) document.getElementById('login-msg').innerText = error.message; else init(data.user.id);
 }
 async function init(uid) {
 const { data: profile } = await client.from('perfis').select('*').eq('id', uid).single();
@@ -82,11 +75,14 @@ if(profile.hierarquia >= 3) document.getElementById('form-area').classList.remov
 carregarDados();
 }
 async function carregarDados() {
-const { data: delibs } = await client.from('deliberacoes').select('*, perfis:responsavel_id(nome_completo)').order('identificador');
+const { data: delibs } = await client.from('deliberacoes').select('*, perfis:responsavel_id(nome_completo, username)').order('identificador');
 if(delibs) {
 const soma = delibs.reduce((acc, curr) => acc + (curr.total_cumprimento || 0), 0);
 document.getElementById('total-geral').innerText = Math.round(soma / delibs.length) + "%";
 renderCards(delibs);
+renderSelect(delibs);
+const { data: evol } = await client.from('evolucao_mensal').select('mes_referencia, percentual_lancado').order('mes_referencia');
+renderChart(evol);
 }
 }
 function renderCards(itens) {
@@ -97,32 +93,36 @@ const prazo = new Date(i.prazo);
 const diff = Math.ceil((prazo - hoje) / 86400000);
 let cor = 'status-em-dia';
 if (diff < 0) cor = 'status-vencido'; else if (diff <= 30) cor = 'status-alerta';
-const editBtn = userProfile.hierarquia === 1 ? `<button onclick="ajusteAuditor('${i.id}', '${i.identificador}', ${i.total_cumprimento})" class="btn-edit bg-blue-500/20 hover:bg-blue-500 p-1 rounded-md text-[9px] font-bold">CORRIGIR</button>` : '';
-return `
-<div class="card-glass card-micro rounded-lg ${cor} flex flex-col justify-between shadow-sm">
-<div>
-<div class="flex justify-between items-start mb-1">
-<span class="font-black text-blue-400 text-[11px]">${i.identificador}</span>
+const editBtn = userProfile.hierarquia === 1 ? `<button onclick="corrigir('${i.id}', '${i.identificador}', ${i.total_cumprimento})" class="btn-correct">CORRIGIR</button>` : '';
+return `<div class="card-micro rounded-lg ${cor} flex flex-col justify-between">
+<div class="flex justify-between items-start">
+<span class="font-black text-blue-400 text-[9px]">${i.identificador}</span>
 ${editBtn}
 </div>
-<p class="text-[9px] text-slate-300 leading-tight line-clamp-2" title="${i.descricao}">${i.descricao}</p>
-</div>
-<div class="mt-2 border-t border-white/5 pt-2">
-<div class="flex justify-between text-[8px] mb-0.5">
-<span class="text-slate-500 truncate mr-1">${i.perfis?.nome_completo?.split(' ')[0] || 'Audit.'}</span>
-<span class="font-bold text-blue-400">${i.total_cumprimento || 0}%</span>
-</div>
-<div class="w-full bg-slate-900 h-0.5 rounded-full overflow-hidden"><div class="bg-blue-500 h-full" style="width:${i.total_cumprimento || 0}%"></div></div>
+<p class="text-xs-audit text-slate-400 truncate-2-lines mb-1" title="${i.descricao}">${i.descricao}</p>
+<div>
+<div class="flex justify-between text-[7px] mb-0.5"><span class="text-slate-500">${i.perfis?.username || 'AUD'}</span><span class="font-bold text-blue-400">${i.total_cumprimento || 0}%</span></div>
+<div class="w-full bg-slate-900 h-0.5 rounded-full overflow-hidden"><div class="bg-blue-500 h-full" style="width:${i.total_cumprimento}%"></div></div>
 </div>
 </div>`;
 }).join('');
 }
-async function ajusteAuditor(id, ident, valorAtual) {
-const novoPerc = prompt(`[AUDITORIA] Ajustar percentual da Meta ${ident}:`, valorAtual);
-if(novoPerc !== null) {
-const { error } = await client.from('deliberacoes').update({ total_cumprimento: novoPerc }).eq('id', id);
-if(error) alert("Erro na correção: " + error.message); else carregarDados();
+async function corrigir(id, ident, valor) {
+const novo = prompt(`[AUDITORIA] Ajustar cumprimento Meta ${ident}:`, valor);
+if(novo !== null) {
+const { error } = await client.from('deliberacoes').update({ total_cumprimento: novo }).eq('id', id);
+if(!error) carregarDados();
 }
+}
+function renderChart(dados) {
+const ctx = document.getElementById('mainChart').getContext('2d');
+if(window.myChart) window.myChart.destroy();
+const agrupar = dados.reduce((acc, c) => { acc[c.mes_referencia] = (acc[c.mes_referencia] || 0) + parseFloat(c.percentual_lancado); return acc; }, {});
+window.myChart = new Chart(ctx, { type: 'line', data: { labels: Object.keys(agrupar), datasets: [{ label: 'Evolução', data: Object.values(agrupar), borderColor: '#3b82f6', tension: 0.4 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } } });
+}
+function renderSelect(itens) {
+const sel = document.getElementById('delib_id');
+sel.innerHTML = itens.map(i => `<option value="${i.id}">${i.identificador}</option>`).join('');
 }
 async function logout() { await client.auth.signOut(); location.reload(); }
 </script>
