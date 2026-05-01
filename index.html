@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <link rel="icon" href="data:,">
-<title>Sedam TAG 2026 - Auditoria e Gestão</title>
+<title>Sedam TAG 2026 - Dashboard Auditoria</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -15,255 +15,90 @@ body { background: radial-gradient(circle at top, #1e293b, #0f172a); color: #f8f
 .status-vencido { border-left: 8px solid #ef4444 !important; background: rgba(239, 68, 68, 0.05); }
 .status-alerta { border-left: 8px solid #f59e0b !important; background: rgba(245, 158, 11, 0.05); }
 .status-em-dia { border-left: 8px solid #10b981 !important; background: rgba(16, 185, 129, 0.05); }
-input::placeholder { color: #64748b; }
 </style>
-
 </head>
 <body class="p-4 md:p-8">
-<!-- SEÇÃO DE LOGIN -->
 <div id="login-screen" class="min-h-screen flex items-center justify-center">
 <div class="card-glass p-10 rounded-3xl w-full max-w-md shadow-2xl">
 <h1 class="text-3xl font-black text-center mb-2 text-blue-400">TAG SEDAM</h1>
-<p class="text-center text-slate-400 text-sm mb-8">Gestão Estratégica 2026</p>
+<p class="text-center text-slate-400 text-sm mb-8">Login Auditoria</p>
 <div class="space-y-4">
-<input type="text" id="email" placeholder="Usuário" class="w-full p-4 bg-slate-800 rounded-xl border-none focus:ring-2 focus:ring-blue-500 text-white">
-<input type="password" id="password" placeholder="Senha de acesso" class="w-full p-4 bg-slate-800 rounded-xl border-none focus:ring-2 focus:ring-blue-500 text-white">
-<button onclick="login()" class="w-full bg-blue-600 hover:bg-blue-700 py-4 rounded-xl font-bold shadow-lg transition-all transform active:scale-95">Entrar no Sistema</button>
+<input type="email" id="email" placeholder="Email (manoel@sedam.com)" class="w-full p-4 bg-slate-800 rounded-xl border-none text-white focus:ring-2 focus:ring-blue-500">
+<input type="password" id="password" placeholder="Senha" class="w-full p-4 bg-slate-800 rounded-xl border-none text-white focus:ring-2 focus:ring-blue-500">
+<button onclick="login()" class="w-full bg-blue-600 hover:bg-blue-700 py-4 rounded-xl font-bold shadow-lg transition-all">Acessar Painel</button>
 </div>
 <p id="login-msg" class="text-center mt-6 text-xs text-red-400 font-medium"></p>
 </div>
 </div>
-<!-- SEÇÃO DO DASHBOARD -->
 <div id="dashboard" class="hidden max-w-7xl mx-auto">
 <header class="flex flex-col md:flex-row justify-between items-center mb-12 gap-6">
 <div>
 <h2 class="text-4xl font-black bg-gradient-to-r from-blue-400 to-emerald-400 bg-clip-text text-transparent">Painel de Auditoria</h2>
 <p id="user-info" class="text-slate-400 font-medium mt-1 italic"></p>
 </div>
-<button onclick="logout()" class="bg-red-500/10 text-red-400 px-6 py-2 rounded-xl font-bold hover:bg-red-500 hover:text-white transition-all">Sair do Sistema</button>
-<button id="btnCriarUsuarios" onclick="criarUsuariosAdmin()" style="display:none" class="bg-emerald-500 px-4 py-2 rounded-xl font-bold">
-Criar Usuários
-</button>
+<button onclick="logout()" class="bg-red-500/10 text-red-400 px-6 py-2 rounded-xl font-bold hover:bg-red-500 transition-all">Sair</button>
 </header>
 <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-<!-- GRÁFICO -->
 <div class="lg:col-span-2 card-glass p-8 rounded-3xl shadow-xl">
-<h3 class="text-xl font-bold mb-6 flex items-center gap-2"><span class="w-2 h-6 bg-blue-500 rounded-full"></span>Evolução Acumulada (%)</h3>
+<h3 class="text-xl font-bold mb-6 flex items-center gap-2">Evolução Acumulada (%)</h3>
 <div class="h-[350px] w-full"><canvas id="mainChart"></canvas></div>
 </div>
-<!-- FORMULÁRIO (VISÍVEL APENAS PARA NÍVEL 3 E 4) -->
 <div id="form-area" class="card-glass p-8 rounded-3xl shadow-xl hidden">
-<h3 class="text-xl font-bold mb-6 text-emerald-400">Lançar Atualização</h3>
-<label class="block text-xs text-slate-500 mb-1 ml-1">Selecione a Meta</label>
+<h3 class="text-xl font-bold mb-6 text-emerald-400">Atualizar Meta</h3>
 <select id="delib_id" class="w-full p-4 mb-4 bg-slate-800 rounded-xl border-none text-sm text-white"></select>
-<label class="block text-xs text-slate-500 mb-1 ml-1">Mês de Referência</label>
 <input type="month" id="mes_ref" class="w-full p-4 mb-4 bg-slate-800 rounded-xl border-none text-white">
-<label class="block text-xs text-slate-500 mb-1 ml-1">Percentual Concluído (%)</label>
-<input type="number" id="percentual" placeholder="Ex: 85" class="w-full p-4 mb-6 bg-slate-800 rounded-xl border-none text-white">
-<button onclick="salvarLancamento()" class="w-full bg-emerald-600 hover:bg-emerald-700 py-4 rounded-xl font-bold shadow-lg transition-all">Registrar Evolução</button>
+<input type="number" id="percentual" placeholder="%" class="w-full p-4 mb-6 bg-slate-800 rounded-xl border-none text-white">
+<button onclick="salvarLancamento()" class="w-full bg-emerald-600 hover:bg-emerald-700 py-4 rounded-xl font-bold w-full">Salvar</button>
 </div>
 </div>
-<!-- LISTA DE CARDS -->
 <div id="cards-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-12"></div>
 </div>
 <script>
-
-// CONFIGURAÇÕES SUPABASE
 const SUPABASE_URL = 'https://zvtzbiqfwhggysiuiuxh.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp2dHpiaXFmd2hnZ3lzaXVpdXhoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc1ODYyMjcsImV4cCI6MjA5MzE2MjIyN30.tCnFZv2B6Kmd9KsyZM8CHClZqsq7Nyu-8nxyYVs_ZMQ';
-const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp2dHpiaXFmd2hnZ3lzaXVpdXhoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc1ODYyMjcsImV4cCI6MjA5MzE2MjIyN30.tCnFZv2B6Kmd9KsyZM8CHClZqsq7Nyu-8nxyYVs_ZMQ';
+const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 let myProfile = null;
-let myChart = null;
-
-async function login(){
-let usuario=document.getElementById('email').value
-usuario=usuario.trim().toLowerCase()
-const senha=document.getElementById('password').value.trim()
-const loginMsg=document.getElementById('login-msg')
-if(!usuario || !senha){
-loginMsg.innerText="Informe usuário e senha"
-return
-}
-loginMsg.innerText="Validando..."
-const {data,error}=await supabaseClient
-.from("perfis")
-.select("*")
-.eq("username",usuario)
-.limit(1)
-if(error){
-console.error(error)
-loginMsg.innerText="Erro conexão banco"
-return
-}
-const user = data && data.length ? data[0] : null
-if(!user){
-loginMsg.innerText="Usuário não encontrado"
-return
-}
-// 🔥 senha simples
-if(senha !== "123456"){
-loginMsg.innerText="Senha inválida"
-return
-}
-// 🔥 salva sessão correta
-localStorage.setItem("uid",user.id)
-// 🔥 entra correto
-initApp(user.id)
-}
-
-async function criarUsuariosAdmin(){
-const res = await fetch("https://zvtzbiqfwhggysiuiuxh.supabase.co/functions/v1/criar-usuarios",{
-method:"POST",
-headers:{
-"Authorization": "Bearer " + SUPABASE_ANON_KEY
-}
-})
-const data = await res.json()
-alert(JSON.stringify(data))
+async function login() {
+const email = document.getElementById('email').value;
+const password = document.getElementById('password').value;
+const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
+if(error) document.getElementById('login-msg').innerText = error.message;
+else initApp(data.user.id);
 }
 async function initApp(uid) {
-const { data: profile, error } = await supabaseClient.from('perfis').select('*').eq('id', uid).single();
-if(error || !profile) { alert("Perfil não localizado no banco de dados."); return; }
+const { data: profile } = await supabaseClient.from('perfis').select('*').eq('id', uid).single();
+if(!profile) { document.getElementById('login-msg').innerText = "Perfil não sincronizado. Rode o SQL de Sincronização."; return; }
 myProfile = profile;
 document.getElementById('login-screen').classList.add('hidden');
 document.getElementById('dashboard').classList.remove('hidden');
-document.getElementById('user-info').innerText = `${profile.nome_completo} | ${profile.nivel_acesso} (Nível ${profile.hierarquia})`;
+document.getElementById('user-info').innerText = `${profile.nome_completo} | ${profile.nivel_acesso}`;
 if(profile.hierarquia >= 3) document.getElementById('form-area').classList.remove('hidden');
-if(profile.hierarquia == 1){
-document.getElementById("btnCriarUsuarios").style.display = "block"
-}
 carregarDashboard();
 }
-// ATUALIZAÇÃO DA FUNÇÃO DE CARREGAMENTO (INDEX.HTML)
 async function carregarDashboard() {
-    // Busca deliberações e traz os dados do perfil vinculado (JOIN)
-    const { data: delibs, error } = await supabaseClient
-        .from('deliberacoes')
-        .select(`
-            identificador, 
-            descricao, 
-            prazo, 
-            total_cumprimento,
-            perfis:responsavel_id (nome_completo, nivel_acesso)
-        `)
-        .order('identificador', { ascending: true });
-    if (error) {
-        console.error("Erro na extração de dados:", error.message);
-        return;
-    }
-    renderizarInterface(delibs);
-}
-function renderizarInterface(itens) {
-    const container = document.getElementById('cards-container');
-    const hoje = new Date();
-    if (!itens || itens.length === 0) {
-        container.innerHTML = '<p class="col-span-full text-center text-slate-500 py-10">Nenhuma meta encontrada para auditoria.</p>';
-        return;
-    }
-    container.innerHTML = itens.map(i => {
-        const prazo = new Date(i.prazo);
-        const dias = Math.ceil((prazo - hoje) / 86400000);
-        let corStatus = 'status-em-dia';
-        if (dias < 0) corStatus = 'status-vencido';
-        else if (dias <= 30) corStatus = 'status-alerta';
-        return `
-        <div class="card-glass p-6 rounded-2xl ${corStatus} shadow-xl mb-4">
-            <div class="flex justify-between items-start mb-2">
-                <span class="text-blue-400 font-black text-xl">${i.identificador}</span>
-                <span class="text-[10px] uppercase font-bold text-slate-500">${new Date(i.prazo).toLocaleDateString('pt-BR')}</span>
-            </div>
-            <p class="text-xs text-slate-300 mb-6 leading-relaxed line-clamp-2">${i.descricao}</p>
-            <div class="flex justify-between items-end border-t border-white/5 pt-4">
-                <div class="text-[10px]">
-                    <span class="text-slate-500 block uppercase tracking-widest">Responsável</span>
-                    <span class="text-blue-200 font-medium">${i.perfis?.nome_completo || 'Auditoria Geral'}</span>
-                </div>
-                <div class="text-right">
-                    <span class="text-lg font-black text-blue-400">${i.total_cumprimento || 0}%</span>
-                </div>
-            </div>
-            <div class="w-full bg-slate-900 h-1.5 rounded-full mt-3 overflow-hidden">
-                <div class="bg-blue-500 h-full transition-all duration-1000" style="width: ${i.total_cumprimento || 0}%"></div>
-            </div>
-        </div>`;
-    }).join('');
-}
-function renderCards(itens) {
+const { data: delibs, error } = await supabaseClient.from('deliberacoes').select('*, perfis(nome_completo)');
+if(error) { console.error(error); return; }
 const container = document.getElementById('cards-container');
 const hoje = new Date();
-if(!itens) return;
-container.innerHTML = itens.map(i => {
+if(!delibs || delibs.length === 0) { container.innerHTML = "<p class='col-span-full text-center py-20 text-slate-500'>Nenhuma meta vinculada ao seu perfil.</p>"; return; }
+container.innerHTML = delibs.map(i => {
 const prazo = new Date(i.prazo);
-const diff = Math.ceil((prazo - hoje) / (86400000));
-let corStatus = 'status-em-dia';
-if(diff < 0) corStatus = 'status-vencido';
-else if(diff <= 30) corStatus = 'status-alerta';
-return `<div class="card-glass p-6 rounded-2xl ${corStatus}">
-<div class="flex justify-between items-start mb-3">
-<span class="font-black text-blue-400 text-lg">${i.identificador}</span>
-<span class="text-[10px] bg-slate-800 px-2 py-1 rounded-lg text-slate-400">${new Date(i.prazo).toLocaleDateString('pt-BR')}</span>
-</div>
-<p class="text-xs text-slate-300 mb-6 h-12 overflow-hidden leading-relaxed">${i.descricao}</p>
-<div class="flex justify-between items-center text-[10px] mb-2">
-<span class="text-slate-500">Resp: ${i.perfis?.nome_completo || 'Auditoria'}</span>
-<span class="font-bold text-blue-400">${i.total_cumprimento}%</span>
-</div>
-<div class="w-full bg-slate-900 h-2 rounded-full overflow-hidden">
-<div class="bg-blue-500 h-full transition-all duration-1000" style="width:${i.total_cumprimento}%"></div>
-</div>
+const diff = Math.ceil((prazo - hoje) / 86400000);
+let cor = 'status-em-dia';
+if(diff < 0) cor = 'status-vencido'; else if(diff <= 30) cor = 'status-alerta';
+return `<div class="card-glass p-6 rounded-2xl ${cor}">
+<div class="flex justify-between mb-3"><span class="font-bold text-blue-400">${i.identificador}</span><span class="text-[10px] text-slate-500">${new Date(i.prazo).toLocaleDateString()}</span></div>
+<p class="text-xs text-slate-300 mb-4 h-12 overflow-hidden">${i.descricao}</p>
+<div class="flex justify-between text-[10px] mb-2"><span>Resp: ${i.perfis?.nome_completo || 'Auditoria'}</span><span class="font-bold text-blue-400">${i.total_cumprimento}%</span></div>
+<div class="w-full bg-slate-900 h-1.5 rounded-full overflow-hidden"><div class="bg-blue-500 h-full" style="width:${i.total_cumprimento}%"></div></div>
 </div>`;
 }).join('');
 }
-function renderChart(dados) {
-const ctx = document.getElementById('mainChart').getContext('2d');
-if(myChart) myChart.destroy();
-if(!dados || dados.length === 0) return;
-myChart = new Chart(ctx, {
-type: 'line',
-data: {
-labels: dados.map(d => d.mes_referencia),
-datasets: [{
-label: 'Evolução TAG (%)',
-data: dados.map(d => d.percentual_lancado),
-borderColor: '#3b82f6',
-backgroundColor: 'rgba(59, 130, 246, 0.1)',
-borderWidth: 3,
-tension: 0.4,
-fill: true,
-pointRadius: 4,
-pointBackgroundColor: '#3b82f6'
-}]
-},
-options: {
-responsive: true,
-maintainAspectRatio: false,
-scales: { 
-y: { beginAtZero: true, max: 100, grid: { color: 'rgba(255,255,255,0.05)' } },
-x: { grid: { display: false } }
-},
-plugins: { legend: { display: false } }
-}
-});
-}
-function renderSelect(itens) {
-const sel = document.getElementById('delib_id');
-if(!sel) return;
-sel.innerHTML = itens.map(i => `<option value="${i.id}">${i.identificador} - ${i.descricao.substring(0,30)}...</option>`).join('');
-}
-async function salvarLancamento() {
-const idDelib = document.getElementById('delib_id').value;
-const perc = document.getElementById('percentual').value;
-const dataRef = document.getElementById('mes_ref').value + "-01";
-if(!idDelib || !perc || !dataRef) { alert("Preencha todos os campos!"); return; }
-const { error } = await supabaseClient.from('evolucao_mensal').insert({
-deliberacao_id: idDelib,
-mes_referencia: dataRef,
-percentual_lancado: perc
-});
-if(error) alert("Erro ao salvar: " + error.message);
-else { alert("Lançamento realizado com sucesso!"); carregarDashboard(); }
-}
 async function logout() { await supabaseClient.auth.signOut(); location.reload(); }
+document.addEventListener('DOMContentLoaded', async () => {
+const { data } = await supabaseClient.auth.getSession();
+if(data.session) initApp(data.session.user.id);
+});
 </script>
 </body>
 </html>
