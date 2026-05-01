@@ -4,73 +4,75 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <link rel="icon" href="data:,">
-<title>TAG 2026 - Auditoria Online</title>
+<title>Auditoria TAG 2026 - TCE/RO & SEDAM</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<!-- Bibliotecas para Geração de PDF Profissional -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
 <style>
 body { background: #020617; color: #f8fafc; font-family: 'Inter', sans-serif; margin: 0; }
-/* Cards Micro: Tamanho reduzido e Percentual Duplicado */
-.card-micro { background: rgba(30,41,59,0.4); border: 1px solid rgba(255,255,255,0.05); padding: 0.2rem; min-height: 45px; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: 0.2s; }
-.card-micro:hover { border-color: #3b82f6; background: rgba(30,41,59,0.8); }
+.card-micro { background: rgba(30,41,59,0.4); border: 1px solid rgba(255,255,255,0.05); padding: 0.2rem; min-height: 45px; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: 0.2s; border-radius: 4px; }
 .percent-big { font-size: 1.6rem; font-weight: 900; line-height: 1; color: #3b82f6; letter-spacing: -1px; }
 .status-vencido { border-left: 2px solid #ef4444; }
 .status-ok { border-left: 2px solid #10b981; }
-/* Tabs */
+.row-100 { background: rgba(16, 185, 129, 0.15) !important; color: #10b981 !important; }
 .tab-btn { padding: 0.75rem 1rem; font-size: 0.7rem; font-weight: 800; text-transform: uppercase; color: #64748b; border-bottom: 2px solid transparent; transition: 0.3s; }
 .tab-active { color: #3b82f6; border-bottom-color: #3b82f6; background: rgba(59,130,246,0.05); }
-/* Tabela */
 .input-table { background: transparent; border: none; color: #3b82f6; font-weight: 800; width: 45px; text-align: center; font-size: 11px; }
 .input-table:focus { outline: 1px solid #3b82f6; background: rgba(0,0,0,0.3); }
-.input-disabled { color: #475569; font-weight: 400; cursor: not-allowed; }
+.btn-pdf { background: #ef4444; color: white; padding: 4px 10px; border-radius: 6px; font-size: 9px; font-weight: 900; text-transform: uppercase; transition: 0.3s; }
+.btn-pdf:hover { background: #dc2626; transform: scale(1.05); }
 </style>
 </head>
 <body class="p-2 md:p-4">
 <div id="login-screen" class="min-h-screen flex items-center justify-center">
 <div class="bg-slate-900 p-8 rounded-3xl border border-white/5 shadow-2xl w-full max-w-xs">
-<h1 class="text-xl font-black text-blue-400 text-center mb-6 tracking-tighter">TAG 2026 ONLINE</h1>
+<h1 class="text-xl font-black text-blue-400 text-center mb-6 tracking-tighter uppercase">TAG 2026 Auditoria</h1>
 <input type="text" id="u" placeholder="Usuário" class="w-full p-3 mb-3 bg-slate-800 rounded-xl text-white border-none text-sm">
 <input type="password" id="p" placeholder="Senha" class="w-full p-3 mb-4 bg-slate-800 rounded-xl text-white border-none text-sm">
-<button onclick="login()" class="w-full bg-blue-600 hover:bg-blue-700 py-3 rounded-xl font-bold text-sm shadow-lg">ENTRAR NO SISTEMA</button>
+<button onclick="login()" class="w-full bg-blue-600 hover:bg-blue-700 py-3 rounded-xl font-bold text-sm shadow-lg">ENTRAR</button>
 </div>
 </div>
 
 <div id="dashboard" class="hidden">
 <header class="flex justify-between items-center mb-4 px-2">
-<div><h2 class="text-lg font-black text-blue-400 leading-none">SEDAM TAG 2026</h2><p id="user-info" class="text-[9px] text-slate-500 uppercase mt-1"></p></div>
-<div class="text-right"><span class="block text-[7px] text-slate-500 font-bold uppercase">Cumprimento Global</span><span id="total-geral" class="text-2xl font-black text-emerald-400">0%</span></div>
+<div><h2 class="text-lg font-black text-blue-400 leading-none">PAINEL ESTRATÉGICO TAG</h2><p id="user-info" class="text-[9px] text-slate-500 uppercase mt-1 italic"></p></div>
+<div class="flex items-center gap-4">
+<div id="pdf-container"></div> <!-- Botão PDF injetado via JS por nível -->
+<div class="text-right border-l border-white/10 pl-4"><span class="block text-[7px] text-slate-500 font-bold uppercase">Progresso Global</span><span id="total-geral" class="text-2xl font-black text-emerald-400">0%</span></div>
+<button onclick="logout()" class="text-[9px] bg-white/5 hover:bg-red-500/20 text-slate-400 px-3 py-1 rounded transition-all">SAIR</button>
+</div>
 </header>
 
-<nav class="flex gap-2 mb-4 border-b border-white/5">
-<button onclick="switchTab('resumo')" id="tab-resumo" class="tab-btn tab-active">Resumo Cards</button>
-<button onclick="switchTab('mensal')" id="tab-mensal" class="tab-btn">Monitoramento Mensal</button>
-<button onclick="switchTab('analise')" id="tab-analise" class="tab-btn">Análise Gráfica</button>
+<nav class="flex gap-1 mb-4 border-b border-white/5">
+<button onclick="switchTab('resumo')" id="tab-resumo" class="tab-btn tab-active">Cards</button>
+<button onclick="switchTab('mensal')" id="tab-mensal" class="tab-btn">Monitoramento</button>
+<button onclick="switchTab('concluidos')" id="tab-concluidos" class="tab-btn">100% Cumpridos</button>
+<button onclick="switchTab('analise')" id="tab-analise" class="tab-btn">Gráficos</button>
 </nav>
 
-<div id="view-resumo" class="tab-view">
-<div id="cards-container" class="grid grid-cols-5 sm:grid-cols-8 md:grid-cols-10 lg:grid-cols-12 2xl:grid-cols-18 gap-1"></div>
-</div>
+<!-- VIEWS -->
+<div id="view-resumo" class="tab-view"><div id="cards-container" class="grid grid-cols-5 sm:grid-cols-8 md:grid-cols-10 lg:grid-cols-14 2xl:grid-cols-20 gap-1"></div></div>
 
 <div id="view-mensal" class="tab-view hidden">
 <div class="bg-slate-900/40 rounded-xl border border-white/5 overflow-x-auto">
-<table class="w-full text-left border-collapse min-w-[900px]">
-<thead><tr class="text-[9px] text-slate-500 uppercase border-b border-white/10">
-<th class="p-3">Sub-Item</th><th class="p-3 w-1/4">Descrição</th><th>Jan-Mar</th><th>Abril</th><th class="text-blue-400">Maio</th><th>Jun-Dez</th><th class="p-3 text-right">Acumulado</th>
-</tr></thead>
+<table id="table-monitoramento" class="w-full text-left border-collapse min-w-[900px]">
+<thead><tr class="text-[9px] text-slate-500 uppercase border-b border-white/10"><th class="p-3">Sub-Item</th><th class="p-3 w-1/4">Descrição</th><th>Março</th><th>Abril</th><th class="text-blue-400">Maio</th><th>Status</th><th class="p-3 text-right">Total</th></tr></thead>
 <tbody id="table-body" class="text-[10px]"></tbody>
 </table>
 </div>
 </div>
 
+<div id="view-concluidos" class="tab-view hidden">
+<div id="concluidos-container" class="grid grid-cols-5 sm:grid-cols-8 md:grid-cols-10 lg:grid-cols-14 2xl:grid-cols-20 gap-1"></div>
+</div>
+
 <div id="view-analise" class="tab-view hidden">
-<div class="grid grid-cols-1 lg:grid-cols-4 gap-4 p-2">
-<div class="lg:col-span-3 bg-slate-900/40 p-6 rounded-2xl border border-white/5">
-<div class="flex gap-4 mb-6">
-<select id="sel-meta" onchange="renderChart()" class="bg-slate-800 text-[10px] rounded p-2 text-white border-none w-64"></select>
-<button onclick="carregarDados()" class="bg-blue-600 text-[9px] px-4 py-2 rounded font-black">PESQUISAR PERÍODO</button>
-</div>
-<div class="h-[350px]"><canvas id="barChart"></canvas></div>
-</div>
+<div class="bg-slate-900/40 p-6 rounded-2xl border border-white/5">
+<select id="sel-meta" onchange="renderChart()" class="bg-slate-800 text-[10px] rounded p-2 text-white border-none w-64 mb-6"></select>
+<div class="h-[300px]"><canvas id="barChart"></canvas></div>
 </div>
 </div>
 </div>
@@ -94,53 +96,87 @@ userP = p;
 document.getElementById('login-screen').classList.add('hidden');
 document.getElementById('dashboard').classList.remove('hidden');
 document.getElementById('user-info').innerText = `${p.nome_completo} | ${p.nivel_acesso}`;
+// Lógica de Persistência de Aba
+const lastTab = localStorage.getItem('activeTab') || 'resumo';
+switchTab(lastTab);
+// Botão PDF Restrito (Níveis 1 e 2)
+if(p.hierarquia <= 2) { document.getElementById('pdf-container').innerHTML = `<button onclick="gerarRelatorioPDF()" class="btn-pdf">Gerar Relatório A4</button>`; }
 carregarDados();
-// Escuta alterações em tempo real para visualização online com a equipe
-client.channel('schema-db-changes').on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'deliberacoes' }, () => carregarDados()).subscribe();
+client.channel('any').on('postgres_changes', { event: '*', schema: 'public', table: 'deliberacoes' }, () => carregarDados()).subscribe();
 }
 
 async function carregarDados() {
-const { data } = await client.from('deliberacoes').select('*, evolucao_mensal(*)').order('identificador');
+const { data } = await client.from('deliberacoes').select('*, evolucao_mensal(*)');
 if(data) {
 allData = data.sort((a,b) => a.identificador.localeCompare(b.identificador, undefined, {numeric:true}));
-renderResumo(); renderTable(); renderSelect();
-if(!myChart) renderChart();
 const soma = allData.reduce((acc,c) => acc + (c.total_cumprimento || 0), 0);
 document.getElementById('total-geral').innerText = Math.round(soma / allData.length) + "%";
+renderResumo(); renderTable(); renderConcluidos(); renderSelect();
+if(!myChart) renderChart();
 }
 }
 
 function renderResumo() {
 document.getElementById('cards-container').innerHTML = allData.map(i => `
-<div class="card-micro rounded-md ${i.total_cumprimento<100?'status-vencido':'status-ok'}">
-<span class="text-[7px] font-black text-slate-500">${i.identificador}</span>
+<div class="card-micro ${i.total_cumprimento>=100?'status-ok':'status-vencido'}">
+<span class="text-[7px] font-bold text-slate-500">${i.identificador}</span>
 <span class="percent-big">${i.total_cumprimento}%</span>
 </div>`).join('');
 }
 
 function renderTable() {
 document.getElementById('table-body').innerHTML = allData.map(i => {
+const is100 = i.total_cumprimento >= 100;
 const abr = i.evolucao_mensal?.find(e => e.mes_referencia === '2026-04-01')?.percentual_lancado || 0;
 const mai = i.evolucao_mensal?.find(e => e.mes_referencia === '2026-05-01')?.percentual_lancado || 0;
 const canEdit = (userP.hierarquia === 1 || i.responsavel_id === userP.id);
 return `
-<tr class="border-b border-white/5 hover:bg-white/5">
-<td class="p-3 font-black text-blue-400">${i.identificador}</td>
-<td class="p-3 text-slate-500 text-[9px] leading-tight">${i.descricao}</td>
-<td class="text-slate-700">0%</td>
-<td><input type="number" class="input-table ${!canEdit?'input-disabled':''}" value="${abr}" ${!canEdit?'disabled':''} onchange="salvar(this.value, '${i.id}', '2026-04-01')"></td>
-<td><input type="number" class="input-table ${!canEdit?'input-disabled':''}" value="${mai}" ${!canEdit?'disabled':''} onchange="salvar(this.value, '${i.id}', '2026-05-01')"></td>
-<td class="text-slate-700">Pendente</td>
-<td class="p-3 text-right font-black text-emerald-400 text-sm">${i.total_cumprimento}%</td>
+<tr class="border-b border-white/5 hover:bg-white/5 ${is100 ? 'row-100' : ''}">
+<td class="p-3 font-black">${i.identificador}</td>
+<td class="p-3 text-[9px]">${i.descricao}</td>
+<td class="opacity-50">0%</td>
+<td><input type="number" class="input-table" value="${abr}" ${!canEdit?'disabled':''} onchange="salvar(this.value, '${i.id}', '2026-04-01')"></td>
+<td><input type="number" class="input-table" value="${mai}" ${!canEdit?'disabled':''} onchange="salvar(this.value, '${i.id}', '2026-05-01')"></td>
+<td class="italic">${is100 ? 'CONCLUÍDO' : 'EM ANDAMENTO'}</td>
+<td class="p-3 text-right font-black text-sm">${i.total_cumprimento}%</td>
 </tr>`; }).join('');
 }
 
-async function salvar(val, id, mes) {
-const { error } = await client.from('evolucao_mensal').upsert({ deliberacao_id: id, mes_referencia: mes, percentual_lancado: val }, { onConflict: 'deliberacao_id,mes_referencia' });
-if(!error) {
-await client.from('deliberacoes').update({ total_cumprimento: val }).eq('id', id);
-carregarDados();
+function renderConcluidos() {
+const concluidos = allData.filter(i => i.total_cumprimento >= 100);
+document.getElementById('concluidos-container').innerHTML = concluidos.length > 0 ? concluidos.map(i => `
+<div class="card-micro status-ok">
+<span class="text-[7px] font-bold text-slate-500">${i.identificador}</span>
+<span class="percent-big">100%</span>
+</div>`).join('') : "<p class='col-span-full text-center text-slate-500 py-10'>Nenhuma meta atingiu 100% ainda.</p>";
 }
+
+async function salvar(v, id, m) {
+const { error } = await client.from('evolucao_mensal').upsert({ deliberacao_id: id, mes_referencia: m, percentual_lancado: v }, { onConflict: 'deliberacao_id,mes_referencia' });
+if(!error) { await client.from('deliberacoes').update({ total_cumprimento: v }).eq('id', id); carregarDados(); }
+}
+
+function switchTab(t) {
+localStorage.setItem('activeTab', t);
+document.querySelectorAll('.tab-view').forEach(v => v.classList.add('hidden'));
+document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('tab-active'));
+document.getElementById('view-'+t).classList.remove('hidden');
+document.getElementById('tab-'+t).classList.add('tab-active');
+}
+
+function gerarRelatorioPDF() {
+const { jsPDF } = window.jspdf;
+const doc = new jsPDF('p', 'mm', 'a4');
+const head = "Metodologia de Acompanhamento do TAG da Sedam no Estado de Rondônia";
+const foot = "Maria Gleidivana Alves de Albuquerque – Auditora de Controle Externo / Assessora IV\nManoel Fernandes Neto – Auditor de Controle Externo – TCE/RO";
+doc.setFontSize(8); doc.setTextColor(100); doc.text(head, 105, 10, { align: 'center' });
+doc.setFontSize(14); doc.setTextColor(0); doc.text("Relatório Operacional de Auditoria - TAG 2026", 105, 25, { align: 'center' });
+doc.setFontSize(10); doc.text(`Emissão: ${new Date().toLocaleString('pt-BR')}`, 105, 32, { align: 'center' });
+const rows = allData.map(i => [i.identificador, i.descricao, i.total_cumprimento + "%"]);
+doc.autoTable({ head: [['Item', 'Descrição da Ação', 'Cumprimento']], body: rows, startY: 40, theme: 'striped', headStyles: { fillStyle: [59, 130, 246] }, styles: { fontSize: 7 } });
+const pageCount = doc.internal.getNumberOfPages();
+for(let i = 1; i <= pageCount; i++) { doc.setPage(i); doc.setFontSize(8); doc.text(foot, 105, 285, { align: 'center' }); }
+doc.save(`TAG_2026_Relatorio_${new Date().getTime()}.pdf`);
 }
 
 function renderChart() {
@@ -150,23 +186,13 @@ const selId = document.getElementById('sel-meta').value || allData[0].id;
 const item = allData.find(i => i.id === selId);
 const labels = ['Jan-Mar', 'Abril', 'Maio'];
 const v = [0, item.evolucao_mensal?.find(e=>e.mes_referencia==='2026-04-01')?.percentual_lancado || 0, item.evolucao_mensal?.find(e=>e.mes_referencia==='2026-05-01')?.percentual_lancado || 0];
-myChart = new Chart(ctx, { type: 'bar', data: { labels, datasets: [{ label: 'Execução %', data: v, backgroundColor: v.map(val => val >= 100 ? '#10b981' : '#3b82f6'), borderRadius: 5 }] },
+myChart = new Chart(ctx, { type: 'bar', data: { labels, datasets: [{ label: 'Evolução %', data: v, backgroundColor: v.map(val => val >= 100 ? '#10b981' : '#3b82f6'), borderRadius: 5 }] },
 options: { responsive: true, maintainAspectRatio: false, plugins: { tooltip: { callbacks: { label: (c) => c.raw >= 100 ? '✅ OK-CUMPRIDO' : c.raw + '%' } } } } });
 }
-
-function renderSelect() { 
-const s = document.getElementById('sel-meta'); 
-if(s.options.length === 0) s.innerHTML = allData.map(d => `<option value="${d.id}">SUB-ITEM ${d.identificador}</option>`).join('');
-}
-
-function switchTab(t) {
-document.querySelectorAll('.tab-view').forEach(v => v.classList.add('hidden'));
-document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('tab-active'));
-document.getElementById('view-'+t).classList.remove('hidden');
-document.getElementById('tab-'+t).classList.add('tab-active');
-}
-
-async function logout() { await client.auth.signOut(); location.reload(); }
+function renderSelect() { const s = document.getElementById('sel-meta'); if(s.options.length === 0) s.innerHTML = allData.map(d => `<option value="${d.id}">SUB-ITEM ${d.identificador}</option>`).join(''); }
+async function logout() { await client.auth.signOut(); localStorage.clear(); location.reload(); }
+// Carrega sessão existente
+client.auth.getSession().then(({data}) => { if(data.session) init(data.session.user.id); });
 </script>
 </body>
 </html>
