@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <link rel="icon" href="data:,">
-<title>Auditoria Master TAG 2026 - TCE/RO</title>
+<title>Auditoria TAG 2026 - TCE/RO</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -13,8 +13,8 @@
 <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
 <style>
 body { background: #020617; color: #f8fafc; font-family: 'Inter', sans-serif; margin: 0; }
-/* Estilo Semafórico dos Cards */
-.card-micro { padding: 0.15rem; min-height: 42px; display: flex; align-items: center; justify-content: center; transition: 0.2s; border-radius: 4px; border: 1px solid rgba(255,255,255,0.1); cursor: pointer; }
+/* Estilo Semafórico dos Cards - Botão Completo */
+.card-micro { padding: 0.15rem; min-height: 40px; display: flex; align-items: center; justify-content: center; transition: 0.2s; border-radius: 4px; border: 1px solid rgba(255,255,255,0.1); cursor: pointer; }
 .bg-status-red { background-color: #991b1b !important; } /* 0-30% */
 .bg-status-yellow { background-color: #854d0e !important; } /* 31-99% */
 .bg-status-green { background-color: #065f46 !important; } /* 100% */
@@ -22,7 +22,7 @@ body { background: #020617; color: #f8fafc; font-family: 'Inter', sans-serif; ma
 .tab-btn { padding: 0.6rem 1rem; font-size: 0.65rem; font-weight: 800; text-transform: uppercase; color: #64748b; border-bottom: 2px solid transparent; transition: 0.3s; }
 .tab-active { color: #3b82f6; border-bottom-color: #3b82f6; background: rgba(59,130,246,0.05); }
 .input-table { background: transparent; border: none; color: #3b82f6; font-weight: 800; width: 45px; text-align: center; font-size: 11px; }
-.row-100 { background: rgba(16, 185, 129, 0.1) !important; color: #10b981; font-weight: 700; }
+.row-100 { background: rgba(16, 185, 129, 0.12) !important; color: #10b981; font-weight: 700; }
 .legend-box { background: rgba(30,41,59,0.6); border: 1px solid rgba(59,130,246,0.2); padding: 1rem; border-radius: 10px; margin-top: 1rem; font-size: 0.7rem; color: #cbd5e1; white-space: pre-wrap; }
 .btn-pdf { background: #ef4444; color: white; padding: 6px 12px; border-radius: 8px; font-size: 10px; font-weight: 900; text-transform: uppercase; transition: 0.3s; }
 </style>
@@ -30,47 +30,46 @@ body { background: #020617; color: #f8fafc; font-family: 'Inter', sans-serif; ma
 <body class="p-2 md:p-4">
 <div id="login-screen" class="min-h-screen flex items-center justify-center">
 <div class="bg-slate-900 p-8 rounded-3xl border border-white/5 shadow-2xl w-full max-w-xs text-center">
-<h1 class="text-xl font-black text-blue-400 mb-6 uppercase tracking-tighter">TAG TCE/RO v11</h1>
+<h1 class="text-xl font-black text-blue-400 mb-6 uppercase">TAG TCE/RO v12</h1>
 <input type="text" id="u" placeholder="Usuário" class="w-full p-3 mb-3 bg-slate-800 rounded-lg text-white text-sm">
 <input type="password" id="p" placeholder="Senha" class="w-full p-3 mb-4 bg-slate-800 rounded-lg text-white text-sm">
-<button onclick="login()" class="w-full bg-blue-600 hover:bg-blue-700 py-3 rounded-xl font-bold text-sm">ENTRAR</button>
+<button onclick="login()" class="w-full bg-blue-600 hover:bg-blue-700 py-3 rounded-xl font-bold text-sm">ACESSAR PAINEL</button>
 </div>
 </div>
 
 <div id="dashboard" class="hidden">
 <header class="flex justify-between items-center mb-4 px-2">
-<div><h2 class="text-lg font-black text-blue-400 leading-none">PAINEL ESTRATÉGICO TAG</h2><p id="user-info" class="text-[9px] text-slate-500 uppercase mt-1 italic"></p></div>
+<div><h2 class="text-lg font-black text-blue-400 leading-none tracking-tighter uppercase">Painel de Auditoria TAG 2026</h2><p id="user-info" class="text-[9px] text-slate-500 mt-1 uppercase italic"></p></div>
 <div class="flex items-center gap-4">
 <div id="pdf-container"></div>
 <div class="text-right border-l border-white/10 pl-4"><span class="block text-[7px] text-slate-500 font-bold uppercase">Média Geral TAG</span><span id="total-geral" class="text-2xl font-black text-emerald-400">0%</span></div>
-<button onclick="logout()" class="text-[9px] bg-white/5 text-slate-400 px-3 py-1 rounded">SAIR</button>
+<button onclick="logout()" class="text-[9px] bg-white/5 text-slate-400 px-2 py-1 rounded">SAIR</button>
 </div>
 </header>
 
-<nav class="flex gap-1 mb-4 border-b border-white/5">
+<nav class="flex gap-1 mb-4 border-b border-white/5 overflow-x-auto">
 <button onclick="switchTab('resumo')" id="tab-resumo" class="tab-btn tab-active">Resumo</button>
 <button onclick="switchTab('mensal')" id="tab-mensal" class="tab-btn">Monitoramento</button>
 <button onclick="switchTab('analise')" id="tab-analise" class="tab-btn">Gráficos</button>
-<button onclick="switchTab('concluidos')" id="tab-concluidos" class="tab-btn">100% Concluídos</button>
+<button onclick="switchTab('concluidos')" id="tab-concluidos" class="tab-btn">100% Cumpridos</button>
 </nav>
 
-<!-- MONITORAMENTO MENSAL DETALHADO -->
+<!-- ABA 1: RESUMO (CARDS SEMAFÓRICOS) -->
+<div id="view-resumo" class="tab-view"><div id="cards-container" class="grid grid-cols-6 sm:grid-cols-12 md:grid-cols-16 lg:grid-cols-20 2xl:grid-cols-28 gap-1"></div></div>
+
+<!-- ABA 2: MONITORAMENTO (TABELA COMPLETA) -->
 <div id="view-mensal" class="tab-view hidden">
 <div class="bg-slate-900/40 rounded-xl border border-white/5 overflow-x-auto">
 <table class="w-full text-left border-collapse min-w-[1400px]">
 <thead><tr class="text-[8px] text-slate-500 uppercase border-b border-white/10">
-<th class="p-3">Sub-Item</th><th class="p-3 w-1/4">Ação Detalhada</th><th>Responsável</th><th>Coordenadoria</th><th>Início</th><th>Março</th><th>Abril</th><th class="text-blue-400">Maio</th><th class="p-3 text-right">Total</th>
+<th class="p-3">Sub-Item</th><th class="p-3 w-1/4">Descrição da Ação</th><th>Responsável</th><th>Coordenadoria</th><th>Início</th><th>Março</th><th>Abril</th><th class="text-blue-400">Maio</th><th class="p-3 text-right">Total</th>
 </tr></thead>
 <tbody id="table-body" class="text-[10px]"></tbody>
 </table>
 </div>
 </div>
 
-<div id="view-concluidos" class="tab-view hidden">
-<div id="concluidos-container" class="grid grid-cols-6 sm:grid-cols-10 lg:grid-cols-18 gap-1 mb-8"></div>
-<div class="bg-slate-900/40 p-6 rounded-xl border border-emerald-500/20"><h3 class="text-emerald-400 font-bold text-xs mb-4 uppercase">Descrição das Ações Cumpridas (100%)</h3><div id="concluidos-list" class="space-y-1 text-[10px] text-slate-400"></div></div>
-</div>
-
+<!-- ABA 3: ANÁLISE GRÁFICA (MULTINÍVEL + CARRY-FORWARD) -->
 <div id="view-analise" class="tab-view hidden">
 <div class="bg-slate-900/40 p-6 rounded-2xl border border-white/5">
 <div class="flex flex-col sm:flex-row gap-3 mb-6">
@@ -82,7 +81,14 @@ body { background: #020617; color: #f8fafc; font-family: 'Inter', sans-serif; ma
 </div>
 </div>
 
-<div id="view-resumo" class="tab-view"><div id="cards-container" class="grid grid-cols-6 sm:grid-cols-12 md:grid-cols-16 lg:grid-cols-20 2xl:grid-cols-28 gap-1"></div></div>
+<!-- ABA 4: 100% CUMPRIDOS (LISTA DESCRITIVA) -->
+<div id="view-concluidos" class="tab-view hidden">
+<div id="concluidos-container" class="grid grid-cols-6 sm:grid-cols-12 lg:grid-cols-18 gap-1 mb-8"></div>
+<div class="bg-slate-900/40 p-6 rounded-xl border border-emerald-500/20">
+<h3 class="text-emerald-400 font-bold text-xs mb-4 uppercase">Descrição das Ações Cumpridas (100%)</h3>
+<div id="concluidos-list" class="space-y-2 text-[10px] text-slate-400"></div>
+</div>
+</div>
 </div>
 
 <script>
@@ -91,11 +97,19 @@ const S_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJl
 const client = supabase.createClient(S_URL, S_KEY);
 let userP = null; let allData = []; let myChart = null;
 
-const descItens = { "total": "TOTAL GERAL DO TAG SEDAM", "1.1": "Elabore plano de ação considerando LOA e PE-RO.", "1.2": "Concluir Plano Estratégico Sedam (5 anos).", "1.3": "Identificar processos e rotinas e instituir manuais.", "1.4": "Institucionalizar licenciamento via sensoriamento remoto.", "1.5": "Desenvolver Geoportal SEDAM.", "1.7": "Plano de Ação Unidades de Conservação." };
+const descItens = { "total": "TOTAL GERAL TAG SEDAM", "1.1": "Elabore plano de ação considerando LOA e PE-RO.", "1.2": "Concluir Plano Estratégico Sedam (5 anos).", "1.3": "Identificar processos e rotinas e instituir manuais.", "1.4": "Institucionalizar licenciamento via sensoriamento remoto.", "1.5": "Desenvolver Geoportal SEDAM.", "1.7": "Plano de Ação Unidades de Conservação." };
 const rangeItens = { "1.1": ["1.1", "1.2", "1.3", "1.4"], "1.2": ["2.1", "3.1", "3.2", "3.3", "4.1", "4.2"], "1.3": ["5.1", "5.2", "5.3", "5.4", "5.5", "5.6", "5.7"], "1.4": ["6.1", "6.2", "6.3", "6.4", "7.1", "7.2", "8.1"], "1.5": ["9.1", "9.2", "9.3", "9.4", "10.1", "10.2", "10.3", "10.4", "10.5", "10.6", "10.7"] };
 
 async function login() { let e = document.getElementById('u').value.trim().toLowerCase(); if(!e.includes('@')) e += '@sedam.com'; const { data, error } = await client.auth.signInWithPassword({ email: e, password: document.getElementById('p').value }); if(!error) init(data.user.id); }
-async function init(uid) { const { data: p } = await client.from('perfis').select('*').eq('id', uid).single(); userP = p; document.getElementById('login-screen').classList.add('hidden'); document.getElementById('dashboard').classList.remove('hidden'); document.getElementById('user-info').innerText = `${p.nome_completo} | ${p.nivel_acesso}`; if(p.hierarquia <= 2) document.getElementById('pdf-container').innerHTML = `<button onclick="gerarRelatorioPDF()" class="btn-pdf">Emitir PDF A4</button>`; const lastTab = localStorage.getItem('activeTab') || 'resumo'; switchTab(lastTab); carregarDados(); client.channel('any').on('postgres_changes', { event: '*', schema: 'public', table: 'deliberacoes' }, () => carregarDados()).subscribe(); }
+
+async function init(uid) {
+const { data: p } = await client.from('perfis').select('*').eq('id', uid).single(); userP = p;
+document.getElementById('login-screen').classList.add('hidden'); document.getElementById('dashboard').classList.remove('hidden');
+document.getElementById('user-info').innerText = `${p.nome_completo} | ${p.nivel_acesso}`;
+if(p.hierarquia <= 2) document.getElementById('pdf-container').innerHTML = `<button onclick="gerarRelatorioPDF()" class="btn-pdf">PDF A4</button>`;
+const lastTab = localStorage.getItem('activeTab') || 'resumo'; switchTab(lastTab); carregarDados();
+client.channel('any').on('postgres_changes', { event: '*', schema: 'public', table: 'deliberacoes' }, () => carregarDados()).subscribe();
+}
 
 async function carregarDados() {
 const { data } = await client.from('deliberacoes').select('*, evolucao_mensal(*)');
@@ -119,14 +133,17 @@ const is100 = i.total_cumprimento >= 100;
 const abr = i.evolucao_mensal?.find(e => e.mes_referencia === '2026-04-01')?.percentual_lancado || 0;
 const mai = i.evolucao_mensal?.find(e => e.mes_referencia === '2026-05-01')?.percentual_lancado || 0;
 const canEdit = (userP.hierarquia === 1 || i.responsavel_id === userP.id);
-return `<tr class="border-b border-white/5 hover:bg-white/5 ${is100?'row-100':''}"><td class="p-3 font-black text-blue-400">${i.identificador}</td><td class="p-3 leading-tight">${i.descricao||'---'}</td><td>${i.responsavel_manual||'---'}</td><td>${i.coordenadoria||'---'}</td><td>${i.data_inicio||'---'}</td><td class="opacity-50">0%</td><td class="font-bold text-blue-300">${abr}%</td><td><input type="number" class="input-table" value="${mai}" ${!canEdit?'disabled':''} onchange="salvar(this.value, '${i.id}', '2026-05-01')"></td><td class="p-3 text-right font-black text-emerald-400 text-sm">${i.total_cumprimento}%</td></tr>`;
+return `<tr class="border-b border-white/5 hover:bg-white/5 ${is100?'row-100':''}">
+<td class="p-3 font-black text-blue-400">${i.identificador}</td><td class="p-3 leading-tight">${i.descricao||'---'}</td>
+<td>${i.responsavel_manual||'---'}</td><td>${i.coordenadoria||'---'}</td><td>${i.data_inicio||'---'}</td>
+<td class="opacity-50">0%</td><td class="font-bold text-blue-300">${abr}%</td><td><input type="number" class="input-table" value="${mai}" ${!canEdit?'disabled':''} onchange="salvar(this.value, '${i.id}', '2026-05-01')"></td><td class="p-3 text-right font-black text-emerald-400 text-sm">${i.total_cumprimento}%</td></tr>`;
 }).join('');
 }
 
 function renderConcluidos() {
 const c = allData.filter(i => i.total_cumprimento >= 100);
-document.getElementById('concluidos-container').innerHTML = c.map(i => `<div class="card-micro bg-status-green"><span class="percent-big">100%</span><span class="text-[7px] text-white/50 ml-1">${i.identificador}</span></div>`).join('');
-document.getElementById('concluidos-list').innerHTML = c.map(i => `<div class="flex gap-2"><span class="font-bold text-emerald-400">${i.identificador}:</span> ${i.descricao}</div>`).join('');
+document.getElementById('concluidos-container').innerHTML = c.map(i => `<div class="card-micro bg-status-green"><span class="percent-big">100%</span><span class="text-[7px] text-white/50 font-bold ml-1">${i.identificador}</span></div>`).join('');
+document.getElementById('concluidos-list').innerHTML = c.map(i => `<div><span class="font-bold text-emerald-400">${i.identificador}:</span> ${i.descricao}</div>`).join('');
 }
 
 function renderChart() {
@@ -140,12 +157,12 @@ if(sI === 'total' || sS === 'item') {
   const calc = (m) => { 
     let sum = 0; items.forEach(it => { 
       let v = it.evolucao_mensal?.find(e=>e.mes_referencia===m)?.percentual_lancado || 0;
-      if(m === '2026-05-01' && v === 0) v = it.evolucao_mensal?.find(e=>e.mes_referencia==='2026-04-01')?.percentual_lancado || 0; // Carry-Forward Logic
+      if(m === '2026-05-01' && v === 0) v = it.evolucao_mensal?.find(e=>e.mes_referencia==='2026-04-01')?.percentual_lancado || 0; // CARRY-FORWARD
       sum += parseFloat(v);
     }); return Math.round(sum / items.length);
   };
   dataset = [0, calc('2026-04-01'), calc('2026-05-01')];
-  leg.innerText = descItens[sI] || "Consolidação Global";
+  leg.innerText = descItens[sI] || "TOTAL GERAL DO TAG SEDAM";
 } else {
   const item = allData.find(i => i.id === sS); leg.innerText = item.descricao;
   dataset = [0, item.evolucao_mensal?.find(e=>e.mes_referencia==='2026-04-01')?.percentual_lancado||0, item.evolucao_mensal?.find(e=>e.mes_referencia==='2026-05-01')?.percentual_lancado||0];
@@ -161,7 +178,7 @@ doc.setFontSize(8); doc.setTextColor(100); doc.text(h, 105, 10, { align: 'center
 const rows = allData.map(i => [i.identificador, i.descricao.substring(0,70)+'...', i.responsavel_manual||'---', i.total_cumprimento+"%"]);
 doc.autoTable({ head: [['Item', 'Ação', 'Responsável', 'Progresso']], body: rows, startY: 20, styles: { fontSize: 6 } });
 const pCount = doc.internal.getNumberOfPages(); for(let i=1; i<=pCount; i++) { doc.setPage(i); doc.setFontSize(7); doc.text(f, 105, 285, { align: 'center' }); }
-doc.save(`TAG2026_Relatorio_TCE.pdf`);
+doc.save(`Relatorio_TAG2026_Final.pdf`);
 }
 
 async function salvar(v, id, m) { const { error } = await client.from('evolucao_mensal').upsert({ deliberacao_id: id, mes_referencia: m, percentual_lancado: v }, { onConflict: 'deliberacao_id,mes_referencia' }); if(!error) { await client.from('deliberacoes').update({ total_cumprimento: v }).eq('id', id); carregarDados(); } }
