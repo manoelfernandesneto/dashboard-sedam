@@ -5,178 +5,178 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sedam TAG 2026</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
-<body class="bg-gradient-to-br from-slate-900 via-blue-950 to-slate-900 min-h-screen text-gray-100 antialiased">
-
-    <!-- Tela de Login -->
-    <div id="loginScreen" class="flex items-center justify-center min-h-screen p-4">
-        <div class="bg-white/10 backdrop-blur-xl p-10 rounded-3xl shadow-2xl max-w-md w-full border border-white/20">
-            <h1 class="text-4xl font-bold text-white mb-8 text-center bg-gradient-to-r from-blue-400 to-blue-200 bg-clip-text text-transparent">Sedam TAG 2026</h1>
-            <form id="loginForm">
-                <input type="email" id="userEmail" placeholder="Email" class="w-full p-4 mb-6 bg-white/20 text-white placeholder-white/60 rounded-2xl border-0 focus:ring-4 focus:ring-blue-500/50 transition-all text-lg font-medium">
-                <input type="password" id="userPass" placeholder="Senha" class="w-full p-4 mb-8 bg-white/20 text-white placeholder-white/60 rounded-2xl border-0 focus:ring-4 focus:ring-blue-500/50 transition-all text-lg font-medium">
-                <button type="submit" class="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-bold py-4 px-8 rounded-2xl text-lg shadow-xl transition-all transform hover:scale-105">Entrar</button>
+<body class="bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900 min-h-screen text-white font-sans">
+    <!-- Login Screen -->
+    <div id="login" class="min-h-screen flex items-center justify-center p-8">
+        <div class="bg-gray-800/50 backdrop-blur-xl p-12 rounded-3xl shadow-2xl max-w-md w-full border border-gray-700/50">
+            <h1 class="text-4xl md:text-5xl font-bold text-center mb-12 bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent drop-shadow-2xl">Sedam TAG 2026</h1>
+            <form id="authForm" class="space-y-6">
+                <input id="email" type="email" placeholder="Email" class="w-full p-4 bg-gray-700/80 border border-gray-600 text-white rounded-2xl focus:outline-none focus:ring-4 focus:ring-blue-500/50 transition-all" required>
+                <input id="password" type="password" placeholder="Senha" class="w-full p-4 bg-gray-700/80 border border-gray-600 text-white rounded-2xl focus:outline-none focus:ring-4 focus:ring-blue-500/50 transition-all" required>
+                <button id="loginBtn" type="submit" name="action" value="login" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-4 rounded-2xl font-bold text-lg shadow-xl hover:shadow-2xl transition-all">Entrar</button>
+                <button id="signupBtn" type="submit" name="action" value="signup" class="w-full bg-green-600 hover:bg-green-700 text-white py-4 rounded-2xl font-bold text-lg shadow-xl hover:shadow-2xl transition-all">Criar Conta</button>
             </form>
         </div>
     </div>
 
-    <!-- Dashboard Geral -->
-    <div id="generalDashboard" class="hidden min-h-screen">
-        <nav class="bg-slate-800/50 backdrop-blur-xl border-b border-white/10 p-6">
-            <div class="max-w-7xl mx-auto flex justify-between items-center">
-                <h1 class="text-3xl font-bold bg-gradient-to-r from-blue-400 to-blue-200 bg-clip-text text-transparent">Dashboard Geral</h1>
-                <button class="logout-btn bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-6 rounded-xl shadow-lg transition-all">Sair</button>
+    <!-- Dashboard -->
+    <div id="dashboard" class="min-h-screen p-8" style="display: none;">
+        <header class="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-12 p-8 bg-gray-800/40 backdrop-blur-xl rounded-3xl shadow-2xl border border-gray-700/50">
+            <h2 class="text-3xl md:text-4xl font-bold bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent drop-shadow-2xl mb-4 lg:mb-0">Dashboard</h2>
+            <div class="flex flex-col sm:flex-row items-start sm:items-center gap-4 w-full lg:w-auto">
+                <span id="userInfo" class="text-xl font-semibold text-gray-200 bg-gray-800/50 px-4 py-2 rounded-xl"></span>
+                <button id="logoutBtn" class="bg-red-600 hover:bg-red-700 text-white px-8 py-3 rounded-2xl font-bold shadow-xl hover:shadow-2xl transition-all">Sair</button>
             </div>
-        </nav>
-        <main class="p-8 max-w-7xl mx-auto space-y-8">
-            <div class="flex flex-col lg:flex-row gap-6">
-                <select id="coordFilter" class="flex-1 bg-white/20 backdrop-blur-xl p-5 rounded-2xl border-0 focus:ring-4 focus:ring-blue-500/50 text-white font-semibold text-lg">
-                    <option value="">Selecione Coordenador</option>
-                </select>
-                <select id="monthFilter" class="flex-1 bg-white/20 backdrop-blur-xl p-5 rounded-2xl border-0 focus:ring-4 focus:ring-blue-500/50 text-white font-semibold text-lg">
-                    <option value="">Selecione Mês</option>
-                </select>
-            </div>
-            <div class="bg-white/10 backdrop-blur-xl rounded-3xl p-8 border border-white/20">
-                <canvas id="chartCanvas"></canvas>
-            </div>
-            <div id="delibsList" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6"></div>
-        </main>
+        </header>
+
+        <div id="cardsContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12"></div>
+
+        <div class="bg-gray-800/50 backdrop-blur-xl p-8 rounded-3xl shadow-2xl border border-gray-700/50">
+            <h3 class="text-2xl font-bold mb-6 text-center">Evolução Acumulada por Mês</h3>
+            <canvas id="progressChart"></canvas>
+        </div>
+
+        <div class="mt-12 flex justify-end">
+            <button id="launchBtn" class="bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white px-12 py-4 rounded-2xl font-bold text-xl shadow-2xl hover:shadow-3xl transition-all" style="display: none;">Lançar Percentual</button>
+        </div>
     </div>
 
-    <!-- Painel Individual Coordenador -->
-    <div id="coordPanel" class="hidden min-h-screen">
-        <nav class="bg-slate-800/50 backdrop-blur-xl border-b border-white/10 p-6">
-            <div class="max-w-7xl mx-auto flex justify-between items-center">
-                <h1 id="coordTitle" class="text-3xl font-bold bg-gradient-to-r from-blue-400 to-blue-200 bg-clip-text text-transparent">Painel Individual do Coordenador</h1>
-                <button class="logout-btn bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-6 rounded-xl shadow-lg transition-all">Sair</button>
-            </div>
-        </nav>
-        <main class="p-8 max-w-7xl mx-auto space-y-8">
-            <p class="text-xl text-blue-200 font-medium">Lançamento do percentual do mês atual (<span id="currentMonthDisplay">Maio</span>)</p>
-            <div id="coordDelibs" class="grid grid-cols-1 lg:grid-cols-2 gap-8"></div>
-            <button id="saveProgress" class="mx-auto block bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white font-bold py-4 px-12 rounded-2xl text-xl shadow-xl transition-all transform hover:scale-105">Salvar Progresso do Mês</button>
-        </main>
-    </div>
+    <!-- Launch Modal -->
+    <dialog id="launchModal" class="backdrop:bg-black/70 p-8">
+        <div class="bg-gray-800/90 backdrop-blur-2xl p-10 rounded-3xl max-w-md w-full mx-auto border border-gray-700/50 shadow-2xl">
+            <h2 class="text-3xl font-bold text-white mb-8 text-center">Lançar Percentual</h2>
+            <form id="launchForm">
+                <div class="mb-6">
+                    <label class="block text-gray-300 mb-2 font-semibold">Mês (YYYY-MM)</label>
+                    <input id="monthInput" type="month" class="w-full p-4 bg-gray-700/80 border border-gray-600 text-white rounded-2xl focus:outline-none focus:ring-4 focus:ring-emerald-500/50 transition-all" required>
+                </div>
+                <div class="mb-8">
+                    <label class="block text-gray-300 mb-2 font-semibold">Percentual (%)</label>
+                    <input id="progressInput" type="number" min="0" max="100" step="0.1" class="w-full p-4 bg-gray-700/80 border border-gray-600 text-white rounded-2xl focus:outline-none focus:ring-4 focus:ring-emerald-500/50 transition-all" required>
+                </div>
+                <button type="submit" class="w-full bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 text-white py-4 rounded-2xl font-bold text-lg shadow-xl hover:shadow-2xl transition-all mb-4">Lançar</button>
+                <button type="button" class="w-full text-gray-400 hover:text-white py-3 rounded-xl transition-all font-semibold" onclick="document.getElementById('launchModal').close()">Cancelar</button>
+            </form>
+        </div>
+    </dialog>
 
     <script>
-        // Configurações globais
-        const months = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
-        const monthOrder = months.reduce((acc, month, idx) => { acc[month] = idx; return acc; }, {});
-        const currentMonth = 'Mai';
-        const prevMonth = 'Abr';
-        let appData;
-        let currentUser = null;
-        let evolutionChart = null;
+        // Replace with your Supabase project details
+        const SUPABASE_URL = 'https://zvtzbiqfwhggysiuiuxh.supabase.co/rest/v1/';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp2dHpiaXFmd2hnZ3lzaXVpdXhoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc1ODYyMjcsImV4cCI6MjA5MzE2MjIyN30.tCnFZv2B6Kmd9KsyZM8CHClZqsq7Nyu-8nxyYVs_ZMQ';
 
-        // Usuários mock
-        const users = {
-            'auditor@sedam.com': { role: 'general', pass: 'pass123' },
-            'diretor@sedam.com': { role: 'general', pass: 'pass123' },
-            'coord1@sedam.com': { role: 'coord', coordId: 'coord1', pass: 'pass123' }
-        };
+        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        // Inicializar dados
-        function initData() {
-            if (!localStorage.getItem('sedamData')) {
-                const coordNames = {
-                    'coord1': 'João Silva',
-                    'coord2': 'Maria Oliveira'
-                };
-                const delibs = {};
-                ['coord1', 'coord2'].forEach(coordId => {
-                    delibs[coordId] = [];
-                    const monthlyData = coordId === 'coord1' ? { Mar: 30, Abr: 20 } : { Mar: 10, Abr: 40 };
-                    for (let i = 1; i <= 10; i++) {
-                        delibs[coordId].push({
-                            id: i,
-                            title: `Deliberação ${i.toString().padStart(2, '0')} - ${coordNames[coordId]}`,
-                            monthly: { ...monthlyData }
-                        });
-                    }
-                });
-                appData = { coordNames, delibs };
-                localStorage.setItem('sedamData', JSON.stringify(appData));
+        let currentSession = null;
+        let userRole = null;
+        let progressChart = null;
+
+        // Auth state listener
+        supabase.auth.onAuthStateChange(async (event, session) => {
+            currentSession = session;
+            if (session) {
+                await loadUserRole(session.user.id);
+                await loadDashboard();
+                document.getElementById('login').style.display = 'none';
+                document.getElementById('dashboard').style.display = 'block';
             } else {
-                appData = JSON.parse(localStorage.getItem('sedamData'));
+                document.getElementById('login').style.display = 'flex';
+                document.getElementById('dashboard').style.display = 'none';
             }
-        }
+        });
 
-        // Calcular acumulado até mês específico
-        function getCumulative(deliberation, upToMonth) {
-            const upToIdx = monthOrder[upToMonth];
-            let cum = 0;
-            for (let i = 0; i <= upToIdx; i++) {
-                const monthKey = months[i];
-                cum += (deliberation.monthly[monthKey] || 0);
+        async function loadUserRole(userId) {
+            const { data: profile, error } = await supabase
+                .from('profiles')
+                .select('role')
+                .eq('id', userId)
+                .single();
+            if (error) {
+                console.error('Error fetching profile:', error);
+                return;
             }
-            return Math.min(cum, 100);
+            userRole = profile.role;
+            document.getElementById('userInfo').textContent = `${currentSession.user.email} (${userRole.toUpperCase()})`;
         }
 
-        // Logout
-        function logout() {
-            document.getElementById('loginScreen').classList.remove('hidden');
-            document.getElementById('generalDashboard').classList.add('hidden');
-            document.getElementById('coordPanel').classList.add('hidden');
-            currentUser = null;
-            if (evolutionChart) {
-                evolutionChart.destroy();
-                evolutionChart = null;
+        async function loadDashboard() {
+            let query = supabase.from('progresses').select('*').order('month', { ascending: true });
+            if (userRole === 'coordenador') {
+                query = supabase.from('progresses').select('*').eq('coordinator_id', currentSession.user.id).order('month', { ascending: true });
             }
+            const { data: progresses, error } = await query;
+            if (error) {
+                console.error('Error fetching progresses:', error);
+                return;
+            }
+            renderCards(progresses || []);
+            renderChart(progresses || []);
+            document.getElementById('launchBtn').style.display = userRole === 'coordenador' ? 'block' : 'none';
         }
 
-        // Popular filtros
-        function populateFilters() {
-            const coordSel = document.getElementById('coordFilter');
-            coordSel.innerHTML = '<option value="">Selecione Coordenador</option>' +
-                Object.entries(appData.coordNames).map(([id, name]) =>
-                    `<option value="${id}">${name}</option>`
-                ).join('');
-            const monthSel = document.getElementById('monthFilter');
-            monthSel.innerHTML = '<option value="">Selecione Mês</option>' +
-                months.map((m, i) => `<option value="${i}">${m}</option>`).join('');
+        function renderCards(progresses) {
+            const container = document.getElementById('cardsContainer');
+            container.innerHTML = '';
+            if (progresses.length === 0) {
+                container.innerHTML = '<div class="col-span-full text-center py-12 text-gray-400 text-xl">Nenhuma deliberação encontrada.</div>';
+                return;
+            }
+            progresses.forEach(p => {
+                const card = document.createElement('div');
+                card.className = 'bg-gray-800/70 backdrop-blur-md rounded-3xl p-8 shadow-2xl border border-gray-700/50 hover:scale-105 hover:shadow-3xl transition-all group';
+                card.innerHTML = `
+                    <h3 class="text-2xl font-bold text-white mb-4 group-hover:text-blue-400 transition-colors">${p.month}</h3>
+                    <div class="w-full bg-gray-700/80 rounded-full h-6 mb-4 overflow-hidden">
+                        <div class="bg-gradient-to-r from-blue-500 to-cyan-500 h-6 rounded-full transition-all duration-1000 group-hover:from-green-500 group-hover:to-emerald-500 shadow-lg" style="width: ${p.progress}%"></div>
+                    </div>
+                    <p class="text-3xl font-bold text-white">${p.progress.toFixed(1)}%</p>
+                    <p class="text-gray-400 text-sm mt-2">ID: ${p.coordinator_id.slice(-8)}</p>
+                `;
+                container.appendChild(card);
+            });
         }
 
-        // Atualizar dashboard geral
-        function updateDashboard() {
-            const coordId = document.getElementById('coordFilter').value;
-            const monthIdx = parseInt(document.getElementById('monthFilter').value) || 0;
-            const selectedMonth = months[monthIdx];
-            if (!coordId || monthIdx === 0) return;
-
-            // Gráfico
-            const labels = months.slice(0, monthIdx + 1);
-            const dataPoints = labels.map(m => {
-                let totalCum = 0;
-                appData.delibs[coordId].forEach(d => {
-                    totalCum += getCumulative(d, m);
-                });
-                return (totalCum / appData.delibs[coordId].length).toFixed(1);
+        function renderChart(progresses) {
+            const monthlyData = {};
+            progresses.forEach(p => {
+                const month = p.month;
+                monthlyData[month] = (monthlyData[month] || 0) + p.progress;
+            });
+            const sortedMonths = Object.keys(monthlyData).sort();
+            const labels = sortedMonths;
+            const data = [];
+            let accumulated = 0;
+            sortedMonths.forEach(month => {
+                accumulated += monthlyData[month];
+                data.push(accumulated);
             });
 
-            if (evolutionChart) evolutionChart.destroy();
-            const ctx = document.getElementById('chartCanvas').getContext('2d');
-            evolutionChart = new Chart(ctx, {
+            const ctx = document.getElementById('progressChart').getContext('2d');
+            if (progressChart) {
+                progressChart.destroy();
+            }
+            progressChart = new Chart(ctx, {
                 type: 'line',
                 data: {
                     labels,
                     datasets: [{
                         label: 'Evolução Acumulada (%)',
-                        data: dataPoints,
+                        data,
                         borderColor: 'rgb(59 130 246)',
-                        backgroundColor: 'rgba(59 130 246 0.2)',
+                        backgroundColor: 'rgba(59 130 246, 0.2)',
                         tension: 0.4,
                         fill: true,
-                        pointBackgroundColor: 'rgb(59 130 246)',
-                        pointBorderColor: '#fff',
-                        pointHoverBackgroundColor: '#fff',
-                        pointHoverBorderColor: 'rgb(59 130 246)'
+                        pointBackgroundColor: '#3B82F6',
+                        pointBorderColor: '#1E40AF',
+                        pointHoverBackgroundColor: '#1E40AF',
+                        pointHoverBorderColor: '#3B82F6'
                     }]
                 },
                 options: {
                     responsive: true,
-                    maintainAspectRatio: false,
                     scales: {
                         y: {
                             beginAtZero: true,
@@ -194,101 +194,49 @@
                     }
                 }
             });
-
-            // Lista de deliberações
-            const listCont = document.getElementById('delibsList');
-            listCont.innerHTML = '';
-            appData.delibs[coordId].forEach(delib => {
-                const cum = getCumulative(delib, selectedMonth);
-                const card = `
-                    <div class="bg-white/10 backdrop-blur-xl p-6 rounded-2xl border border-white/20 hover:bg-white/20 transition-all shadow-xl hover:shadow-2xl">
-                        <h3 class="text-xl font-bold text-white mb-3 truncate">${delib.title}</h3>
-                        <div class="w-full bg-gray-700/50 rounded-xl h-4 mb-3 overflow-hidden">
-                            <div class="bg-gradient-to-r from-blue-500 to-blue-400 h-4 rounded-xl transition-all duration-500 shadow-md" style="width: ${cum}%"></div>
-                        </div>
-                        <div class="text-2xl font-mono font-bold text-blue-300">${cum.toFixed(1)}%</div>
-                    </div>
-                `;
-                listCont.insertAdjacentHTML('beforeend', card);
-            });
         }
 
-        // Popular painel coordenador
-        function populateCoordPanel(coordId) {
-            document.getElementById('coordTitle').textContent = `Painel Individual - ${appData.coordNames[coordId]}`;
-            document.getElementById('currentMonthDisplay').textContent = currentMonth;
-            const container = document.getElementById('coordDelibs');
-            container.innerHTML = '';
-            const delibs = appData.delibs[coordId];
-            delibs.forEach((delib, idx) => {
-                const prevCum = getCumulative(delib, prevMonth);
-                const card = `
-                    <div class="bg-white/10 backdrop-blur-xl p-8 rounded-3xl border border-white/20 shadow-xl hover:shadow-2xl transition-all">
-                        <h3 class="text-2xl font-bold text-white mb-4">${delib.title}</h3>
-                        <div class="w-full bg-gray-700/50 rounded-2xl h-5 mb-6 overflow-hidden">
-                            <div class="bg-gradient-to-r from-emerald-500 to-emerald-400 h-5 rounded-xl transition-all duration-500 shadow-lg" style="width: ${prevCum}%"></div>
-                        </div>
-                        <div class="text-xl text-white mb-4 font-semibold">Acumulado até ${prevMonth}: <span class="text-blue-300 font-bold text-2xl">${prevCum.toFixed(0)}%</span></div>
-                        <label class="block text-white text-lg font-medium mb-3">Incremento ${currentMonth} (%):</label>
-                        <input type="number" id="input-${delib.id}" min="0" max="100" step="0.5" value="0" class="w-full p-4 bg-white/20 text-white text-xl rounded-2xl border-0 focus:ring-4 focus:ring-emerald-500/50 font-mono tracking-wider">
-                    </div>
-                `;
-                container.insertAdjacentHTML('beforeend', card);
-            });
-        }
+        // Event listeners
+        document.getElementById('authForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const action = e.submitter.name === 'action' ? e.submitter.value : 'login';
 
-        // Eventos
-        document.addEventListener('DOMContentLoaded', () => {
-            initData();
+            if (action === 'login') {
+                const { error } = await supabase.auth.signInWithPassword({ email, password });
+                if (error) alert('Erro no login: ' + error.message);
+            } else {
+                const { error } = await supabase.auth.signUp({ email, password });
+                if (error) alert('Erro no cadastro: ' + error.message);
+                else alert('Conta criada! Verifique seu email para confirmar (se configurado).');
+            }
+        });
 
-            // Login
-            document.getElementById('loginForm').addEventListener('submit', (e) => {
-                e.preventDefault();
-                const email = document.getElementById('userEmail').value.trim();
-                const pass = document.getElementById('userPass').value;
-                if (users[email] && users[email].pass === pass) {
-                    currentUser = users[email];
-                    document.getElementById('loginScreen').classList.add('hidden');
-                    if (currentUser.role === 'general') {
-                        document.getElementById('generalDashboard').classList.remove('hidden');
-                        populateFilters();
-                        document.getElementById('coordFilter').addEventListener('change', updateDashboard);
-                        document.getElementById('monthFilter').addEventListener('change', updateDashboard);
-                    } else {
-                        document.getElementById('coordPanel').classList.remove('hidden');
-                        populateCoordPanel(currentUser.coordId);
-                    }
-                } else {
-                    alert('Credenciais inválidas!');
-                }
-            });
+        document.getElementById('logoutBtn').addEventListener('click', () => {
+            supabase.auth.signOut();
+        });
 
-            // Logout buttons
-            document.addEventListener('click', (e) => {
-                if (e.target.classList.contains('logout-btn')) {
-                    logout();
-                }
-            });
+        document.getElementById('launchBtn').addEventListener('click', () => {
+            document.getElementById('launchModal').showModal();
+        });
 
-            // Salvar progresso coordenador
-            document.getElementById('saveProgress').addEventListener('click', () => {
-                const coordId = currentUser.coordId;
-                const delibs = appData.delibs[coordId];
-                let savedCount = 0;
-                delibs.forEach(delib => {
-                    const input = document.getElementById(`input-${delib.id}`);
-                    if (input) {
-                        const val = parseFloat(input.value);
-                        if (!isNaN(val) && val >= 0 && val <= 100) {
-                            delib.monthly[currentMonth] = val;
-                            savedCount++;
-                        }
-                    }
-                });
-                localStorage.setItem('sedamData', JSON.stringify(appData));
-                populateCoordPanel(coordId);
-                alert(`${savedCount} deliberações atualizadas com sucesso!`);
+        document.getElementById('launchForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const month = document.getElementById('monthInput').value;
+            const progress = parseFloat(document.getElementById('progressInput').value);
+            const { error } = await supabase.from('progresses').insert({
+                coordinator_id: currentSession.user.id,
+                month,
+                progress
             });
+            if (error) {
+                alert('Erro ao lançar: ' + error.message);
+            } else {
+                document.getElementById('launchModal').close();
+                document.getElementById('launchForm').reset();
+                await loadDashboard();
+            }
         });
     </script>
 </body>
