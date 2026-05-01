@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
+<link rel="icon" href="data:,">
 <title>Sedam TAG 2026 - Auditoria e Gestão</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -76,7 +77,8 @@ let myChart = null;
 
 async function login(){
 
-const usuario=document.getElementById('email').value.trim().toLowerCase()
+let usuario=document.getElementById('email').value
+usuario=usuario.trim().toLowerCase()
 const senha=document.getElementById('password').value.trim()
 const loginMsg=document.getElementById('login-msg')
 
@@ -91,7 +93,14 @@ const {data,error}=await supabaseClient
 .from("perfis")
 .select("*")
 .ilike("username",usuario)
-.single()
+.limit(1)
+
+const user = data && data.length ? data[0] : null
+
+if(error || !user){
+loginMsg.innerText="Usuário não encontrado"
+return
+}
 
 if(error || !data){
 loginMsg.innerText="Usuário não encontrado"
