@@ -1,243 +1,102 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sedam TAG 2026</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Sedam TAG 2026 - Auditoria</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+body { background-color: #0f172a; color: #f8fafc; font-family: 'Inter', sans-serif; }
+.card { background-color: rgba(30, 41, 59, 0.7); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); }
+</style>
 </head>
-<body class="bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900 min-h-screen text-white font-sans">
-    <!-- Login Screen -->
-    <div id="login" class="min-h-screen flex items-center justify-center p-8">
-        <div class="bg-gray-800/50 backdrop-blur-xl p-12 rounded-3xl shadow-2xl max-w-md w-full border border-gray-700/50">
-            <h1 class="text-4xl md:text-5xl font-bold text-center mb-12 bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent drop-shadow-2xl">Sedam TAG 2026</h1>
-            <form id="authForm" class="space-y-6">
-                <input id="email" type="email" placeholder="Email" class="w-full p-4 bg-gray-700/80 border border-gray-600 text-white rounded-2xl focus:outline-none focus:ring-4 focus:ring-blue-500/50 transition-all" required>
-                <input id="password" type="password" placeholder="Senha" class="w-full p-4 bg-gray-700/80 border border-gray-600 text-white rounded-2xl focus:outline-none focus:ring-4 focus:ring-blue-500/50 transition-all" required>
-                <button id="loginBtn" type="submit" name="action" value="login" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-4 rounded-2xl font-bold text-lg shadow-xl hover:shadow-2xl transition-all">Entrar</button>
-                <button id="signupBtn" type="submit" name="action" value="signup" class="w-full bg-green-600 hover:bg-green-700 text-white py-4 rounded-2xl font-bold text-lg shadow-xl hover:shadow-2xl transition-all">Criar Conta</button>
-            </form>
-        </div>
-    </div>
-
-    <!-- Dashboard -->
-    <div id="dashboard" class="min-h-screen p-8" style="display: none;">
-        <header class="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-12 p-8 bg-gray-800/40 backdrop-blur-xl rounded-3xl shadow-2xl border border-gray-700/50">
-            <h2 class="text-3xl md:text-4xl font-bold bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent drop-shadow-2xl mb-4 lg:mb-0">Dashboard</h2>
-            <div class="flex flex-col sm:flex-row items-start sm:items-center gap-4 w-full lg:w-auto">
-                <span id="userInfo" class="text-xl font-semibold text-gray-200 bg-gray-800/50 px-4 py-2 rounded-xl"></span>
-                <button id="logoutBtn" class="bg-red-600 hover:bg-red-700 text-white px-8 py-3 rounded-2xl font-bold shadow-xl hover:shadow-2xl transition-all">Sair</button>
-            </div>
-        </header>
-
-        <div id="cardsContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12"></div>
-
-        <div class="bg-gray-800/50 backdrop-blur-xl p-8 rounded-3xl shadow-2xl border border-gray-700/50">
-            <h3 class="text-2xl font-bold mb-6 text-center">Evolução Acumulada por Mês</h3>
-            <canvas id="progressChart"></canvas>
-        </div>
-
-        <div class="mt-12 flex justify-end">
-            <button id="launchBtn" class="bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white px-12 py-4 rounded-2xl font-bold text-xl shadow-2xl hover:shadow-3xl transition-all" style="display: none;">Lançar Percentual</button>
-        </div>
-    </div>
-
-    <!-- Launch Modal -->
-    <dialog id="launchModal" class="backdrop:bg-black/70 p-8">
-        <div class="bg-gray-800/90 backdrop-blur-2xl p-10 rounded-3xl max-w-md w-full mx-auto border border-gray-700/50 shadow-2xl">
-            <h2 class="text-3xl font-bold text-white mb-8 text-center">Lançar Percentual</h2>
-            <form id="launchForm">
-                <div class="mb-6">
-                    <label class="block text-gray-300 mb-2 font-semibold">Mês (YYYY-MM)</label>
-                    <input id="monthInput" type="month" class="w-full p-4 bg-gray-700/80 border border-gray-600 text-white rounded-2xl focus:outline-none focus:ring-4 focus:ring-emerald-500/50 transition-all" required>
-                </div>
-                <div class="mb-8">
-                    <label class="block text-gray-300 mb-2 font-semibold">Percentual (%)</label>
-                    <input id="progressInput" type="number" min="0" max="100" step="0.1" class="w-full p-4 bg-gray-700/80 border border-gray-600 text-white rounded-2xl focus:outline-none focus:ring-4 focus:ring-emerald-500/50 transition-all" required>
-                </div>
-                <button type="submit" class="w-full bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 text-white py-4 rounded-2xl font-bold text-lg shadow-xl hover:shadow-2xl transition-all mb-4">Lançar</button>
-                <button type="button" class="w-full text-gray-400 hover:text-white py-3 rounded-xl transition-all font-semibold" onclick="document.getElementById('launchModal').close()">Cancelar</button>
-            </form>
-        </div>
-    </dialog>
-
-    <script>
-        // Replace with your Supabase project details
+<body>
+<!-- LOGIN -->
+<div id="login-section" class="flex items-center justify-center min-h-screen">
+<div class="card p-10 rounded-3xl w-full max-w-md shadow-2xl">
+<h2 class="text-3xl font-bold mb-8 text-center text-blue-400">Sedam TAG 2026</h2>
+<input type="email" id="email" placeholder="Email" class="w-full p-4 mb-4 bg-slate-800 rounded-xl border-none focus:ring-2 focus:ring-blue-500">
+<input type="password" id="password" placeholder="Senha" class="w-full p-4 mb-6 bg-slate-800 rounded-xl border-none focus:ring-2 focus:ring-blue-500">
+<button onclick="fazerLogin()" class="w-full bg-blue-600 hover:bg-blue-700 py-4 rounded-xl font-bold transition-all shadow-lg">Entrar</button>
+</div>
+</div>
+<!-- DASHBOARD -->
+<div id="dashboard-section" class="hidden p-8 max-w-7xl mx-auto">
+<div class="flex justify-between items-center mb-12">
+<h1 class="text-4xl font-bold">Monitoramento TAG 2026</h1>
+<button onclick="logout()" class="text-red-400 hover:text-red-300 font-semibold">Sair</button>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
+<div class="lg:col-span-2 card p-8 rounded-3xl min-h-[400px]">
+<h3 class="text-xl font-bold mb-6">Evolução Mensal Acumulada</h3>
+<canvas id="graficoEvolucao"></canvas>
+</div>
+<div class="card p-8 rounded-3xl">
+<h3 class="text-xl font-bold mb-6 text-green-400">Lançar Percentual</h3>
+<input type="month" id="mes_ref" class="w-full p-4 mb-4 bg-slate-800 rounded-xl border-none">
+<input type="number" id="perc_mes" placeholder="%" class="w-full p-4 mb-6 bg-slate-800 rounded-xl border-none">
+<button onclick="lancarDados()" class="w-full bg-green-600 hover:bg-green-700 py-4 rounded-xl font-bold transition-all">Salvar Lançamento</button>
+</div>
+</div>
+<div id="lista-delib" class="grid grid-cols-1 md:grid-cols-2 gap-6"></div>
+</div>
+<script>
+// CONFIGURAÇÃO SUPABASE - EDITE ESTES DOIS CAMPOS
         const SUPABASE_URL = 'https://zvtzbiqfwhggysiuiuxh.supabase.co/rest/v1/';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp2dHpiaXFmd2hnZ3lzaXVpdXhoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc1ODYyMjcsImV4cCI6MjA5MzE2MjIyN30.tCnFZv2B6Kmd9KsyZM8CHClZqsq7Nyu-8nxyYVs_ZMQ';
-
         const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        let currentSession = null;
-        let userRole = null;
-        let progressChart = null;
-
-        // Auth state listener
-        supabase.auth.onAuthStateChange(async (event, session) => {
-            currentSession = session;
-            if (session) {
-                await loadUserRole(session.user.id);
-                await loadDashboard();
-                document.getElementById('login').style.display = 'none';
-                document.getElementById('dashboard').style.display = 'block';
-            } else {
-                document.getElementById('login').style.display = 'flex';
-                document.getElementById('dashboard').style.display = 'none';
-            }
-        });
-
-        async function loadUserRole(userId) {
-            const { data: profile, error } = await supabase
-                .from('profiles')
-                .select('role')
-                .eq('id', userId)
-                .single();
-            if (error) {
-                console.error('Error fetching profile:', error);
-                return;
-            }
-            userRole = profile.role;
-            document.getElementById('userInfo').textContent = `${currentSession.user.email} (${userRole.toUpperCase()})`;
-        }
-
-        async function loadDashboard() {
-            let query = supabase.from('progresses').select('*').order('month', { ascending: true });
-            if (userRole === 'coordenador') {
-                query = supabase.from('progresses').select('*').eq('coordinator_id', currentSession.user.id).order('month', { ascending: true });
-            }
-            const { data: progresses, error } = await query;
-            if (error) {
-                console.error('Error fetching progresses:', error);
-                return;
-            }
-            renderCards(progresses || []);
-            renderChart(progresses || []);
-            document.getElementById('launchBtn').style.display = userRole === 'coordenador' ? 'block' : 'none';
-        }
-
-        function renderCards(progresses) {
-            const container = document.getElementById('cardsContainer');
-            container.innerHTML = '';
-            if (progresses.length === 0) {
-                container.innerHTML = '<div class="col-span-full text-center py-12 text-gray-400 text-xl">Nenhuma deliberação encontrada.</div>';
-                return;
-            }
-            progresses.forEach(p => {
-                const card = document.createElement('div');
-                card.className = 'bg-gray-800/70 backdrop-blur-md rounded-3xl p-8 shadow-2xl border border-gray-700/50 hover:scale-105 hover:shadow-3xl transition-all group';
-                card.innerHTML = `
-                    <h3 class="text-2xl font-bold text-white mb-4 group-hover:text-blue-400 transition-colors">${p.month}</h3>
-                    <div class="w-full bg-gray-700/80 rounded-full h-6 mb-4 overflow-hidden">
-                        <div class="bg-gradient-to-r from-blue-500 to-cyan-500 h-6 rounded-full transition-all duration-1000 group-hover:from-green-500 group-hover:to-emerald-500 shadow-lg" style="width: ${p.progress}%"></div>
-                    </div>
-                    <p class="text-3xl font-bold text-white">${p.progress.toFixed(1)}%</p>
-                    <p class="text-gray-400 text-sm mt-2">ID: ${p.coordinator_id.slice(-8)}</p>
-                `;
-                container.appendChild(card);
-            });
-        }
-
-        function renderChart(progresses) {
-            const monthlyData = {};
-            progresses.forEach(p => {
-                const month = p.month;
-                monthlyData[month] = (monthlyData[month] || 0) + p.progress;
-            });
-            const sortedMonths = Object.keys(monthlyData).sort();
-            const labels = sortedMonths;
-            const data = [];
-            let accumulated = 0;
-            sortedMonths.forEach(month => {
-                accumulated += monthlyData[month];
-                data.push(accumulated);
-            });
-
-            const ctx = document.getElementById('progressChart').getContext('2d');
-            if (progressChart) {
-                progressChart.destroy();
-            }
-            progressChart = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels,
-                    datasets: [{
-                        label: 'Evolução Acumulada (%)',
-                        data,
-                        borderColor: 'rgb(59 130 246)',
-                        backgroundColor: 'rgba(59 130 246, 0.2)',
-                        tension: 0.4,
-                        fill: true,
-                        pointBackgroundColor: '#3B82F6',
-                        pointBorderColor: '#1E40AF',
-                        pointHoverBackgroundColor: '#1E40AF',
-                        pointHoverBorderColor: '#3B82F6'
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            max: 100,
-                            ticks: { color: 'white' },
-                            grid: { color: 'rgba(255,255,255,0.1)' }
-                        },
-                        x: {
-                            ticks: { color: 'white' },
-                            grid: { color: 'rgba(255,255,255,0.1)' }
-                        }
-                    },
-                    plugins: {
-                        legend: { labels: { color: 'white' } }
-                    }
-                }
-            });
-        }
-
-        // Event listeners
-        document.getElementById('authForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-            const action = e.submitter.name === 'action' ? e.submitter.value : 'login';
-
-            if (action === 'login') {
-                const { error } = await supabase.auth.signInWithPassword({ email, password });
-                if (error) alert('Erro no login: ' + error.message);
-            } else {
-                const { error } = await supabase.auth.signUp({ email, password });
-                if (error) alert('Erro no cadastro: ' + error.message);
-                else alert('Conta criada! Verifique seu email para confirmar (se configurado).');
-            }
-        });
-
-        document.getElementById('logoutBtn').addEventListener('click', () => {
-            supabase.auth.signOut();
-        });
-
-        document.getElementById('launchBtn').addEventListener('click', () => {
-            document.getElementById('launchModal').showModal();
-        });
-
-        document.getElementById('launchForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const month = document.getElementById('monthInput').value;
-            const progress = parseFloat(document.getElementById('progressInput').value);
-            const { error } = await supabase.from('progresses').insert({
-                coordinator_id: currentSession.user.id,
-                month,
-                progress
-            });
-            if (error) {
-                alert('Erro ao lançar: ' + error.message);
-            } else {
-                document.getElementById('launchModal').close();
-                document.getElementById('launchForm').reset();
-                await loadDashboard();
-            }
-        });
-    </script>
+let meuPerfil = null;
+let chartInstance = null;
+async function fazerLogin() {
+const email = document.getElementById('email').value;
+const password = document.getElementById('password').value;
+const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+if(error) alert("Erro: " + error.message);
+else carregarPerfil(data.user.id);
+}
+async function carregarPerfil(userId) {
+const { data } = await supabase.from('perfis').select('*').eq('id', userId).single();
+meuPerfil = data;
+document.getElementById('login-section').classList.add('hidden');
+document.getElementById('dashboard-section').classList.remove('hidden');
+carregarDados();
+}
+async function carregarDados() {
+let query = supabase.from('deliberacoes').select('*, perfis(nome_completo)');
+if(meuPerfil.nivel_acesso === 'Coordenador') query = query.eq('responsavel_id', meuPerfil.id);
+const { data } = await query;
+exibirDeliberações(data);
+carregarGrafico();
+}
+function exibirDeliberações(delibs) {
+const container = document.getElementById('lista-delib');
+container.innerHTML = delibs.map(d => `
+<div class="card p-6 rounded-2xl">
+<div class="flex justify-between items-start mb-4">
+<span class="text-blue-400 font-bold">${d.identificador}</span>
+<span class="text-sm text-slate-400">${d.prazo}</span>
+</div>
+<p class="text-sm mb-4 leading-relaxed">${d.descricao}</p>
+<div class="w-full bg-slate-700 h-2 rounded-full overflow-hidden">
+<div class="bg-blue-500 h-full" style="width: ${d.total_cumprimento}%"></div>
+</div>
+<div class="mt-2 text-right font-bold">${d.total_cumprimento}%</div>
+</div>`).join('');
+}
+async function carregarGrafico() {
+const { data } = await supabase.from('evolucao_mensal').select('*').order('mes_referencia', { ascending: true });
+const ctx = document.getElementById('graficoEvolucao').getContext('2d');
+if(chartInstance) chartInstance.destroy();
+chartInstance = new Chart(ctx, {
+type: 'line',
+data: { labels: data.map(d => d.mes_referencia), datasets: [{ label: 'Evolução %', data: data.map(d => d.percentual_lancado), borderColor: '#3b82f6', tension: 0.3 }] },
+options: { responsive: true, scales: { y: { beginAtZero: true, max: 100 } } }
+});
+}
+async function logout() { await supabase.auth.signOut(); location.reload(); }
+</script>
 </body>
 </html>
