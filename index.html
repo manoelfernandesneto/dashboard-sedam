@@ -64,27 +64,45 @@ document.getElementById('login-section').classList.add('hidden');
 document.getElementById('dashboard-section').classList.remove('hidden');
 carregarDados();
 }
+// ATUALIZAÇÃO DA LÓGICA DE HIERARQUIA NO index.html
 async function carregarDados() {
-let query = supabase.from('deliberacoes').select('*, perfis(nome_completo)');
-if(meuPerfil.nivel_acesso === 'Coordenador') query = query.eq('responsavel_id', meuPerfil.id);
-const { data } = await query;
-exibirDeliberações(data);
-carregarGrafico();
+  // O RLS do banco (Etapa 1) já faz o filtro por hierarquia automaticamente
+  const { data, error } = await supabase.from('deliberacoes').select('*, perfis(nome_completo, nivel_acesso)');
+  if (error) {
+    console.error("Erro na auditoria de dados:", error.message);
+    return;
+  }
+  exibirDeliberacoes(data);
+  // O gráfico de evolução acumulada (Chart.js) também respeitará o que o usuário pode ver
+  carregarGrafico(data);
 }
-function exibirDeliberações(delibs) {
-const container = document.getElementById('lista-delib');
-container.innerHTML = delibs.map(d => `
-<div class="card p-6 rounded-2xl">
-<div class="flex justify-between items-start mb-4">
-<span class="text-blue-400 font-bold">${d.identificador}</span>
-<span class="text-sm text-slate-400">${d.prazo}</span>
-</div>
-<p class="text-sm mb-4 leading-relaxed">${d.descricao}</p>
-<div class="w-full bg-slate-700 h-2 rounded-full overflow-hidden">
-<div class="bg-blue-500 h-full" style="width: ${d.total_cumprimento}%"></div>
-</div>
-<div class="mt-2 text-right font-bold">${d.total_cumprimento}%</div>
-</div>`).join('');
+
+function exibirDeliberacoes(delibs) {
+  const container = document.getElementById('lista-delib');
+  container.innerHTML = delibs.map(d => {
+    // Lógica de cores baseada no prazo (Vencido = Vermelho, Próximo = Amarelo, OK = Verde)
+    const hoje = new Date();
+    const prazo = new Date(d.prazo);
+    const diasRestantes = Math.ceil((prazo - hoje) / (1000 * 60 * 60 * 24));
+    let corStatus = "border-green-500";
+    if (diasRestantes < 0) corStatus = "border-red-500";
+    else if (diasRestantes <= 30) corStatus = "border-yellow-500";
+    return `
+    <div class="card p-6 rounded-2xl border-l-4 ${corStatus} mb-4 bg-slate-800 shadow-xl">
+      <div class="flex justify-between items-start mb-2">
+        <span class="text-blue-400 font-bold">${d.identificador}</span>
+        <span class="text-xs text-slate-400">Prazo: ${prazo.toLocaleDateString('pt-BR')}</span>
+      </div>
+      <p class="text-sm mb-4 leading-relaxed">${d.descricao}</p>
+      <div class="flex justify-between items-center">
+        <span class="text-[10px] text-slate-500 italic">Responsável: ${d.perfis?.nome_completo || 'Sem Atribuição'}</span>
+        <span class="font-bold text-blue-400 text-lg">${d.total_cumprimento}%</span>
+      </div>
+      <div class="w-full bg-slate-700 h-1.5 rounded-full mt-3 overflow-hidden">
+        <div class="bg-blue-500 h-full transition-all duration-500" style="width: ${d.total_cumprimento}%"></div>
+      </div>
+    </div>`;
+  }).join('');
 }
 async function carregarGrafico() {
 const { data } = await supabase.from('evolucao_mensal').select('*').order('mes_referencia', { ascending: true });
