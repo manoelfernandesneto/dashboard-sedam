@@ -83,17 +83,14 @@ if(error) { loginMsg.innerText = "Falha no acesso: " + error.message; }
 else { initApp(data.user.id); }
 }
 async function criarUsuariosAdmin(){
-
-if(!confirm("Vai criar usuários no sistema. Continuar?")) return
-
-const res = await fetch("https://SEU-PROJETO.functions.supabase.co/criar-usuarios",{
-method:"POST"
+const res = await fetch("https://zvtzbiqfwhggysiuiuxh.supabase.co/functions/v1/criar-usuarios",{
+method:"POST",
+headers:{
+"Authorization": "Bearer " + SUPABASE_ANON_KEY
+}
 })
-
 const data = await res.json()
-
-alert(data.msg || "Processo finalizado")
-
+alert(JSON.stringify(data))
 }
 async function initApp(uid) {
 const { data: profile, error } = await supabaseClient.from('perfis').select('*').eq('id', uid).single();
