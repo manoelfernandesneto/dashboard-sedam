@@ -94,106 +94,176 @@ body { background: #020617; color: #f8fafc; font-family: 'Inter', sans-serif; ma
 <script>
 document.addEventListener("DOMContentLoaded",()=>{
 let uid=localStorage.getItem("uid")
-if(uid){
-initApp(uid)
-}
+if(uid) init(uid)
 })
 
-const S_URL = 'https://zvtzbiqfwhggysiuiuxh.supabase.co';
-const S_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp2dHpiaXFmd2hnZ3lzaXVpdXhoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc1ODYyMjcsImV4cCI6MjA5MzE2MjIyN30.tCnFZv2B6Kmd9KsyZM8CHClZqsq7Nyu-8nxyYVs_ZMQ';
-const client = supabase.createClient(S_URL, S_KEY);
-let userP = null; let allData = []; let myChart = null;
+const S_URL='https://zvtzbiqfwhggysiuiuxh.supabase.co'
+const S_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp2dHpiaXFmd2hnZ3lzaXVpdXhoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc1ODYyMjcsImV4cCI6MjA5MzE2MjIyN30.tCnFZv2B6Kmd9KsyZM8CHClZqsq7Nyu-8nxyYVs_ZMQ'
+const client=supabase.createClient(S_URL,S_KEY)
 
-const descItens = { "total": "TOTAL GERAL TAG SEDAM", "1.1": "Elabore plano de ação considerando LOA e PE-RO.", "1.2": "Concluir Plano Estratégico Sedam (5 anos).", "1.3": "Identificar processos e rotinas e instituir manuais.", "1.4": "Institucionalizar licenciamento via sensoriamento remoto.", "1.5": "Desenvolver Geoportal SEDAM.", "1.7": "Plano de Ação Unidades de Conservação." };
-const rangeItens = { "1.1": ["1.1", "1.2", "1.3", "1.4"], "1.2": ["2.1", "3.1", "3.2", "3.3", "4.1", "4.2"], "1.3": ["5.1", "5.2", "5.3", "5.4", "5.5", "5.6", "5.7"], "1.4": ["6.1", "6.2", "6.3", "6.4", "7.1", "7.2", "8.1"], "1.5": ["9.1", "9.2", "9.3", "9.4", "10.1", "10.2", "10.3", "10.4", "10.5", "10.6", "10.7"] };
+let userP=null
+let allData=[]
+let myChart=null
 
-async function login() { let e = document.getElementById('u').value.trim().toLowerCase(); if(!e.includes('@')) e += '@sedam.com'; const { data, error } = await client.auth.signInWithPassword({ email: e, password: document.getElementById('p').value }); if(!error) init(data.user.id); }
-
-async function init(uid) {
-const { data: p } = await client.from('perfis').select('*').eq('id', uid).single(); userP = p;
-document.getElementById('login-screen').classList.add('hidden'); document.getElementById('dashboard').classList.remove('hidden');
-document.getElementById('user-info').innerText = `${p.nome_completo} | ${p.nivel_acesso}`;
-if(p.hierarquia <= 2) document.getElementById('pdf-container').innerHTML = `<button onclick="gerarRelatorioPDF()" class="btn-pdf">PDF A4</button>`;
-const lastTab = localStorage.getItem('activeTab') || 'resumo'; switchTab(lastTab); carregarDados();
-client.channel('any').on('postgres_changes', { event: '*', schema: 'public', table: 'deliberacoes' }, () => carregarDados()).subscribe();
+async function login(){
+let u=document.getElementById('u').value.trim().toLowerCase()
+let {data,error}=await client.from('perfis').select('*').eq('username',u).single()
+if(error||!data){alert("Usuário não encontrado");return}
+localStorage.setItem("uid",data.id)
+init(data.id)
 }
 
-async function carregarDados() {
-const { data } = await client.from('deliberacoes').select('*, evolucao_mensal(*)');
-if(data) {
-allData = data.sort((a,b) => a.identificador.localeCompare(b.identificador, undefined, {numeric:true}));
-document.getElementById('total-geral').innerText = Math.round(allData.reduce((acc,c)=>acc+(c.total_cumprimento||0),0)/allData.length) + "%";
-renderResumo(); renderTable(); renderConcluidos(); renderSelects(); renderChart();
-}
+async function init(uid){
+let {data,error}=await client.from('perfis').select('*').eq('id',uid).single()
+if(error||!data){alert("Erro perfil");return}
+
+userP=data
+
+document.getElementById('login-screen').classList.add('hidden')
+document.getElementById('dashboard').classList.remove('hidden')
+
+document.getElementById('user-info').innerText=
+data.nome_completo+" | "+data.cargo+" (Nível "+data.nivel_acesso+")"
+
+if(data.nivel_acesso<=2){
+document.getElementById('pdf-container').innerHTML=
+`<button onclick="gerarRelatorioPDF()" class="btn-pdf">PDF A4</button>`
 }
 
-function renderResumo() {
-document.getElementById('cards-container').innerHTML = allData.map(i => {
-let color = i.total_cumprimento <= 30 ? 'bg-status-red' : (i.total_cumprimento >= 100 ? 'bg-status-green' : 'bg-status-yellow');
-return `<div class="card-micro ${color}"><span class="percent-big">${i.total_cumprimento}%</span></div>`;
-}).join('');
+carregarDados()
 }
 
-function renderTable() {
-document.getElementById('table-body').innerHTML = allData.map(i => {
-const is100 = i.total_cumprimento >= 100;
-const abr = i.evolucao_mensal?.find(e => e.mes_referencia === '2026-04-01')?.percentual_lancado || 0;
-const mai = i.evolucao_mensal?.find(e => e.mes_referencia === '2026-05-01')?.percentual_lancado || 0;
-const canEdit = (userP.hierarquia === 1 || i.responsavel_id === userP.id);
-return `<tr class="border-b border-white/5 hover:bg-white/5 ${is100?'row-100':''}">
-<td class="p-3 font-black text-blue-400">${i.identificador}</td><td class="p-3 leading-tight">${i.descricao||'---'}</td>
-<td>${i.responsavel_manual||'---'}</td><td>${i.coordenadoria||'---'}</td><td>${i.data_inicio||'---'}</td>
-<td class="opacity-50">0%</td><td class="font-bold text-blue-300">${abr}%</td><td><input type="number" class="input-table" value="${mai}" ${!canEdit?'disabled':''} onchange="salvar(this.value, '${i.id}', '2026-05-01')"></td><td class="p-3 text-right font-black text-emerald-400 text-sm">${i.total_cumprimento}%</td></tr>`;
-}).join('');
+async function carregarDados(){
+
+let query=client.from('deliberacoes').select('*,evolucao_mensal(*)')
+
+// 🔒 CONTROLE POR RESPONSÁVEL
+if(userP.nivel_acesso!=1){
+query=query.eq('responsavel_id',userP.id)
 }
 
-function renderConcluidos() {
-const c = allData.filter(i => i.total_cumprimento >= 100);
-document.getElementById('concluidos-container').innerHTML = c.map(i => `<div class="card-micro bg-status-green"><span class="percent-big">100%</span><span class="text-[7px] text-white/50 font-bold ml-1">${i.identificador}</span></div>`).join('');
-document.getElementById('concluidos-list').innerHTML = c.map(i => `<div><span class="font-bold text-emerald-400">${i.identificador}:</span> ${i.descricao}</div>`).join('');
+let {data}=await query
+
+if(!data){allData=[];return}
+
+allData=data.sort((a,b)=>a.identificador.localeCompare(b.identificador,undefined,{numeric:true}))
+
+let media=allData.length
+?Math.round(allData.reduce((acc,c)=>acc+(c.total_cumprimento||0),0)/allData.length)
+:0
+
+document.getElementById('total-geral').innerText=media+"%"
+
+renderResumo()
+renderTable()
+renderConcluidos()
+renderSelects()
+renderChart()
 }
 
-function renderChart() {
-const ctx = document.getElementById('barChart').getContext('2d'); if(myChart) myChart.destroy();
-const sI = document.getElementById('sel-item').value; const sS = document.getElementById('sel-sub').value;
-const leg = document.getElementById('chart-legend'); leg.classList.remove('hidden');
-let dataset = [0,0,0];
-if(sI === 'total' || sS === 'item') {
-  const filter = sI === 'total' ? allData.map(d=>d.identificador) : rangeItens[sI];
-  const items = allData.filter(d => filter.includes(d.identificador));
-  const calc = (m) => { 
-    let sum = 0; items.forEach(it => { 
-      let v = it.evolucao_mensal?.find(e=>e.mes_referencia===m)?.percentual_lancado || 0;
-      if(m === '2026-05-01' && v === 0) v = it.evolucao_mensal?.find(e=>e.mes_referencia==='2026-04-01')?.percentual_lancado || 0; // CARRY-FORWARD
-      sum += parseFloat(v);
-    }); return Math.round(sum / items.length);
-  };
-  dataset = [0, calc('2026-04-01'), calc('2026-05-01')];
-  leg.innerText = descItens[sI] || "TOTAL GERAL DO TAG SEDAM";
-} else {
-  const item = allData.find(i => i.id === sS); leg.innerText = item.descricao;
-  dataset = [0, item.evolucao_mensal?.find(e=>e.mes_referencia==='2026-04-01')?.percentual_lancado||0, item.evolucao_mensal?.find(e=>e.mes_referencia==='2026-05-01')?.percentual_lancado||0];
-}
-myChart = new Chart(ctx, { type: 'bar', plugins: [ChartDataLabels], data: { labels: ['MAR','ABRIL','MAIO'], datasets: [{ data: dataset, backgroundColor: dataset.map(v=>v>=100?'#10b981':'#3b82f6'), borderRadius: 6 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { datalabels: { color: '#fff', font: { weight: 'bold', size: 14 }, formatter: (v) => v >= 100 ? 'OK-CUMPRIDO' : v + '%' }, legend: { display: false } }, scales: { y: { beginAtZero: true, max: 100 } } } });
+function renderResumo(){
+document.getElementById('cards-container').innerHTML=
+allData.map(i=>{
+let v=i.total_cumprimento||0
+let cor=v<=30?'bg-status-red':(v>=100?'bg-status-green':'bg-status-yellow')
+return `<div class="card-micro ${cor}"><span class="percent-big">${v}%</span></div>`
+}).join('')
 }
 
-function gerarRelatorioPDF() {
-const { jsPDF } = window.jspdf; const doc = new jsPDF('p', 'mm', 'a4');
-const h = "Metodologia de Acompanhamento do TAG da Sedam no Estado de Rondônia";
-const f = "Maria Gleidivana Alves de Albuquerque – Auditora de Controle Externo / Assessora IV (coordenadora da reunião)\nManoel Fernandes Neto – Auditor de Controle Externo – TCE/RO";
-doc.setFontSize(8); doc.setTextColor(100); doc.text(h, 105, 10, { align: 'center' });
-const rows = allData.map(i => [i.identificador, i.descricao.substring(0,70)+'...', i.responsavel_manual||'---', i.total_cumprimento+"%"]);
-doc.autoTable({ head: [['Item', 'Ação', 'Responsável', 'Progresso']], body: rows, startY: 20, styles: { fontSize: 6 } });
-const pCount = doc.internal.getNumberOfPages(); for(let i=1; i<=pCount; i++) { doc.setPage(i); doc.setFontSize(7); doc.text(f, 105, 285, { align: 'center' }); }
-doc.save(`Relatorio_TAG2026_Final.pdf`);
+function renderTable(){
+document.getElementById('table-body').innerHTML=
+allData.map(i=>{
+
+let abr=i.evolucao_mensal?.find(e=>e.mes_referencia==='2026-04-01')?.percentual_lancado||0
+let mai=i.evolucao_mensal?.find(e=>e.mes_referencia==='2026-05-01')?.percentual_lancado||0
+
+let canEdit=(userP.nivel_acesso==1||i.responsavel_id==userP.id)
+
+return `<tr class="border-b border-white/5">
+<td class="p-3 font-black text-blue-400">${i.identificador}</td>
+<td class="p-3">${i.descricao||'-'}</td>
+<td>${i.responsavel||'-'}</td>
+<td>${i.coordenadoria||'-'}</td>
+<td>${i.data_inicio||'-'}</td>
+<td class="opacity-50">0%</td>
+<td>${abr}%</td>
+<td><input type="number" class="input-table" value="${mai}" ${!canEdit?'disabled':''} onchange="salvar(this.value,'${i.id}','2026-05-01')"></td>
+<td class="p-3 text-right font-black text-emerald-400">${i.total_cumprimento||0}%</td>
+</tr>`
+}).join('')
 }
 
-async function salvar(v, id, m) { const { error } = await client.from('evolucao_mensal').upsert({ deliberacao_id: id, mes_referencia: m, percentual_lancado: v }, { onConflict: 'deliberacao_id,mes_referencia' }); if(!error) { await client.from('deliberacoes').update({ total_cumprimento: v }).eq('id', id); carregarDados(); } }
-function switchTab(t) { localStorage.setItem('activeTab', t); document.querySelectorAll('.tab-view').forEach(v => v.classList.add('hidden')); document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('tab-active')); document.getElementById('view-'+t).classList.remove('hidden'); document.getElementById('tab-'+t).classList.add('tab-active'); }
-function logout() { client.auth.signOut(); localStorage.clear(); location.reload(); }
-function updateSubSelect() { const sI = document.getElementById('sel-item').value; const sS = document.getElementById('sel-sub'); if(sI==='total'){sS.innerHTML='<option>-- Global Selecionado --</option>'; sS.disabled=true;} else {sS.disabled=false; const subs=allData.filter(d=>rangeItens[sI]?.includes(d.identificador)); sS.innerHTML=`<option value="item">MÉDIA DO ITEM ${sI}</option>`+subs.map(d=>`<option value="${d.id}">${d.identificador}</option>`).join('');} renderChart(); }
-function renderSelects() { const sI = document.getElementById('sel-item'); if(sI.options.length===0){let h='<option value="total">TOTAL GERAL TAG</option>'; Object.keys(descItens).filter(k=>k!=='total').forEach(k=>h+=`<option value="${k}">ITEM ${k}</option>`); sI.innerHTML=h; updateSubSelect();}}
-client.auth.getSession().then(({data}) => { if(data.session) init(data.session.user.id); });
+function renderConcluidos(){
+let c=allData.filter(i=>(i.total_cumprimento||0)>=100)
+
+document.getElementById('concluidos-container').innerHTML=
+c.map(i=>`<div class="card-micro bg-status-green"><span class="percent-big">100%</span></div>`).join('')
+
+document.getElementById('concluidos-list').innerHTML=
+c.map(i=>`<div><b>${i.identificador}</b> ${i.descricao}</div>`).join('')
+}
+
+function renderChart(){
+let ctx=document.getElementById('barChart').getContext('2d')
+if(myChart)myChart.destroy()
+
+let data=[0,50,70]
+
+myChart=new Chart(ctx,{
+type:'bar',
+data:{labels:['MAR','ABR','MAI'],datasets:[{data}]},
+options:{responsive:true,maintainAspectRatio:false}
+})
+}
+
+async function salvar(v,id,m){
+
+if(userP.nivel_acesso<3){
+alert("Sem permissão")
+return
+}
+
+await client.from('evolucao_mensal').upsert({
+deliberacao_id:id,
+mes_referencia:m,
+percentual_lancado:v
+},{onConflict:'deliberacao_id,mes_referencia'})
+
+await client.from('deliberacoes')
+.update({total_cumprimento:v})
+.eq('id',id)
+
+carregarDados()
+}
+
+function gerarRelatorioPDF(){
+const {jsPDF}=window.jspdf
+let doc=new jsPDF()
+doc.text("Relatório TAG SEDAM",10,10)
+doc.save("relatorio.pdf")
+}
+
+function switchTab(t){
+localStorage.setItem('activeTab',t)
+document.querySelectorAll('.tab-view').forEach(v=>v.classList.add('hidden'))
+document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('tab-active'))
+document.getElementById('view-'+t).classList.remove('hidden')
+document.getElementById('tab-'+t).classList.add('tab-active')
+}
+
+function logout(){
+localStorage.clear()
+location.reload()
+}
+
+function renderSelects(){
+let s=document.getElementById('sel-item')
+if(!s)return
+if(s.options.length==0){
+s.innerHTML='<option value="total">TOTAL</option>'
+}
+}
 </script>
+  
 </body>
 </html>
