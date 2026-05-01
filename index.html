@@ -85,28 +85,40 @@ const { data: evol } = await client.from('evolucao_mensal').select('mes_referenc
 renderChart(evol);
 }
 }
+// FUNÇÃO RENDERIZAÇÃO DE MICRO-CARDS (AUDITORIA)
 function renderCards(itens) {
 const container = document.getElementById('cards-container');
 const hoje = new Date();
+if (!itens || itens.length === 0) {
+container.innerHTML = "<p class='col-span-full text-center py-20 text-slate-500'>Aguardando processamento SQL...</p>";
+return;
+}
 container.innerHTML = itens.map(i => {
 const prazo = new Date(i.prazo);
 const diff = Math.ceil((prazo - hoje) / 86400000);
-let cor = 'status-em-dia';
-if (diff < 0) cor = 'status-vencido'; else if (diff <= 30) cor = 'status-alerta';
-const editBtn = userProfile.hierarquia === 1 ? `<button onclick="corrigir('${i.id}', '${i.identificador}', ${i.total_cumprimento})" class="btn-correct">CORRIGIR</button>` : '';
-return `<div class="card-micro rounded-lg ${cor} flex flex-col justify-between">
+// Lógica Semafórica: Menos de 100% é considerado em andamento ou atrasado
+let cor = i.total_cumprimento < 100 ? (diff < 0 ? 'status-vencido' : 'status-alerta') : 'status-em-dia';
+const editBtn = userProfile.hierarquia === 1 ? `<button onclick="corrigir('${i.id}', '${i.identificador}', ${i.total_cumprimento})" class="btn-correct">AJUSTAR</button>` : '';
+return `
+<div class="card-micro rounded-lg ${cor} flex flex-col justify-between shadow-sm">
 <div class="flex justify-between items-start">
-<span class="font-black text-blue-400 text-[9px]">${i.identificador}</span>
+<span class="font-black text-blue-400 text-[10px] tracking-tighter">${i.identificador}</span>
 ${editBtn}
 </div>
-<p class="text-xs-audit text-slate-400 truncate-2-lines mb-1" title="${i.descricao}">${i.descricao}</p>
+<p class="text-xs-audit text-slate-400 line-clamp-2 mb-1" title="${i.descricao}">${i.descricao}</p>
 <div>
-<div class="flex justify-between text-[7px] mb-0.5"><span class="text-slate-500">${i.perfis?.username || 'AUD'}</span><span class="font-bold text-blue-400">${i.total_cumprimento || 0}%</span></div>
-<div class="w-full bg-slate-900 h-0.5 rounded-full overflow-hidden"><div class="bg-blue-500 h-full" style="width:${i.total_cumprimento}%"></div></div>
+<div class="flex justify-between text-[7px] mb-0.5">
+<span class="text-slate-600 uppercase">ABR/26</span>
+<span class="font-bold text-blue-400">${i.total_cumprimento || 0}%</span>
+</div>
+<div class="w-full bg-slate-900 h-0.5 rounded-full overflow-hidden">
+<div class="bg-blue-500 h-full transition-all duration-1000" style="width:${i.total_cumprimento || 0}%"></div>
+</div>
 </div>
 </div>`;
 }).join('');
 }
+  
 async function corrigir(id, ident, valor) {
 const novo = prompt(`[AUDITORIA] Ajustar cumprimento Meta ${ident}:`, valor);
 if(novo !== null) {
