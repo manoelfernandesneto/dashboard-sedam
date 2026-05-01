@@ -3,116 +3,115 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Sedam TAG 2026 - Auditoria</title>
+<title>Sedam TAG 2026 - Gestão Estratégica</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <style>
-body { background-color: #0f172a; color: #f8fafc; font-family: 'Inter', sans-serif; }
-.card { background-color: rgba(30, 41, 59, 0.7); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); }
+body { background: radial-gradient(circle at top, #1e293b, #0f172a); color: #f8fafc; font-family: 'Inter', sans-serif; }
+.card-glass { background: rgba(30, 41, 59, 0.6); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.1); transition: 0.3s; }
+.card-glass:hover { transform: translateY(-4px); border-color: rgba(59, 130, 246, 0.4); }
+.status-vencido { border-left: 8px solid #ef4444; }
+.status-alerta { border-left: 8px solid #f59e0b; }
+.status-em-dia { border-left: 8px solid #10b981; }
 </style>
 </head>
-<body>
+<body class="p-4 md:p-8">
 <!-- LOGIN -->
-<div id="login-section" class="flex items-center justify-center min-h-screen">
-<div class="card p-10 rounded-3xl w-full max-w-md shadow-2xl">
-<h2 class="text-3xl font-bold mb-8 text-center text-blue-400">Sedam TAG 2026</h2>
+<div id="login-screen" class="min-h-screen flex items-center justify-center">
+<div class="card-glass p-10 rounded-3xl w-full max-w-md shadow-2xl">
+<h1 class="text-3xl font-black text-center mb-8 text-blue-400">TAG SEDAM 2026</h1>
 <input type="email" id="email" placeholder="Email" class="w-full p-4 mb-4 bg-slate-800 rounded-xl border-none focus:ring-2 focus:ring-blue-500">
-<input type="password" id="password" placeholder="Senha" class="w-full p-4 mb-6 bg-slate-800 rounded-xl border-none focus:ring-2 focus:ring-blue-500">
-<button onclick="fazerLogin()" class="w-full bg-blue-600 hover:bg-blue-700 py-4 rounded-xl font-bold transition-all shadow-lg">Entrar</button>
+<input type="password" id="password" placeholder="Senha" class="w-full p-4 mb-8 bg-slate-800 rounded-xl border-none focus:ring-2 focus:ring-blue-500">
+<button onclick="login()" class="w-full bg-blue-600 hover:bg-blue-700 py-4 rounded-xl font-bold shadow-lg transition-all">Entrar no Sistema</button>
+<p id="login-msg" class="text-center mt-4 text-xs text-slate-500"></p>
 </div>
 </div>
 <!-- DASHBOARD -->
-<div id="dashboard-section" class="hidden p-8 max-w-7xl mx-auto">
-<div class="flex justify-between items-center mb-12">
-<h1 class="text-4xl font-bold">Monitoramento TAG 2026</h1>
-<button onclick="logout()" class="text-red-400 hover:text-red-300 font-semibold">Sair</button>
+<div id="dashboard" class="hidden max-w-7xl mx-auto">
+<header class="flex flex-col md:row justify-between items-center mb-12 gap-4">
+<div>
+<h2 class="text-4xl font-black bg-gradient-to-r from-blue-400 to-emerald-400 bg-clip-text text-transparent">Monitoramento de Metas</h2>
+<p id="user-info" class="text-slate-400 font-medium"></p>
 </div>
-<div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
-<div class="lg:col-span-2 card p-8 rounded-3xl min-h-[400px]">
-<h3 class="text-xl font-bold mb-6">Evolução Mensal Acumulada</h3>
-<canvas id="graficoEvolucao"></canvas>
+<button onclick="logout()" class="bg-red-500/10 text-red-400 px-6 py-2 rounded-xl font-bold hover:bg-red-500 hover:text-white transition-all">Sair</button>
+</header>
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+<div class="lg:col-span-2 card-glass p-8 rounded-3xl shadow-xl">
+<h3 class="text-xl font-bold mb-6">Evolução Acumulada (%)</h3>
+<div class="h-[300px] w-full"><canvas id="mainChart"></canvas></div>
 </div>
-<div class="card p-8 rounded-3xl">
-<h3 class="text-xl font-bold mb-6 text-green-400">Lançar Percentual</h3>
+<div id="form-area" class="card-glass p-8 rounded-3xl shadow-xl hidden">
+<h3 class="text-xl font-bold mb-6 text-emerald-400">Lançar Evolução</h3>
+<select id="delib_id" class="w-full p-4 mb-4 bg-slate-800 rounded-xl border-none text-sm"></select>
 <input type="month" id="mes_ref" class="w-full p-4 mb-4 bg-slate-800 rounded-xl border-none">
-<input type="number" id="perc_mes" placeholder="%" class="w-full p-4 mb-6 bg-slate-800 rounded-xl border-none">
-<button onclick="lancarDados()" class="w-full bg-green-600 hover:bg-green-700 py-4 rounded-xl font-bold transition-all">Salvar Lançamento</button>
+<input type="number" id="percentual" placeholder="Percentual do Mês (%)" class="w-full p-4 mb-6 bg-slate-800 rounded-xl border-none">
+<button onclick="salvarLancamento()" class="w-full bg-emerald-600 hover:bg-emerald-700 py-4 rounded-xl font-bold shadow-lg">Registrar</button>
 </div>
 </div>
-<div id="lista-delib" class="grid grid-cols-1 md:grid-cols-2 gap-6"></div>
+<div id="cards-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-12"></div>
 </div>
 <script>
-// CONFIGURAÇÃO SUPABASE - EDITE ESTES DOIS CAMPOS
+// CONFIGURAÇÕES SUPABASE
         const SUPABASE_URL = 'https://zvtzbiqfwhggysiuiuxh.supabase.co/rest/v1/';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp2dHpiaXFmd2hnZ3lzaXVpdXhoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc1ODYyMjcsImV4cCI6MjA5MzE2MjIyN30.tCnFZv2B6Kmd9KsyZM8CHClZqsq7Nyu-8nxyYVs_ZMQ';
         const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-let meuPerfil = null;
-let chartInstance = null;
-async function fazerLogin() {
+let myProfile = null;
+let myChart = null;
+async function login() {
 const email = document.getElementById('email').value;
 const password = document.getElementById('password').value;
 const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-if(error) alert("Erro: " + error.message);
-else carregarPerfil(data.user.id);
+if(error) document.getElementById('login-msg').innerText = error.message;
+else initApp(data.user.id);
 }
-async function carregarPerfil(userId) {
-const { data } = await supabase.from('perfis').select('*').eq('id', userId).single();
-meuPerfil = data;
-document.getElementById('login-section').classList.add('hidden');
-document.getElementById('dashboard-section').classList.remove('hidden');
-carregarDados();
+async function initApp(uid) {
+const { data: profile } = await supabase.from('perfis').select('*').eq('id', uid).single();
+myProfile = profile;
+document.getElementById('login-screen').classList.add('hidden');
+document.getElementById('dashboard').classList.remove('hidden');
+document.getElementById('user-info').innerText = `${profile.nome_completo} • ${profile.nivel_acesso}`;
+if(profile.hierarquia >= 3) document.getElementById('form-area').classList.remove('hidden');
+carregarDashboard();
 }
-// ATUALIZAÇÃO DA LÓGICA DE HIERARQUIA NO index.html
-async function carregarDados() {
-  // O RLS do banco (Etapa 1) já faz o filtro por hierarquia automaticamente
-  const { data, error } = await supabase.from('deliberacoes').select('*, perfis(nome_completo, nivel_acesso)');
-  if (error) {
-    console.error("Erro na auditoria de dados:", error.message);
-    return;
-  }
-  exibirDeliberacoes(data);
-  // O gráfico de evolução acumulada (Chart.js) também respeitará o que o usuário pode ver
-  carregarGrafico(data);
+async function carregarDashboard() {
+const { data: delibs } = await supabase.from('deliberacoes').select('*, perfis(nome_completo)');
+renderCards(delibs);
+if(myProfile.hierarquia >= 3) renderSelect(delibs);
+const { data: evolucao } = await supabase.from('evolucao_mensal').select('*').order('mes_referencia');
+renderChart(evolucao);
 }
-
-function exibirDeliberacoes(delibs) {
-  const container = document.getElementById('lista-delib');
-  container.innerHTML = delibs.map(d => {
-    // Lógica de cores baseada no prazo (Vencido = Vermelho, Próximo = Amarelo, OK = Verde)
-    const hoje = new Date();
-    const prazo = new Date(d.prazo);
-    const diasRestantes = Math.ceil((prazo - hoje) / (1000 * 60 * 60 * 24));
-    let corStatus = "border-green-500";
-    if (diasRestantes < 0) corStatus = "border-red-500";
-    else if (diasRestantes <= 30) corStatus = "border-yellow-500";
-    return `
-    <div class="card p-6 rounded-2xl border-l-4 ${corStatus} mb-4 bg-slate-800 shadow-xl">
-      <div class="flex justify-between items-start mb-2">
-        <span class="text-blue-400 font-bold">${d.identificador}</span>
-        <span class="text-xs text-slate-400">Prazo: ${prazo.toLocaleDateString('pt-BR')}</span>
-      </div>
-      <p class="text-sm mb-4 leading-relaxed">${d.descricao}</p>
-      <div class="flex justify-between items-center">
-        <span class="text-[10px] text-slate-500 italic">Responsável: ${d.perfis?.nome_completo || 'Sem Atribuição'}</span>
-        <span class="font-bold text-blue-400 text-lg">${d.total_cumprimento}%</span>
-      </div>
-      <div class="w-full bg-slate-700 h-1.5 rounded-full mt-3 overflow-hidden">
-        <div class="bg-blue-500 h-full transition-all duration-500" style="width: ${d.total_cumprimento}%"></div>
-      </div>
-    </div>`;
-  }).join('');
+function renderCards(itens) {
+const container = document.getElementById('cards-container');
+const hoje = new Date();
+container.innerHTML = itens.map(i => {
+const prazo = new Date(i.prazo);
+const dias = Math.ceil((prazo - hoje) / (86400000));
+let cor = 'status-em-dia';
+if(dias < 0) cor = 'status-vencido';
+else if(dias <= 30) cor = 'status-alerta';
+return `<div class="card-glass p-6 rounded-2xl ${cor}">
+<div class="flex justify-between mb-2"><span class="font-black text-blue-400">${i.identificador}</span><span class="text-[10px] text-slate-500">${i.prazo}</span></div>
+<p class="text-xs text-slate-300 mb-4 h-12 overflow-hidden">${i.descricao}</p>
+<div class="flex justify-between text-[10px] mb-1"><span>${i.perfis?.nome_completo || 'Sem Resp.'}</span><span class="font-bold">${i.total_cumprimento}%</span></div>
+<div class="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden"><div class="bg-blue-500 h-full" style="width:${i.total_cumprimento}%"></div></div>
+</div>`;
+}).join('');
 }
-async function carregarGrafico() {
-const { data } = await supabase.from('evolucao_mensal').select('*').order('mes_referencia', { ascending: true });
-const ctx = document.getElementById('graficoEvolucao').getContext('2d');
-if(chartInstance) chartInstance.destroy();
-chartInstance = new Chart(ctx, {
-type: 'line',
-data: { labels: data.map(d => d.mes_referencia), datasets: [{ label: 'Evolução %', data: data.map(d => d.percentual_lancado), borderColor: '#3b82f6', tension: 0.3 }] },
-options: { responsive: true, scales: { y: { beginAtZero: true, max: 100 } } }
-});
+function renderChart(dados) {
+const ctx = document.getElementById('mainChart').getContext('2d');
+if(myChart) myChart.destroy();
+myChart = new Chart(ctx, { type: 'line', data: { labels: dados.map(d => d.mes_referencia), datasets: [{ label: 'Evolução %', data: dados.map(d => d.percentual_lancado), borderColor: '#3b82f6', tension: 0.4, fill: true, backgroundColor: 'rgba(59, 130, 246, 0.1)' }] }, options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true, max: 100 } } } });
+}
+function renderSelect(itens) {
+const sel = document.getElementById('delib_id');
+sel.innerHTML = itens.map(i => `<option value="${i.id}">${i.identificador}</option>`).join('');
+}
+async function salvarLancamento() {
+const payload = { deliberacao_id: document.getElementById('delib_id').value, mes_referencia: document.getElementById('mes_ref').value + "-01", percentual_lancado: document.getElementById('percentual').value };
+const { error } = await supabase.from('evolucao_mensal').insert(payload);
+if(error) alert(error.message); else carregarDashboard();
 }
 async function logout() { await supabase.auth.signOut(); location.reload(); }
 </script>
