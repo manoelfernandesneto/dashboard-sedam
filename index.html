@@ -73,15 +73,31 @@ const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBh
 const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 let myProfile = null;
 let myChart = null;
-async function login() {
-const email = document.getElementById('email').value;
-const password = document.getElementById('password').value;
-const loginMsg = document.getElementById('login-msg');
-loginMsg.innerText = "Autenticando...";
-const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
-if(error) { loginMsg.innerText = "Falha no acesso: " + error.message; }
-else { initApp(data.user.id); }
+
+async function login(){
+const email=document.getElementById('email').value.trim()
+const password=document.getElementById('password').value.trim()
+const loginMsg=document.getElementById('login-msg')
+
+loginMsg.innerText="Autenticando..."
+
+const {data,error}=await supabaseClient.auth.signInWithPassword({email,password})
+
+console.log("LOGIN DEBUG:",{email,password,data,error})
+
+if(error){
+loginMsg.innerText="Erro: "+error.message
+return
 }
+
+if(!data?.user){
+loginMsg.innerText="Usuário não retornado"
+return
+}
+
+initApp(data.user.id)
+}
+
 async function criarUsuariosAdmin(){
 const res = await fetch("https://zvtzbiqfwhggysiuiuxh.supabase.co/functions/v1/criar-usuarios",{
 method:"POST",
