@@ -16,6 +16,7 @@ body { background: radial-gradient(circle at top, #1e293b, #0f172a); color: #f8f
 .status-em-dia { border-left: 8px solid #10b981 !important; background: rgba(16, 185, 129, 0.05); }
 input::placeholder { color: #64748b; }
 </style>
+
 </head>
 <body class="p-4 md:p-8">
 <!-- SEÇÃO DE LOGIN -->
@@ -39,6 +40,9 @@ input::placeholder { color: #64748b; }
 <p id="user-info" class="text-slate-400 font-medium mt-1 italic"></p>
 </div>
 <button onclick="logout()" class="bg-red-500/10 text-red-400 px-6 py-2 rounded-xl font-bold hover:bg-red-500 hover:text-white transition-all">Sair do Sistema</button>
+<button id="btnCriarUsuarios" onclick="criarUsuariosAdmin()" style="display:none" class="bg-emerald-500 px-4 py-2 rounded-xl font-bold">
+Criar Usuários
+</button>
 </header>
 <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
 <!-- GRÁFICO -->
@@ -78,6 +82,19 @@ const { data, error } = await supabaseClient.auth.signInWithPassword({ email, pa
 if(error) { loginMsg.innerText = "Falha no acesso: " + error.message; }
 else { initApp(data.user.id); }
 }
+async function criarUsuariosAdmin(){
+
+if(!confirm("Vai criar usuários no sistema. Continuar?")) return
+
+const res = await fetch("https://SEU-PROJETO.functions.supabase.co/criar-usuarios",{
+method:"POST"
+})
+
+const data = await res.json()
+
+alert(data.msg || "Processo finalizado")
+
+}
 async function initApp(uid) {
 const { data: profile, error } = await supabaseClient.from('perfis').select('*').eq('id', uid).single();
 if(error || !profile) { alert("Perfil não localizado no banco de dados."); return; }
@@ -86,6 +103,9 @@ document.getElementById('login-screen').classList.add('hidden');
 document.getElementById('dashboard').classList.remove('hidden');
 document.getElementById('user-info').innerText = `${profile.nome_completo} | ${profile.nivel_acesso} (Nível ${profile.hierarquia})`;
 if(profile.hierarquia >= 3) document.getElementById('form-area').classList.remove('hidden');
+if(profile.hierarquia == 1){
+document.getElementById("btnCriarUsuarios").style.display = "block"
+}
 carregarDashboard();
 }
 async function carregarDashboard() {
