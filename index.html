@@ -4,137 +4,168 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <link rel="icon" href="data:,">
-<title>Auditoria TAG 2026 - SEDAM</title>
+<title>TAG 2026 - Auditoria Online</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <style>
-body { background: #0f172a; color: #f8fafc; font-family: 'Inter', sans-serif; margin: 0; }
-.card-micro { background: rgba(30,41,59,0.5); border: 1px solid rgba(255,255,255,0.05); padding: 0.25rem; transition: 0.2s; min-height: 55px; display: flex; flex-direction: column; justify-content: center; align-items: center; }
-.card-micro:hover { background: rgba(30,41,59,0.9); border-color: #3b82f6; }
-.status-vencido { border-left: 3px solid #ef4444; }
-.status-em-dia { border-left: 3px solid #10b981; }
-.percent-text { font-size: 1.5rem; font-weight: 900; line-height: 1; color: #3b82f6; }
-.tab-active { border-bottom: 2px solid #3b82f6; color: #3b82f6; }
-::-webkit-scrollbar { width: 4px; height: 4px; }
-::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
+body { background: #020617; color: #f8fafc; font-family: 'Inter', sans-serif; margin: 0; }
+/* Cards Micro: Tamanho reduzido e Percentual Duplicado */
+.card-micro { background: rgba(30,41,59,0.4); border: 1px solid rgba(255,255,255,0.05); padding: 0.2rem; min-height: 45px; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: 0.2s; }
+.card-micro:hover { border-color: #3b82f6; background: rgba(30,41,59,0.8); }
+.percent-big { font-size: 1.6rem; font-weight: 900; line-height: 1; color: #3b82f6; letter-spacing: -1px; }
+.status-vencido { border-left: 2px solid #ef4444; }
+.status-ok { border-left: 2px solid #10b981; }
+/* Tabs */
+.tab-btn { padding: 0.75rem 1rem; font-size: 0.7rem; font-weight: 800; text-transform: uppercase; color: #64748b; border-bottom: 2px solid transparent; transition: 0.3s; }
+.tab-active { color: #3b82f6; border-bottom-color: #3b82f6; background: rgba(59,130,246,0.05); }
+/* Tabela */
+.input-table { background: transparent; border: none; color: #3b82f6; font-weight: 800; width: 45px; text-align: center; font-size: 11px; }
+.input-table:focus { outline: 1px solid #3b82f6; background: rgba(0,0,0,0.3); }
+.input-disabled { color: #475569; font-weight: 400; cursor: not-allowed; }
 </style>
 </head>
 <body class="p-2 md:p-4">
 <div id="login-screen" class="min-h-screen flex items-center justify-center">
-<div class="bg-slate-900 p-8 rounded-3xl border border-white/5 shadow-2xl w-full max-w-xs text-center">
-<h1 class="text-xl font-black text-blue-400 mb-6">TAG AUDITORIA</h1>
-<input type="text" id="u" placeholder="Usuário" class="w-full p-3 mb-3 bg-slate-800 rounded-lg text-white border-none text-sm">
-<input type="password" id="p" placeholder="Senha" class="w-full p-3 mb-4 bg-slate-800 rounded-lg text-white border-none text-sm">
-<button onclick="login()" class="w-full bg-blue-600 hover:bg-blue-700 py-3 rounded-lg font-bold text-sm transition-all">ENTRAR</button>
+<div class="bg-slate-900 p-8 rounded-3xl border border-white/5 shadow-2xl w-full max-w-xs">
+<h1 class="text-xl font-black text-blue-400 text-center mb-6 tracking-tighter">TAG 2026 ONLINE</h1>
+<input type="text" id="u" placeholder="Usuário" class="w-full p-3 mb-3 bg-slate-800 rounded-xl text-white border-none text-sm">
+<input type="password" id="p" placeholder="Senha" class="w-full p-3 mb-4 bg-slate-800 rounded-xl text-white border-none text-sm">
+<button onclick="login()" class="w-full bg-blue-600 hover:bg-blue-700 py-3 rounded-xl font-bold text-sm shadow-lg">ENTRAR NO SISTEMA</button>
 </div>
 </div>
+
 <div id="dashboard" class="hidden">
 <header class="flex justify-between items-center mb-4 px-2">
-<div><h2 class="text-lg font-black text-blue-400">PAINEL DE AUDITORIA TAG</h2><p id="user-info" class="text-[9px] text-slate-500 uppercase tracking-widest"></p></div>
-<div class="flex items-center gap-4">
-<div class="text-right"><span class="block text-[7px] text-slate-500 font-bold uppercase">Cumprimento Global</span><span id="total-geral" class="text-xl font-black text-emerald-400">0%</span></div>
-<button onclick="logout()" class="text-[9px] bg-red-500/10 text-red-400 px-3 py-1 rounded font-bold">SAIR</button>
-</div>
+<div><h2 class="text-lg font-black text-blue-400 leading-none">SEDAM TAG 2026</h2><p id="user-info" class="text-[9px] text-slate-500 uppercase mt-1"></p></div>
+<div class="text-right"><span class="block text-[7px] text-slate-500 font-bold uppercase">Cumprimento Global</span><span id="total-geral" class="text-2xl font-black text-emerald-400">0%</span></div>
 </header>
-<div class="flex gap-4 mb-4 border-b border-white/5 text-[10px] font-bold uppercase px-2">
-<button onclick="switchTab('resumo')" id="tab-resumo" class="pb-2 tab-active">Resumo Cards</button>
-<button onclick="switchTab('mensal')" id="tab-mensal" class="pb-2 text-slate-500">Monitoramento Mensal</button>
-<button onclick="switchTab('analise')" id="tab-analise" class="pb-2 text-slate-500">Análise Gráfica</button>
-</div>
+
+<nav class="flex gap-2 mb-4 border-b border-white/5">
+<button onclick="switchTab('resumo')" id="tab-resumo" class="tab-btn tab-active">Resumo Cards</button>
+<button onclick="switchTab('mensal')" id="tab-mensal" class="tab-btn">Monitoramento Mensal</button>
+<button onclick="switchTab('analise')" id="tab-analise" class="tab-btn">Análise Gráfica</button>
+</nav>
+
 <div id="view-resumo" class="tab-view">
-<div id="cards-container" class="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-10 2xl:grid-cols-14 gap-1.5"></div>
+<div id="cards-container" class="grid grid-cols-5 sm:grid-cols-8 md:grid-cols-10 lg:grid-cols-12 2xl:grid-cols-18 gap-1"></div>
 </div>
+
 <div id="view-mensal" class="tab-view hidden">
-<div class="bg-slate-900/50 rounded-xl border border-white/5 overflow-x-auto">
-<table class="w-full text-left border-collapse min-w-[1000px]">
+<div class="bg-slate-900/40 rounded-xl border border-white/5 overflow-x-auto">
+<table class="w-full text-left border-collapse min-w-[900px]">
 <thead><tr class="text-[9px] text-slate-500 uppercase border-b border-white/10">
-<th class="p-3">Sub-Item</th><th class="p-3 w-1/4">Descrição da Ação</th><th>Jan-Mar</th><th>Abr</th><th class="text-blue-400">Mai</th><th>Jun-Dez</th><th class="p-3 text-right">Total</th>
+<th class="p-3">Sub-Item</th><th class="p-3 w-1/4">Descrição</th><th>Jan-Mar</th><th>Abril</th><th class="text-blue-400">Maio</th><th>Jun-Dez</th><th class="p-3 text-right">Acumulado</th>
 </tr></thead>
 <tbody id="table-body" class="text-[10px]"></tbody>
 </table>
 </div>
 </div>
+
 <div id="view-analise" class="tab-view hidden">
-<div class="grid grid-cols-1 lg:grid-cols-4 gap-4">
-<div class="lg:col-span-3 bg-slate-900/50 p-4 rounded-xl border border-white/5">
-<div class="flex gap-2 mb-4">
-<select id="sel-meta" class="bg-slate-800 text-[10px] rounded p-2 text-white border-none w-48"></select>
-<button onclick="carregarDados()" class="bg-blue-600 text-[10px] px-4 py-2 rounded font-bold uppercase">Pesquisar Período</button>
+<div class="grid grid-cols-1 lg:grid-cols-4 gap-4 p-2">
+<div class="lg:col-span-3 bg-slate-900/40 p-6 rounded-2xl border border-white/5">
+<div class="flex gap-4 mb-6">
+<select id="sel-meta" onchange="renderChart()" class="bg-slate-800 text-[10px] rounded p-2 text-white border-none w-64"></select>
+<button onclick="carregarDados()" class="bg-blue-600 text-[9px] px-4 py-2 rounded font-black">PESQUISAR PERÍODO</button>
 </div>
-<div class="h-[300px]"><canvas id="barChart"></canvas></div>
-</div>
-</div>
+<div class="h-[350px]"><canvas id="barChart"></canvas></div>
 </div>
 </div>
+</div>
+</div>
+
 <script>
 const S_URL = 'https://zvtzbiqfwhggysiuiuxh.supabase.co';
 const S_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp2dHpiaXFmd2hnZ3lzaXVpdXhoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc1ODYyMjcsImV4cCI6MjA5MzE2MjIyN30.tCnFZv2B6Kmd9KsyZM8CHClZqsq7Nyu-8nxyYVs_ZMQ';
-const client = supabase.createClient(S_URL, S_KEY, { global: { headers: { 'apikey': S_KEY } } });
-let userPr = null;
+const client = supabase.createClient(S_URL, S_KEY);
+let userP = null; let allData = []; let myChart = null;
+
 async function login() {
 let e = document.getElementById('u').value.trim().toLowerCase();
 if(!e.includes('@')) e += '@sedam.com';
 const { data, error } = await client.auth.signInWithPassword({ email: e, password: document.getElementById('p').value });
 if(!error) init(data.user.id);
 }
+
 async function init(uid) {
 const { data: p } = await client.from('perfis').select('*').eq('id', uid).single();
-userPr = p;
+userP = p;
 document.getElementById('login-screen').classList.add('hidden');
 document.getElementById('dashboard').classList.remove('hidden');
 document.getElementById('user-info').innerText = `${p.nome_completo} | ${p.nivel_acesso}`;
 carregarDados();
+// Escuta alterações em tempo real para visualização online com a equipe
+client.channel('schema-db-changes').on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'deliberacoes' }, () => carregarDados()).subscribe();
 }
+
 async function carregarDados() {
-const { data: delibs } = await client.from('deliberacoes').select('*, evolucao_mensal(*)').order('identificador');
-if(delibs) {
-const dOrd = delibs.sort((a,b) => a.identificador.localeCompare(b.identificador, undefined, {numeric:true}));
-renderCards(dOrd); renderTable(dOrd); renderChart(dOrd);
-const sel = document.getElementById('sel-meta');
-if(sel.options.length === 0) sel.innerHTML = dOrd.map(d => `<option value="${d.id}">${d.identificador}</option>`).join('');
-document.getElementById('total-geral').innerText = Math.round(dOrd.reduce((acc,c)=>acc+(c.total_cumprimento||0),0)/dOrd.length) + "%";
+const { data } = await client.from('deliberacoes').select('*, evolucao_mensal(*)').order('identificador');
+if(data) {
+allData = data.sort((a,b) => a.identificador.localeCompare(b.identificador, undefined, {numeric:true}));
+renderResumo(); renderTable(); renderSelect();
+if(!myChart) renderChart();
+const soma = allData.reduce((acc,c) => acc + (c.total_cumprimento || 0), 0);
+document.getElementById('total-geral').innerText = Math.round(soma / allData.length) + "%";
 }
 }
-function renderCards(itens) {
-document.getElementById('cards-container').innerHTML = itens.map(i => `
-<div class="card-micro rounded-lg ${i.total_cumprimento<100?'status-vencido':'status-em-dia'}">
-<span class="text-[8px] font-black text-slate-500 uppercase">${i.identificador}</span>
-<span class="percent-text">${i.total_cumprimento}%</span>
+
+function renderResumo() {
+document.getElementById('cards-container').innerHTML = allData.map(i => `
+<div class="card-micro rounded-md ${i.total_cumprimento<100?'status-vencido':'status-ok'}">
+<span class="text-[7px] font-black text-slate-500">${i.identificador}</span>
+<span class="percent-big">${i.total_cumprimento}%</span>
 </div>`).join('');
 }
-function renderTable(itens) {
-document.getElementById('table-body').innerHTML = itens.map(i => {
+
+function renderTable() {
+document.getElementById('table-body').innerHTML = allData.map(i => {
 const abr = i.evolucao_mensal?.find(e => e.mes_referencia === '2026-04-01')?.percentual_lancado || 0;
-return `<tr class="border-b border-white/5 hover:bg-white/5 transition-all">
-<td class="p-3 font-bold text-blue-400">${i.identificador}</td>
-<td class="p-3 text-slate-400">${i.descricao}</td>
-<td class="text-slate-600">0%</td>
-<td class="font-bold text-blue-300">${abr}%</td>
-<td class="bg-blue-500/10 text-center">-</td>
-<td class="text-slate-600">Pendente</td>
-<td class="p-3 text-right font-black text-emerald-400">${i.total_cumprimento}%</td>
+const mai = i.evolucao_mensal?.find(e => e.mes_referencia === '2026-05-01')?.percentual_lancado || 0;
+const canEdit = (userP.hierarquia === 1 || i.responsavel_id === userP.id);
+return `
+<tr class="border-b border-white/5 hover:bg-white/5">
+<td class="p-3 font-black text-blue-400">${i.identificador}</td>
+<td class="p-3 text-slate-500 text-[9px] leading-tight">${i.descricao}</td>
+<td class="text-slate-700">0%</td>
+<td><input type="number" class="input-table ${!canEdit?'input-disabled':''}" value="${abr}" ${!canEdit?'disabled':''} onchange="salvar(this.value, '${i.id}', '2026-04-01')"></td>
+<td><input type="number" class="input-table ${!canEdit?'input-disabled':''}" value="${mai}" ${!canEdit?'disabled':''} onchange="salvar(this.value, '${i.id}', '2026-05-01')"></td>
+<td class="text-slate-700">Pendente</td>
+<td class="p-3 text-right font-black text-emerald-400 text-sm">${i.total_cumprimento}%</td>
 </tr>`; }).join('');
 }
-function renderChart(itens) {
-const ctx = document.getElementById('barChart').getContext('2d');
-if(window.mChart) window.myChart.destroy();
-const selectedId = document.getElementById('sel-meta').value;
-const item = itens.find(i => i.id === selectedId) || itens[0];
-const abr = item.evolucao_mensal?.find(e => e.mes_referencia === '2026-04-01')?.percentual_lancado || 0;
-const labels = ['Jan-Mar', 'Abril', 'Maio'];
-const values = [0, abr, 0];
-window.myChart = new Chart(ctx, { type: 'bar', data: { labels: labels, datasets: [{ label: 'Evolução %', data: values, backgroundColor: values.map(v=>v===100?'#10b981':'#3b82f6'), borderRadius: 4 }] }, 
-options: { responsive: true, maintainAspectRatio: false, plugins: { 
-tooltip: { callbacks: { label: (ctx) => ctx.raw === 100 ? 'OK-CUMPRIDO' : ctx.raw + '%' } } 
-}, scales: { y: { beginAtZero: true, max: 100 } } } });
+
+async function salvar(val, id, mes) {
+const { error } = await client.from('evolucao_mensal').upsert({ deliberacao_id: id, mes_referencia: mes, percentual_lancado: val }, { onConflict: 'deliberacao_id,mes_referencia' });
+if(!error) {
+await client.from('deliberacoes').update({ total_cumprimento: val }).eq('id', id);
+carregarDados();
 }
+}
+
+function renderChart() {
+const ctx = document.getElementById('barChart').getContext('2d');
+if(myChart) myChart.destroy();
+const selId = document.getElementById('sel-meta').value || allData[0].id;
+const item = allData.find(i => i.id === selId);
+const labels = ['Jan-Mar', 'Abril', 'Maio'];
+const v = [0, item.evolucao_mensal?.find(e=>e.mes_referencia==='2026-04-01')?.percentual_lancado || 0, item.evolucao_mensal?.find(e=>e.mes_referencia==='2026-05-01')?.percentual_lancado || 0];
+myChart = new Chart(ctx, { type: 'bar', data: { labels, datasets: [{ label: 'Execução %', data: v, backgroundColor: v.map(val => val >= 100 ? '#10b981' : '#3b82f6'), borderRadius: 5 }] },
+options: { responsive: true, maintainAspectRatio: false, plugins: { tooltip: { callbacks: { label: (c) => c.raw >= 100 ? '✅ OK-CUMPRIDO' : c.raw + '%' } } } } });
+}
+
+function renderSelect() { 
+const s = document.getElementById('sel-meta'); 
+if(s.options.length === 0) s.innerHTML = allData.map(d => `<option value="${d.id}">SUB-ITEM ${d.identificador}</option>`).join('');
+}
+
 function switchTab(t) {
 document.querySelectorAll('.tab-view').forEach(v => v.classList.add('hidden'));
-document.querySelectorAll('button[id^="tab-"]').forEach(b => b.classList.remove('tab-active', 'text-slate-500'));
+document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('tab-active'));
 document.getElementById('view-'+t).classList.remove('hidden');
 document.getElementById('tab-'+t).classList.add('tab-active');
 }
+
 async function logout() { await client.auth.signOut(); location.reload(); }
 </script>
 </body>
