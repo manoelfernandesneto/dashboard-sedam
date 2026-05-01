@@ -104,6 +104,40 @@ return `<div class="card-glass p-6 rounded-2xl ${cor}">
 </div>`;
 }).join('');
 }
+// VERSÃO OTIMIZADA PARA 133 DELIBERAÇÕES
+function renderCards(itens) {
+    const container = document.getElementById('cards-container');
+    const hoje = new Date();
+    if (!itens || itens.length === 0) {
+        container.innerHTML = "<p class='col-span-full text-center py-20 text-slate-500'>Aguardando carga de dados...</p>";
+        return;
+    }
+    container.innerHTML = itens.map(i => {
+        const prazo = new Date(i.prazo);
+        const diff = Math.ceil((prazo - hoje) / 86400000);
+        let cor = 'status-em-dia';
+        if (diff < 0) cor = 'status-vencido'; else if (diff <= 30) cor = 'status-alerta';
+        return `
+        <div class="card-glass p-5 rounded-2xl ${cor} flex flex-col justify-between">
+            <div>
+                <div class="flex justify-between items-start mb-2">
+                    <span class="font-black text-blue-400 text-lg">${i.identificador}</span>
+                    <span class="text-[10px] bg-slate-800 px-2 py-1 rounded-lg text-slate-400">${prazo.toLocaleDateString('pt-BR')}</span>
+                </div>
+                <p class="text-[11px] text-slate-300 mb-4 leading-snug line-clamp-3">${i.descricao}</p>
+            </div>
+            <div>
+                <div class="flex justify-between text-[10px] mb-1">
+                    <span class="text-slate-500">Resp: ${i.perfis?.nome_completo || 'Auditoria Geral'}</span>
+                    <span class="font-bold text-blue-400">${i.total_cumprimento || 0}%</span>
+                </div>
+                <div class="w-full bg-slate-900 h-1.5 rounded-full overflow-hidden">
+                    <div class="bg-blue-500 h-full" style="width:${i.total_cumprimento || 0}%"></div>
+                </div>
+            </div>
+        </div>`;
+    }).join('');
+}
 async function logout() { await client.auth.signOut(); location.reload(); }
 document.addEventListener('DOMContentLoaded', async () => {
 const { data } = await client.auth.getSession();
