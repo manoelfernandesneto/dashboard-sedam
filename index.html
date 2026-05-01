@@ -4,152 +4,137 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <link rel="icon" href="data:,">
-<title>Auditoria Estratégica TAG 2026</title>
+<title>Auditoria TAG 2026 - SEDAM</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <style>
-body { background: #0f172a; color: #f8fafc; font-family: 'Inter', sans-serif; }
-.card-micro { background: rgba(30,41,59,0.5); border: 1px solid rgba(255,255,255,0.05); padding: 0.5rem; transition: 0.2s; min-height: 85px; }
-.status-vencido { border-top: 3px solid #ef4444; }
-.status-em-dia { border-top: 3px solid #10b981; }
+body { background: #0f172a; color: #f8fafc; font-family: 'Inter', sans-serif; margin: 0; }
+.card-micro { background: rgba(30,41,59,0.5); border: 1px solid rgba(255,255,255,0.05); padding: 0.25rem; transition: 0.2s; min-height: 55px; display: flex; flex-direction: column; justify-content: center; align-items: center; }
+.card-micro:hover { background: rgba(30,41,59,0.9); border-color: #3b82f6; }
+.status-vencido { border-left: 3px solid #ef4444; }
+.status-em-dia { border-left: 3px solid #10b981; }
+.percent-text { font-size: 1.5rem; font-weight: 900; line-height: 1; color: #3b82f6; }
 .tab-active { border-bottom: 2px solid #3b82f6; color: #3b82f6; }
-.row-meta:hover { background: rgba(59,130,246,0.05); }
-::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar { width: 4px; height: 4px; }
 ::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
 </style>
 </head>
-<body class="p-2 md:p-6">
+<body class="p-2 md:p-4">
 <div id="login-screen" class="min-h-screen flex items-center justify-center">
-<div class="bg-slate-900 p-10 rounded-3xl border border-white/5 shadow-2xl w-full max-w-xs">
-<h1 class="text-2xl font-black text-blue-400 text-center mb-8">TAG 2026</h1>
-<input type="text" id="uIn" placeholder="Usuário" class="w-full p-4 mb-4 bg-slate-800 rounded-xl text-white border-none text-sm">
-<input type="password" id="pIn" placeholder="Senha" class="w-full p-4 mb-6 bg-slate-800 rounded-xl text-white border-none text-sm">
-<button onclick="login()" class="w-full bg-blue-600 py-4 rounded-xl font-bold shadow-lg">ENTRAR</button>
+<div class="bg-slate-900 p-8 rounded-3xl border border-white/5 shadow-2xl w-full max-w-xs text-center">
+<h1 class="text-xl font-black text-blue-400 mb-6">TAG AUDITORIA</h1>
+<input type="text" id="u" placeholder="Usuário" class="w-full p-3 mb-3 bg-slate-800 rounded-lg text-white border-none text-sm">
+<input type="password" id="p" placeholder="Senha" class="w-full p-3 mb-4 bg-slate-800 rounded-lg text-white border-none text-sm">
+<button onclick="login()" class="w-full bg-blue-600 hover:bg-blue-700 py-3 rounded-lg font-bold text-sm transition-all">ENTRAR</button>
 </div>
 </div>
-
 <div id="dashboard" class="hidden">
-<header class="flex justify-between items-center mb-6">
-<div><h2 class="text-xl font-black text-blue-400">PAINEL DE AUDITORIA</h2><p id="user-info" class="text-[10px] text-slate-500 uppercase"></p></div>
-<div class="flex gap-4">
-<div class="text-right"><span class="block text-[8px] text-slate-500">CUMPRIMENTO GLOBAL</span><span id="total-geral" class="text-2xl font-black text-emerald-400">0%</span></div>
-<button onclick="logout()" class="text-xs bg-red-500/10 text-red-400 px-4 py-2 rounded-lg font-bold">SAIR</button>
+<header class="flex justify-between items-center mb-4 px-2">
+<div><h2 class="text-lg font-black text-blue-400">PAINEL DE AUDITORIA TAG</h2><p id="user-info" class="text-[9px] text-slate-500 uppercase tracking-widest"></p></div>
+<div class="flex items-center gap-4">
+<div class="text-right"><span class="block text-[7px] text-slate-500 font-bold uppercase">Cumprimento Global</span><span id="total-geral" class="text-xl font-black text-emerald-400">0%</span></div>
+<button onclick="logout()" class="text-[9px] bg-red-500/10 text-red-400 px-3 py-1 rounded font-bold">SAIR</button>
 </div>
 </header>
-
-<div class="flex gap-6 mb-8 border-b border-white/5 text-xs font-bold uppercase tracking-widest">
-<button onclick="switchTab('resumo')" id="tab-resumo" class="pb-3 tab-active">Resumo Cards</button>
-<button onclick="switchTab('mensal')" id="tab-mensal" class="pb-3 text-slate-500">Monitoramento Mensal</button>
-<button onclick="switchTab('graficos')" id="tab-graficos" class="pb-3 text-slate-500">Análise Gráfica</button>
+<div class="flex gap-4 mb-4 border-b border-white/5 text-[10px] font-bold uppercase px-2">
+<button onclick="switchTab('resumo')" id="tab-resumo" class="pb-2 tab-active">Resumo Cards</button>
+<button onclick="switchTab('mensal')" id="tab-mensal" class="pb-2 text-slate-500">Monitoramento Mensal</button>
+<button onclick="switchTab('analise')" id="tab-analise" class="pb-2 text-slate-500">Análise Gráfica</button>
 </div>
-
-<!-- ABA RESUMO -->
 <div id="view-resumo" class="tab-view">
-<div id="cards-container" class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-10 2xl:grid-cols-12 gap-2"></div>
+<div id="cards-container" class="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-10 2xl:grid-cols-14 gap-1.5"></div>
 </div>
-
-<!-- ABA MENSAL -->
 <div id="view-mensal" class="tab-view hidden">
-<div class="bg-slate-900/50 rounded-2xl border border-white/5 overflow-x-auto">
-<table class="w-full text-left border-collapse">
-<thead><tr class="text-[10px] text-slate-500 uppercase border-b border-white/10">
-<th class="p-4">Item</th><th class="p-4 w-1/3">Ação</th><th>Jan-Mar</th><th>Abr</th><th class="text-blue-400 font-bold">Mai</th><th>Jun</th><th>Jul</th><th>Ago</th><th>Set</th><th>Out</th><th>Nov</th><th>Dez</th><th class="p-4 text-right">Total</th>
+<div class="bg-slate-900/50 rounded-xl border border-white/5 overflow-x-auto">
+<table class="w-full text-left border-collapse min-w-[1000px]">
+<thead><tr class="text-[9px] text-slate-500 uppercase border-b border-white/10">
+<th class="p-3">Sub-Item</th><th class="p-3 w-1/4">Descrição da Ação</th><th>Jan-Mar</th><th>Abr</th><th class="text-blue-400">Mai</th><th>Jun-Dez</th><th class="p-3 text-right">Total</th>
 </tr></thead>
-<tbody id="table-body" class="text-[11px]"></tbody>
+<tbody id="table-body" class="text-[10px]"></tbody>
 </table>
 </div>
 </div>
-
-<!-- ABA GRAFICOS -->
-<div id="view-graficos" class="tab-view hidden">
-<div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
-<div class="lg:col-span-3 bg-slate-900/50 p-6 rounded-2xl border border-white/5">
-<div class="flex justify-between mb-6">
-<select id="chart-filter" onchange="carregarDados()" class="bg-slate-800 text-[10px] rounded p-2 border-none text-white w-48"></select>
-<button class="bg-blue-600 text-[10px] px-4 py-2 rounded font-bold">PESQUISAR PERÍODO</button>
+<div id="view-analise" class="tab-view hidden">
+<div class="grid grid-cols-1 lg:grid-cols-4 gap-4">
+<div class="lg:col-span-3 bg-slate-900/50 p-4 rounded-xl border border-white/5">
+<div class="flex gap-2 mb-4">
+<select id="sel-meta" class="bg-slate-800 text-[10px] rounded p-2 text-white border-none w-48"></select>
+<button onclick="carregarDados()" class="bg-blue-600 text-[10px] px-4 py-2 rounded font-bold uppercase">Pesquisar Período</button>
 </div>
-<div class="h-[350px]"><canvas id="mainChart"></canvas></div>
+<div class="h-[300px]"><canvas id="barChart"></canvas></div>
 </div>
 </div>
 </div>
 </div>
-
 <script>
 const S_URL = 'https://zvtzbiqfwhggysiuiuxh.supabase.co';
 const S_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp2dHpiaXFmd2hnZ3lzaXVpdXhoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc1ODYyMjcsImV4cCI6MjA5MzE2MjIyN30.tCnFZv2B6Kmd9KsyZM8CHClZqsq7Nyu-8nxyYVs_ZMQ';
 const client = supabase.createClient(S_URL, S_KEY, { global: { headers: { 'apikey': S_KEY } } });
-let userP = null;
-
+let userPr = null;
 async function login() {
-let e = document.getElementById('uIn').value.trim().toLowerCase();
+let e = document.getElementById('u').value.trim().toLowerCase();
 if(!e.includes('@')) e += '@sedam.com';
-const { data, error } = await client.auth.signInWithPassword({ email: e, password: document.getElementById('pIn').value });
+const { data, error } = await client.auth.signInWithPassword({ email: e, password: document.getElementById('p').value });
 if(!error) init(data.user.id);
 }
-
 async function init(uid) {
 const { data: p } = await client.from('perfis').select('*').eq('id', uid).single();
-userP = p;
+userPr = p;
 document.getElementById('login-screen').classList.add('hidden');
 document.getElementById('dashboard').classList.remove('hidden');
 document.getElementById('user-info').innerText = `${p.nome_completo} | ${p.nivel_acesso}`;
 carregarDados();
 }
-
 async function carregarDados() {
 const { data: delibs } = await client.from('deliberacoes').select('*, evolucao_mensal(*)').order('identificador');
-const { data: evol } = await client.from('evolucao_mensal').select('*').order('mes_referencia');
 if(delibs) {
-const soma = delibs.reduce((acc, c) => acc + (c.total_cumprimento || 0), 0);
-document.getElementById('total-geral').innerText = Math.round(soma / delibs.length) + "%";
-renderCards(delibs);
-renderTable(delibs);
-renderChart(evol);
-const sel = document.getElementById('chart-filter');
-if(sel.options.length === 0) sel.innerHTML = `<option value="total">TOTAL TAG SEDAM</option>` + delibs.map(d => `<option value="${d.id}">${d.identificador}</option>`).join('');
+const dOrd = delibs.sort((a,b) => a.identificador.localeCompare(b.identificador, undefined, {numeric:true}));
+renderCards(dOrd); renderTable(dOrd); renderChart(dOrd);
+const sel = document.getElementById('sel-meta');
+if(sel.options.length === 0) sel.innerHTML = dOrd.map(d => `<option value="${d.id}">${d.identificador}</option>`).join('');
+document.getElementById('total-geral').innerText = Math.round(dOrd.reduce((acc,c)=>acc+(c.total_cumprimento||0),0)/dOrd.length) + "%";
 }
 }
-
-function renderTable(itens) {
-const body = document.getElementById('table-body');
-body.innerHTML = itens.map(i => {
-const abr = i.evolucao_mensal?.find(e => e.mes_referencia === '2026-04-01')?.percentual_lancado || 0;
-return `<tr class="row-meta border-b border-white/5">
-<td class="p-4 font-bold text-blue-400">${i.identificador}</td>
-<td class="p-4 text-slate-400 truncate max-w-xs">${i.descricao}</td>
-<td class="text-slate-600">0%</td>
-<td class="font-bold text-blue-200">${abr}%</td>
-<td class="bg-blue-500/10 text-center">-</td>
-<td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td>
-<td class="p-4 text-right font-black text-emerald-400">${i.total_cumprimento}%</td>
-</tr>`;
-}).join('');
-}
-
 function renderCards(itens) {
-const container = document.getElementById('cards-container');
-container.innerHTML = itens.map(i => `<div class="card-micro rounded-lg ${i.total_cumprimento < 100 ? 'status-vencido' : 'status-em-dia'} flex flex-col justify-between">
-<span class="font-black text-blue-400 text-[9px]">${i.identificador}</span>
-<div class="flex justify-between items-end"><span class="text-[9px] font-bold text-blue-200">${i.total_cumprimento}%</span>
-<div class="w-12 bg-slate-900 h-0.5 rounded-full overflow-hidden"><div class="bg-blue-500 h-full" style="width:${i.total_cumprimento}%"></div></div></div>
+document.getElementById('cards-container').innerHTML = itens.map(i => `
+<div class="card-micro rounded-lg ${i.total_cumprimento<100?'status-vencido':'status-em-dia'}">
+<span class="text-[8px] font-black text-slate-500 uppercase">${i.identificador}</span>
+<span class="percent-text">${i.total_cumprimento}%</span>
 </div>`).join('');
 }
-
-function switchTab(tab) {
+function renderTable(itens) {
+document.getElementById('table-body').innerHTML = itens.map(i => {
+const abr = i.evolucao_mensal?.find(e => e.mes_referencia === '2026-04-01')?.percentual_lancado || 0;
+return `<tr class="border-b border-white/5 hover:bg-white/5 transition-all">
+<td class="p-3 font-bold text-blue-400">${i.identificador}</td>
+<td class="p-3 text-slate-400">${i.descricao}</td>
+<td class="text-slate-600">0%</td>
+<td class="font-bold text-blue-300">${abr}%</td>
+<td class="bg-blue-500/10 text-center">-</td>
+<td class="text-slate-600">Pendente</td>
+<td class="p-3 text-right font-black text-emerald-400">${i.total_cumprimento}%</td>
+</tr>`; }).join('');
+}
+function renderChart(itens) {
+const ctx = document.getElementById('barChart').getContext('2d');
+if(window.mChart) window.myChart.destroy();
+const selectedId = document.getElementById('sel-meta').value;
+const item = itens.find(i => i.id === selectedId) || itens[0];
+const abr = item.evolucao_mensal?.find(e => e.mes_referencia === '2026-04-01')?.percentual_lancado || 0;
+const labels = ['Jan-Mar', 'Abril', 'Maio'];
+const values = [0, abr, 0];
+window.myChart = new Chart(ctx, { type: 'bar', data: { labels: labels, datasets: [{ label: 'Evolução %', data: values, backgroundColor: values.map(v=>v===100?'#10b981':'#3b82f6'), borderRadius: 4 }] }, 
+options: { responsive: true, maintainAspectRatio: false, plugins: { 
+tooltip: { callbacks: { label: (ctx) => ctx.raw === 100 ? 'OK-CUMPRIDO' : ctx.raw + '%' } } 
+}, scales: { y: { beginAtZero: true, max: 100 } } } });
+}
+function switchTab(t) {
 document.querySelectorAll('.tab-view').forEach(v => v.classList.add('hidden'));
 document.querySelectorAll('button[id^="tab-"]').forEach(b => b.classList.remove('tab-active', 'text-slate-500'));
-document.getElementById('view-' + tab).classList.remove('hidden');
-document.getElementById('tab-' + tab).classList.add('tab-active');
+document.getElementById('view-'+t).classList.remove('hidden');
+document.getElementById('tab-'+t).classList.add('tab-active');
 }
-
-function renderChart(dados) {
-const ctx = document.getElementById('mainChart').getContext('2d');
-if(window.myChart) window.myChart.destroy();
-const agrupar = dados.reduce((acc, c) => { acc[c.mes_referencia] = (acc[c.mes_referencia] || 0) + parseFloat(c.percentual_lancado); return acc; }, {});
-window.myChart = new Chart(ctx, { type: 'line', data: { labels: Object.keys(agrupar), datasets: [{ label: 'Evolução', data: Object.values(agrupar), borderColor: '#3b82f6', tension: 0.4 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } } });
-}
-
 async function logout() { await client.auth.signOut(); location.reload(); }
 </script>
 </body>
