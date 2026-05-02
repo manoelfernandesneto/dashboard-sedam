@@ -28,7 +28,9 @@ body { background: #020617; color: #f8fafc; font-family: 'Inter', sans-serif; ma
 .td-mes { font-size: 12px; font-weight: 700; text-align:center; }
 .td-mes-strong { font-size: 16px; font-weight: 900; text-align:center; }
 .td-total { font-size: 18px; font-weight: 900; text-align:right; }
-.td-desc {font-size: 11px;max-width: 280px;white-space: normal;line-height: 1.2;}
+.td-desc{font-size:11px;max-width:280px;white-space:normal;line-height:1.2;}
+.td-data{font-size:10px;max-width:90px;white-space:normal;line-height:1.1;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;word-break:break-word;}
+.td-data{max-width:70px;font-size:9px;}
 .tr-hover:hover { background: rgba(255,255,255,0.04); }
 .input-mes {width: 60px;font-size: 16px;font-weight: 900;text-align:center;background: #020617;border:1px solid rgba(255,255,255,0.1);border-radius:6px;}
 select{position:relative;z-index:10;pointer-events:auto;}
@@ -330,7 +332,7 @@ return `
 
 <td class="text-xs">${i.setor||'-'}</td>
 
-<td class="text-xs">${dataFormatada}</td>
+<td class="td-data">${dataFormatada}</td>
 
 <td class="td-mes opacity-40">${jan}%</td>
 <td class="td-mes opacity-40">${fev}%</td>
