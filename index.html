@@ -28,25 +28,12 @@ body { background: #020617; color: #f8fafc; font-family: 'Inter', sans-serif; ma
 .td-mes { font-size: 12px; font-weight: 700; text-align:center; }
 .td-mes-strong { font-size: 16px; font-weight: 900; text-align:center; }
 .td-total { font-size: 18px; font-weight: 900; text-align:right; }
-
-.td-desc {
-font-size: 11px;
-max-width: 280px;
-white-space: normal;
-line-height: 1.2;
-}
-
+.td-desc {font-size: 11px;max-width: 280px;white-space: normal;line-height: 1.2;}
 .tr-hover:hover { background: rgba(255,255,255,0.04); }
+.input-mes {width: 60px;font-size: 16px;font-weight: 900;text-align:center;background: #020617;border:1px solid rgba(255,255,255,0.1);border-radius:6px;}
+select{position:relative;z-index:10;pointer-events:auto;}
+tr{position:relative;z-index:1;}
 
-.input-mes {
-width: 60px;
-font-size: 16px;
-font-weight: 900;
-text-align:center;
-background: #020617;
-border:1px solid rgba(255,255,255,0.1);
-border-radius:6px;
-}
   
 </style>
 </head>
@@ -356,7 +343,7 @@ let d=new Date(i.data_inicio)
 if(!isNaN(d)) dataFormatada=d.toLocaleDateString('pt-BR')
 else dataFormatada=i.prazo_texto||i.data_inicio
 }else{dataFormatada=i.prazo_texto||'-'}
-let podeEditar=(userP.nivel_acesso==1||userP.nivel_acesso==2)||(userP.nivel_acesso==3&&i.responsavel_id==userP.id)
+let podeEditar=(userP.nivel_acesso==1)
 let jan=0
 let fev=0
 let mar=0
@@ -365,7 +352,7 @@ let abr=evol.find(e=>String(e.mes_referencia).startsWith('2026-04'))?.percentual
 let maiReal=evol.find(e=>String(e.mes_referencia).startsWith('2026-05'))?.percentual_lancado
 if(!abr||abr==0) abr=i.total_cumprimento||0
 let bg=i.status_cor==='red'?'bg-red-900/20':i.status_cor==='yellow'?'bg-yellow-900/20':i.status_cor==='green'?'bg-emerald-900/20':''
-let campoResponsavel=(userP.nivel_acesso==1||userP.nivel_acesso==2)?`<select class="bg-slate-800 text-xs p-1 rounded" onchange="if(this.value)salvarResponsavel('${i.id}',this.value)"><option value="">Selecione</option>${(window.perfis||[]).sort((a,b)=>a.nome_completo.localeCompare(b.nome_completo)).map(p=>`<option value="${p.id}" ${p.id==i.responsavel_id?'selected':''}>${p.nome_completo}</option>`).join('')}</select>`:`<span>${i.perfis?.nome_completo||'-'}</span>`
+let campoResponsavel=podeEditar?`<select class="bg-slate-800 text-xs p-1 rounded border border-emerald-400" onchange="salvarResponsavel('${i.id}',this.value)"><option value="">Selecione</option>${(window.perfis||[]).sort((a,b)=>a.nome_completo.localeCompare(b.nome_completo)).map(p=>`<option value="${p.id}" ${p.id==i.responsavel_id?'selected':''}>${p.nome_completo}</option>`).join('')}</select>`:`<span class="opacity-70">${i.perfis?.nome_completo||'-'}</span>`
 return `<tr class="border-b border-white/5 tr-hover ${bg}">
 <td class="p-2 font-black text-blue-400">${i.identificador}</td>
 <td class="p-2 td-desc">${i.descricao||'-'}</td>
@@ -575,7 +562,7 @@ document.getElementById('btn-voltar').style.display='none'
 async function salvarResponsavel(id,novoId){
 if(!novoId||novoId===''){return}
 let {error}=await client.from('deliberacoes').update({responsavel_id:novoId}).eq('id',id)
-if(error){console.error(error);alert("Erro ao salvar responsável");return}
+if(error){console.error("ERRO:",error);alert("Erro ao salvar responsável");return}
 }
   
 function logout(){
