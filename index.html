@@ -148,6 +148,13 @@ class="mb-2 text-xs bg-red-600 px-2 py-1 rounded">
 </div>
 
 <script>
+function formatarDataBR(dataStr){
+if(!dataStr)return'-'
+let p=dataStr.split('-')
+if(p.length!==3)return dataStr
+return p[2]+'/'+p[1]+'/'+p[0]
+}
+
 let ocultarConcluidos=false
 function parseDataLocal(dataStr){
 if(!dataStr) return null
@@ -306,9 +313,7 @@ return true
 document.getElementById('table-body').innerHTML=lista.map(i=>{
 let dataFormatada='-'
 if(i.data_inicio){
-let d=new Date(i.data_inicio)
-if(!isNaN(d))dataFormatada=d.toLocaleDateString('pt-BR')
-else dataFormatada=i.prazo_texto||i.data_inicio
+dataFormatada=formatarDataBR(i.data_inicio)
 }else{
 dataFormatada=i.prazo_texto||'-'
 }
