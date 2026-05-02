@@ -349,7 +349,14 @@ document.getElementById('btn-voltar').style.display='block'
 function renderTable(){
 let lista=filtroItemAtivo?allData.filter(i=>i.identificador?.startsWith(filtroItemAtivo+'.')):allData
 document.getElementById('table-body').innerHTML=lista.map(i=>{
-let dataFormatada=i.data_inicio?new Date(i.data_inicio).toLocaleDateString('pt-BR'):(i.prazo_texto||'-')
+let dataFormatada='-'
+if(i.data_inicio){
+let d=new Date(i.data_inicio)
+if(!isNaN(d)) dataFormatada=d.toLocaleDateString('pt-BR')
+else dataFormatada=i.prazo_texto||i.data_inicio
+}else{
+dataFormatada=i.prazo_texto||'-'
+}
 let podeEditar=(userP.nivel_acesso==1||userP.nivel_acesso==2)||(userP.nivel_acesso==3&&i.responsavel_id==userP.id)
 let jan=0
 let fev=0
@@ -371,7 +378,7 @@ return `<tr class="border-b border-white/5 tr-hover ${bg}">
 <td class="td-mes opacity-40">${mar}%</td>
 <td class="td-mes-strong text-blue-400">${abr}%</td>
 <td><input type="number" class="input-mes" value="${maiReal??''}" placeholder="${abr}" ${!podeEditar?'disabled':''} onchange="salvar(this.value,'${i.id}','2026-05-01')"></td>
-<td class="td-total text-emerald-400">${i.total_cumprimento||0}%</td>
+<td class="td-total text-emerald-400">${Number(i.total_cumprimento||0).toFixed(2)}%</td>
 </tr>`
 }).join('')
 }
