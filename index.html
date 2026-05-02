@@ -171,12 +171,18 @@ let userP=null
 let allData=[]
 let myChart=null
 
-async function login(){
+function login(){
 let u=document.getElementById('u').value.trim().toLowerCase()
-let {data,error}=await client.from('perfis').select('*').eq('username',u).single()
+
+client.from('perfis')
+.select('*')
+.eq('username',u)
+.single()
+.then(({data,error})=>{
 if(error||!data){alert("Usuário não encontrado");return}
 localStorage.setItem("uid",data.id)
 init(data.id)
+})
 }
 
 async function init(uid){
@@ -305,12 +311,14 @@ function renderTable(){
 
 let mesAtual = new Date().getMonth()+1
 
-document.getElementById('table-body').innerHTML=
+// 🔥 CORREÇÃO: lista fora do innerHTML
 let lista = filtroItemAtivo
 ? allData.filter(i=>i.identificador?.startsWith(filtroItemAtivo+'.'))
 : allData
 
+document.getElementById('table-body').innerHTML =
 lista.map(i=>{
+
 let dataFormatada = i.data_inicio
 ? new Date(i.data_inicio).toLocaleDateString('pt-BR')
 : (i.prazo_texto || '-')
@@ -320,7 +328,7 @@ let podeEditar =
 (userP.nivel_acesso==1 || userP.nivel_acesso==2) ||
 (userP.nivel_acesso==3 && i.responsavel_id==userP.id)
 
-// 🔥 COLUNAS DINÂMICAS
+// 🔥 MESES DINÂMICOS
 let colMeses = MESES
 .filter(m=>m.n<=mesAtual)
 .map(m=>{
@@ -329,12 +337,10 @@ let ref = `2026-${String(m.n).padStart(2,'0')}-01`
 
 let valor = i.evolucao_mensal?.find(e=>e.mes_referencia===ref)?.percentual_lancado||0
 
-// passado → travado
 if(m.n < mesAtual){
 return `<td class="opacity-40">${valor}%</td>`
 }
 
-// mês atual → editável
 return `<td>
 <input type="number"
 class="input-table"
@@ -344,27 +350,22 @@ onchange="salvar(this.value,'${i.id}','${ref}')">
 </td>`
 }).join('')
 
-// 🔥 STATUS COR
+// 🔥 COR STATUS
 let bg =
 i.status_cor==='red' ? 'bg-red-900/20' :
 i.status_cor==='yellow' ? 'bg-yellow-900/20' :
 i.status_cor==='green' ? 'bg-emerald-900/20' : ''
 
 return `<tr class="border-b border-white/5 ${bg}">
-
 <td class="p-3 font-black text-blue-400">${i.identificador}</td>
 <td class="p-3">${i.descricao||'-'}</td>
 <td>${i.responsavel||'-'}</td>
 <td>${i.coordenadoria||'-'}</td>
 <td>${dataFormatada}</td>
-
 ${colMeses}
-
-<td class="p-3 text-right font-black text-emerald-400">
-${i.total_cumprimento||0}%
-</td>
-
+<td class="p-3 text-right font-black text-emerald-400">${i.total_cumprimento||0}%</td>
 </tr>`
+
 }).join('')
 }
   
