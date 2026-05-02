@@ -162,7 +162,19 @@ let filtroItemAtivo=null
 const descItens={"1":"Planejamento Estratégico e Governança","2":"Análise e Revisão do Planejamento Estratégico","3":"Atualização e Consolidação do Plano Estratégico","4":"Governança e Monitoramento Estratégico","5":"Mapeamento e Melhoria de Processos","6":"Desenvolvimento e Estruturação de Sistemas","7":"Adequação Normativa e Legal","8":"Capacitação Técnica e Sensoriamento","9":"Desenvolvimento de Sistemas e Integração","10":"Integração e Expansão Tecnológica","12":"Transparência e Portal Público","15":"Revisão de Plano de Ação","24":"Cadastro de Unidades de Conservação","25":"Programas Ambientais e REDD+","30":"Articulação Institucional","31":"Organização e Gestão Operacional","33":"Monitoramento e Coleta de Dados","45":"Ações Integradas e Cooperação"}
 let modoResumo='subitem'
 let modoGrupo='subitem'
-document.addEventListener("DOMContentLoaded",()=>{let uid=localStorage.getItem("uid");if(uid){init(uid)}else{const lastTab=localStorage.getItem('activeTab');if(lastTab)switchTab(lastTab)}})
+document.addEventListener("DOMContentLoaded",()=>{
+let uid=localStorage.getItem("uid")
+document.getElementById('dataInicio').value='2025-01-01'
+document.getElementById('dataFim').value='2028-01-01'
+filtroDataInicio='2025-01-01'
+filtroDataFim='2028-01-01'
+if(uid){
+init(uid)
+}else{
+const lastTab=localStorage.getItem('activeTab')
+if(lastTab)switchTab(lastTab)
+}
+})
 const S_URL='https://zvtzbiqfwhggysiuiuxh.supabase.co'
 const S_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp2dHpiaXFmd2hnZ3lzaXVpdXhoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc1ODYyMjcsImV4cCI6MjA5MzE2MjIyN30.tCnFZv2B6Kmd9KsyZM8CHClZqsq7Nyu-8nxyYVs_ZMQ'
 const client=supabase.createClient(S_URL,S_KEY)
@@ -170,7 +182,7 @@ let userP=null
 let allData=[]
 let myChart=null
 function login(){let u=document.getElementById('u').value.trim().toLowerCase();client.from('perfis').select('*').eq('username',u).single().then(({data,error})=>{if(error||!data){alert("Usuário não encontrado");return}localStorage.setItem("uid",data.id);init(data.id)})}
-async function init(uid){let {data,error}=await client.from('perfis').select('*').eq('id',uid).single();if(error||!data){alert("Erro perfil");return}userP=data;let {data:pList}=await client.from('perfis').select('*').order('nome_completo');window.perfis=pList||[];document.getElementById('login-screen').classList.add('hidden');document.getElementById('dashboard').classList.remove('hidden');const lastTab=localStorage.getItem('activeTab')||'resumo';switchTab(lastTab);document.getElementById('user-info').innerText=data.nome_completo+" | "+(data.cargo||'-')+" (Nível "+data.nivel_acesso+")";if(data.nivel_acesso<=2){document.getElementById('pdf-container').innerHTML=`<button onclick="gerarRelatorioPDF()" class="btn-pdf">PDF A4</button>`}carregarDados()}
+async function init(uid){let {data,error}=await client.from('perfis').select('*').eq('id',uid).single();if(error||!data){alert("Erro perfil");return}userP=data;let {data:pList}=await client.from('perfis').select('*').order('nome_completo');window.perfis=pList||[];document.getElementById('login-screen').classList.add('hidden');document.getElementById('dashboard').classList.remove('hidden');document.getElementById('dataInicio').value='2025-01-01';document.getElementById('dataFim').value='2028-01-01';filtroDataInicio='2025-01-01';filtroDataFim='2028-01-01';const lastTab=localStorage.getItem('activeTab')||'resumo';switchTab(lastTab);document.getElementById('user-info').innerText=data.nome_completo+" | "+(data.cargo||'-')+" (Nível "+data.nivel_acesso+")";if(data.nivel_acesso<=2){document.getElementById('pdf-container').innerHTML=`<button onclick="gerarRelatorioPDF()" class="btn-pdf">PDF A4</button>`}carregarDados()}
 async function carregarDados(){
 
 let query = client.from('deliberacoes').select('*')
@@ -399,10 +411,10 @@ renderResumo()
 }
 
 function limparFiltroData(){
-document.getElementById('dataInicio').value=''
-document.getElementById('dataFim').value=''
-filtroDataInicio=null
-filtroDataFim=null
+document.getElementById('dataInicio').value='2025-01-01'
+document.getElementById('dataFim').value='2028-01-01'
+filtroDataInicio='2025-01-01'
+filtroDataFim='2028-01-01'
 renderTable()
 renderResumo()
 }
