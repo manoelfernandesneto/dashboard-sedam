@@ -336,40 +336,31 @@ document.getElementById('btn-voltar').style.display='block'
 
 function renderTable(){
 let lista=filtroItemAtivo?allData.filter(i=>i.subitem?.startsWith(filtroItemAtivo+'.')):allData
+
 document.getElementById('table-body').innerHTML=lista.map(i=>{
+
 let dataFormatada='-'
+
 if(i.data_inicio){
 let d=new Date(i.data_inicio)
 if(!isNaN(d)) dataFormatada=d.toLocaleDateString('pt-BR')
 else dataFormatada=i.prazo_texto||i.data_inicio
-}else{dataFormatada=i.prazo_texto||'-'}
+}else{
+dataFormatada=i.prazo_texto||'-'
+}
+
 let podeEditar=(userP.nivel_acesso==1)
-let jan=0
-let fev=0
-let mar=0
-let evol=let evol=i.evolucao_mensal||[]||[]
-let abr=evol.find(e=>String(e.mes_referencia).startsWith('2026-04'))?.percentual_lancado
-let maiReal=evol.find(e=>String(e.mes_referencia).startsWith('2026-05'))?.percentual_lancado
-if(!abr||abr==0) abr=i.total_cumprimento||0
-let bg=i.status_cor==='red'?'bg-red-900/20':i.status_cor==='yellow'?'bg-yellow-900/20':i.status_cor==='green'?'bg-emerald-900/20':''
-let campoResponsavel=podeEditar?`<select class="bg-slate-800 text-xs p-1 rounded border border-emerald-400" onchange="salvarResponsavel('${i.id}',this.value)"><option value="">Selecione</option>${(window.perfis||[]).sort((a,b)=>a.nome_completo.localeCompare(b.nome_completo)).map(p=>`<option value="${p.id}" ${p.id==i.responsavel_id?'selected':''}>${p.nome_completo}</option>`).join('')}</select>`:`<span class="opacity-70">${i.responsavel||'-'}</span>`
-return `<tr class="border-b border-white/5 tr-hover ${bg}">
-<td class="p-2 font-black text-blue-400">${i.subitem}</td>
-<td class="p-2 td-desc">${i.descricao||'-'}</td>
-<td class="text-xs">${campoResponsavel}</td>
-<td class="text-xs">${i.setor||'-'}</td>
-<td class="text-xs">${dataFormatada}</td>
-<td class="td-mes opacity-40">${jan}%</td>
-<td class="td-mes opacity-40">${fev}%</td>
-<td class="td-mes opacity-40">${mar}%</td>
-<td class="td-mes-strong text-blue-400">${abr}%</td>
-<td><input type="number" class="input-mes" value="${maiReal??''}" placeholder="${abr}" ${!podeEditar?'disabled':''} onchange="salvar(this.value,'${i.id}','2026-05-01')"></td>
-<td class="td-total text-emerald-400">${Math.max(
-Number(i.jan||0),
-Number(i.fev||0),
-Number(i.mar||0),
-Number(i.abr||0),
-Number(i.mai||0),
+
+// 🔥 MESES DIRETO DO BANCO
+let jan=Number(i.jan||0)
+let fev=Number(i.fev||0)
+let mar=Number(i.mar||0)
+let abr=Number(i.abr||0)
+let mai=Number(i.mai||0)
+
+// 🔥 TOTAL CORRETO
+let total=Math.max(
+jan,fev,mar,abr,mai,
 Number(i.jun||0),
 Number(i.jul||0),
 Number(i.ago||0),
@@ -377,8 +368,44 @@ Number(i.set||0),
 Number(i.out||0),
 Number(i.nov||0),
 Number(i.dez||0)
-).toFixed(2)}%</td>
-</tr>`
+)
+
+// 🔥 COR SEMÁFORO
+let bg=
+total<=30?'bg-red-900/20':
+total>=100?'bg-emerald-900/20':
+'bg-yellow-900/20'
+
+// 🔥 RESPONSÁVEL
+let campoResponsavel=podeEditar
+?`<span>${i.responsavel||'-'}</span>`
+:`<span class="opacity-70">${i.responsavel||'-'}</span>`
+
+return `
+<tr class="border-b border-white/5 tr-hover ${bg}">
+
+<td class="p-2 font-black text-blue-400">${i.subitem}</td>
+
+<td class="p-2 td-desc">${i.descricao||'-'}</td>
+
+<td class="text-xs">${campoResponsavel}</td>
+
+<td class="text-xs">${i.setor||'-'}</td>
+
+<td class="text-xs">${dataFormatada}</td>
+
+<td class="td-mes opacity-40">${jan}%</td>
+<td class="td-mes opacity-40">${fev}%</td>
+<td class="td-mes opacity-40">${mar}%</td>
+
+<td class="td-mes-strong text-blue-400">${abr}%</td>
+
+<td class="td-mes-strong text-yellow-400">${mai}%</td>
+
+<td class="td-total text-emerald-400">${total.toFixed(2)}%</td>
+
+</tr>
+`
 }).join('')
 }
 
