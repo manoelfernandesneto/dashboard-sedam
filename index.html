@@ -595,16 +595,15 @@ mapa[item].push(i)
 })
 datasets=Object.keys(mapa).map(k=>{
 let lista=mapa[k]
-return{
-label:'ITEM '+k,
 let arr=[
 mediaMes(lista,'jan'),mediaMes(lista,'fev'),mediaMes(lista,'mar'),
 mediaMes(lista,'abr'),mediaMes(lista,'mai'),mediaMes(lista,'jun'),
 mediaMes(lista,'jul'),mediaMes(lista,'ago'),mediaMes(lista,'set'),
 mediaMes(lista,'out'),mediaMes(lista,'nov'),mediaMes(lista,'dez')
 ]
+return{
+label:'ITEM '+k,
 data:arr.slice(0,mesAtual+1),
-
 borderWidth:2,
 fill:false
 }
