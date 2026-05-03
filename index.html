@@ -587,7 +587,7 @@ let sel=document.getElementById('filtroItem')
 if(!sel)return
 let mapa={}
 allData.forEach(i=>{
-let item=(i.numitem||'').toString().trim()||((i.subitem||'').split('.')[0])
+let item=(i.numitem||'').toString().trim()
 if(!item)return
 if(!mapa[item]){
 mapa[item]={
@@ -598,7 +598,7 @@ descricao:i.descricaoitem||'-'
 })
 let lista=Object.values(mapa)
 .sort((a,b)=>a.num.localeCompare(b.num,undefined,{numeric:true}))
-sel.innerHTML='<option value="todos">TODOS os ITENS</option>'+
+sel.innerHTML='<option value="todos">TODOS OS ITENS</option>'+
 lista.map(i=>`<option value="${i.num}">ITEM ${i.num} - ${truncarTexto(i.descricao,60)}</option>`).join('')
 }
 
@@ -623,7 +623,8 @@ let cores=['#22c55e','#3b82f6','#f59e0b','#ef4444','#a855f7','#06b6d4','#84cc16'
 let datasets=[]
 if(tipo==='item'){
 let itemSelecionado=selSub
-let lista=allData.filter(i=>(i.subitem||'').startsWith(itemSelecionado+'.'))
+if(!itemSelecionado||itemSelecionado==='todos')return
+let lista=allData.filter(i=>(i.numitem||'').toString()===itemSelecionado)
 if(!lista.length)return
 let arr=[]
 for(let m=0;m<=mesAtual;m++){
@@ -632,7 +633,7 @@ let soma=lista.reduce((a,c)=>a+Number(c[mesKey]??0),0)
 arr.push(Math.round(soma/(lista.length||1)))
 }
 datasets=[{label:'ITEM '+itemSelecionado,data:arr,backgroundColor:cores.slice(0,mesAtual+1),borderRadius:6}]
-let itemDesc=allData.find(x=>(x.subitem||'').startsWith(itemSelecionado+'.')&&(x.descricaoitem||x.descricao))
+let itemDesc=lista.find(x=>x.descricaoitem)||lista[0]||{}
 if(descBox){descBox.innerHTML=`<b>ITEM ${itemSelecionado}</b> - ${itemDesc.descricaoitem||itemDesc.descricao||'-'}`}
 }
 if(tipo==='subitem'){
@@ -647,6 +648,7 @@ Number(i.out??0),Number(i.nov??0),Number(i.dez??0)
 datasets=[{label:i.subitem,data:valores.slice(0,mesAtual+1),backgroundColor:cores.slice(0,mesAtual+1),borderRadius:6}]
 if(descBox){descBox.innerHTML=`<b>${i.subitem}</b> - ${i.descricao||'-'}`}
 }
+if(!datasets.length)return
 chartMaster=new Chart(ctx,{
 type:'bar',
 data:{labels,datasets},
@@ -695,7 +697,7 @@ if(!sel)return
 if(tipo==='item'){
 let mapa={}
 allData.forEach(i=>{
-let item=(i.numitem||'').toString().trim()||((i.subitem||'').split('.')[0])
+let item=(i.numitem||'').toString().trim()
 if(!item)return
 if(!mapa[item]){
 mapa[item]={
@@ -710,7 +712,7 @@ sel.innerHTML=lista.map(i=>`<option value="${i.num}">ITEM ${i.num} - ${truncarTe
 }else{
 let lista=selItem==='todos'
 ? allData
-: allData.filter(i=>(i.subitem||'').startsWith(selItem+'.'))
+: allData.filter(i=>(i.numitem||'').toString()===selItem)
 lista=lista.sort((a,b)=>a.subitem.localeCompare(b.subitem,undefined,{numeric:true}))
 sel.innerHTML=lista.map(i=>`<option value="${i.id}">${i.subitem} - ${truncarTexto(i.descricao||'-',60)}</option>`).join('')
 }
