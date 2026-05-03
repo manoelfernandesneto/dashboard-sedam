@@ -119,26 +119,22 @@ class="mb-2 text-xs bg-red-600 px-2 py-1 rounded">
 
 <!-- ABA 3: ANÁLISE GRÁFICA (MULTINÍVEL + CARRY-FORWARD) -->
 <div id="view-analise" class="tab-view hidden">
-<div class="flex gap-2 mb-3">
-<button onclick="modoGrafico='todos';renderGraficos()" class="text-xs bg-emerald-600 px-2 py-1 rounded">VISÃO GERAL</button>
-<button onclick="modoGrafico='item';renderGraficos()" class="text-xs bg-slate-700 px-2 py-1 rounded">POR ITEM</button>
-<button onclick="modoGrafico='subitem';renderGraficos()" class="text-xs bg-slate-700 px-2 py-1 rounded">SUBITEM</button>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-3 mb-3">
+<select id="tipoGrafico" class="bg-slate-800 p-2 rounded text-sm">
+<option value="item">POR ITEM</option>
+<option value="subitem">POR SUBITEM</option>
+</select>
+<select id="filtroItem" class="bg-slate-800 p-2 rounded text-sm"></select>
+<select id="filtroSubitem" class="bg-slate-800 p-2 rounded text-sm"></select>
 </div>
-<div class="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-4">
-<div class="bg-slate-900/40 p-4 rounded-xl"><canvas id="chartTotal"></canvas></div>
-<div class="bg-slate-900/40 p-4 rounded-xl"><canvas id="chartItem"></canvas></div>
-<div class="bg-slate-900/40 p-4 rounded-xl"><canvas id="chartSubitem"></canvas></div>
+<div class="bg-slate-900/40 p-4 rounded-xl mb-4">
+<canvas id="chartMaster"></canvas>
 </div>
-<div class="bg-slate-900/40 p-4 rounded-xl">
-<canvas id="chartEvolucao"></canvas>
-</div>
-</div>
-  
 <div id="ranking" class="mt-6 text-xs"></div>
-
 <div class="flex gap-2 mb-4">
 <button onclick="modoGrupo='item';renderConcluidos()" class="text-xs bg-blue-600 px-2 py-1 rounded">AGRUPAR POR ITEM</button>
 <button onclick="modoGrupo='subitem';renderConcluidos()" class="text-xs bg-slate-700 px-2 py-1 rounded">AGRUPAR POR SUBITEM</button>
+</div>
 </div>
 
 <!-- ABA 4: 100% CUMPRIDOS (LISTA DESCRITIVA) -->
@@ -369,7 +365,11 @@ document.getElementById('pdf-container').innerHTML=`<span class="text-xs text-em
   
 function renderConcluidos(){let lista=allData.filter(i=>Math.max(Number(i.jan||0),Number(i.fev||0),Number(i.mar||0),Number(i.abr||0),Number(i.mai||0),Number(i.jun||0),Number(i.jul||0),Number(i.ago||0),Number(i.set||0),Number(i.out||0),Number(i.nov||0),Number(i.dez||0))>=100);let mapa={};lista.forEach(i=>{let chave=modoGrupo==='item'?i.subitem.split('.')[0]:i.subitem;if(!mapa[chave])mapa[chave]=[];mapa[chave].push(i)});document.getElementById('concluidos-container').innerHTML=Object.keys(mapa).map(k=>`<div class="card-micro bg-status-green"><span class="percent-big">${mapa[k].length}</span><span class="text-[7px] text-white/50 ml-1">${modoGrupo==='item'?'ITEM':'SUB'} ${k}</span></div>`).join('');document.getElementById('concluidos-list').innerHTML=Object.keys(mapa).map(k=>`<div class="mb-3"><div class="text-emerald-400 font-bold mb-1">${modoGrupo==='item'?'ITEM':'SUBITEM'} ${k} (${mapa[k].length})</div>${mapa[k].map(i=>`<div class="ml-2 text-[10px]">• <b>${i.subitem}</b> - ${i.descricao}</div>`).join('')}</div>`).join('')}
 
-function switchTab(t){localStorage.setItem('activeTab',t);document.querySelectorAll('.tab-view').forEach(v=>v.classList.add('hidden'));document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('tab-active'));document.getElementById('view-'+t).classList.remove('hidden');document.getElementById('tab-'+t).classList.add('tab-active');if(t==='analise'){setTimeout(()=>renderGraficos(),150)}}
+function switchTab(t){localStorage.setItem('activeTab',t);document.querySelectorAll('.tab-view').forEach(v=>v.classList.add('hidden'));document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('tab-active'));document.getElementById('view-'+t).classList.remove('hidden');document.getElementById('tab-'+t).classList.add('tab-active');if(t==='analise'){
+setTimeout(()=>{
+initPainelGrafico()
+},300)
+}}
 function fecharDrill(){filtroItemAtivo=null;renderResumo();document.getElementById('btn-voltar').style.display='none'}
 function logout(){localStorage.clear();location.reload()}
 </script>
@@ -424,18 +424,32 @@ let lista=v==='total'?allData:allData.filter(i=>i.subitem.startsWith(v+'.'))
 selSub.innerHTML=lista.map(i=>`<option value="${i.subitem}">${i.subitem}</option>`).join('')
 renderChart()
 }
+
 function gerarRelatorioPDF(){
 const {jsPDF}=window.jspdf
-let doc=new jsPDF()
+let doc=new jsPDF('p','mm','a4')
 doc.setFontSize(12)
 doc.text("RELATÓRIO TAG SEDAM 2026",10,10)
+doc.setFontSize(8)
+doc.text("Painel Analítico - Evolução por Item/Subitem",10,15)
+let img=getGraficoBase64()
+if(img){
+doc.addImage(img,'PNG',10,20,190,80)
+}
+let startY=110
 let rows=allData.map(i=>{
-let total=Math.max(Number(i.jan||0),Number(i.fev||0),Number(i.mar||0),Number(i.abr||0),Number(i.mai||0),Number(i.jun||0),Number(i.jul||0),Number(i.ago||0),Number(i.set||0),Number(i.out||0),Number(i.nov||0),Number(i.dez||0))
-return[i.subitem,i.descricao?.substring(0,40)||'-',i.responsavel||'-',total+'%']
+let total=Math.max(Number(i.jan??0),Number(i.fev??0),Number(i.mar??0),Number(i.abr??0),Number(i.mai??0),Number(i.jun??0),Number(i.jul??0),Number(i.ago??0),Number(i.set??0),Number(i.out??0),Number(i.nov??0),Number(i.dez??0))
+return[i.subitem,(i.descricao||'-').substring(0,40),i.responsavel||'-',total+'%']
 })
-doc.autoTable({head:[['Item','Descrição','Responsável','%']],body:rows,startY:20,styles:{fontSize:6}})
+doc.autoTable({
+head:[['Item','Descrição','Responsável','%']],
+body:rows,
+startY:startY,
+styles:{fontSize:6}
+})
 doc.save("relatorio_tag.pdf")
 }
+
 function mesFromData(data){
 return ['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'][new Date(data).getMonth()]
 }
@@ -519,28 +533,96 @@ renderResumo()
 let modoGrafico='todos'
 let chartTotal,chartItem,chartSubitem,chartEvolucao
 
-function renderGraficos(){
-renderChartTotal()
-renderChartItem()
-renderChartSubitem()
-renderChartEvolucao()
-}
-
-function renderChartTotal(){
-let el=document.getElementById('chartTotal');if(!el)return;let ctx=el.getContext('2d');if(!ctx)return;if(chartTotal)chartTotal.destroy();let mar=0,abr=0,mai=0,count=allData.length||1;allData.forEach(i=>{mar+=Number(i.mar??0);abr+=Number(i.abr??0);mai+=Number(i.mai??0)});chartTotal=new Chart(ctx,{type:'bar',data:{labels:['MAR','ABR','MAI'],datasets:[{data:[Math.round(mar/count),Math.round(abr/count),Math.round(mai/count)],backgroundColor:['#ef4444','#f59e0b','#10b981']}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,max:100}}}})
-}
-function renderChartItem(){
-let el=document.getElementById('chartItem');if(!el)return;let ctx=el.getContext('2d');if(!ctx)return;if(chartItem)chartItem.destroy();let mapa={};allData.forEach(i=>{let item=(i.subitem||'').split('.')[0];if(!mapa[item])mapa[item]=[];mapa[item].push(i)});let labels=Object.keys(mapa).sort((a,b)=>a.localeCompare(b,undefined,{numeric:true}));let valores=labels.map(k=>{let lista=mapa[k];return Math.round(lista.reduce((a,c)=>a+Number(c.mai??0),0)/lista.length)});chartItem=new Chart(ctx,{type:'bar',data:{labels,datasets:[{data:valores,backgroundColor:'#3b82f6'}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,max:100}}}})
-}
-function renderChartSubitem(){
-let el=document.getElementById('chartSubitem');if(!el)return;let ctx=el.getContext('2d');if(!ctx)return;if(chartSubitem)chartSubitem.destroy();let sel=document.getElementById('sel-sub');if(!sel)return;let id=sel.value;let i=allData.find(x=>String(x.id)===String(id));if(!i){console.warn('Subitem não encontrado',id);return}chartSubitem=new Chart(ctx,{type:'line',data:{labels:['JAN','FEV','MAR','ABR','MAI'],datasets:[{label:i.subitem,data:[Number(i.jan??0),Number(i.fev??0),Number(i.mar??0),Number(i.abr??0),Number(i.mai??0)],borderWidth:3,fill:false,tension:0.3}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:true}},scales:{y:{beginAtZero:true,max:100}}}})
-}
 function carregarSelectSub(){
 let sel=document.getElementById('sel-sub');if(!sel)return;sel.innerHTML=allData.map(i=>`<option value="${i.id}">${i.subitem} - ${(i.descricao||'-').substring(0,40)}</option>`).join('')
 }
-function renderChartEvolucao(){
-let el=document.getElementById('chartEvolucao');if(!el)return;let ctx=el.getContext('2d');if(!ctx)return;if(chartEvolucao)chartEvolucao.destroy();let labels=['JAN','FEV','MAR','ABR','MAI'];let datasets=allData.slice(0,8).map(i=>({label:i.subitem,data:[Number(i.jan??0),Number(i.fev??0),Number(i.mar??0),Number(i.abr??0),Number(i.mai??0)],borderWidth:2,fill:false}));chartEvolucao=new Chart(ctx,{type:'line',data:{labels,datasets},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:'#94a3b8'}}},scales:{y:{beginAtZero:true,max:100}}}})
+
+let chartMaster=null
+function initPainelGrafico(){
+popularItens()
+popularSubitens()
+document.getElementById('tipoGrafico').onchange=renderGraficoMaster
+document.getElementById('filtroItem').onchange=()=>{popularSubitens();renderGraficoMaster()}
+document.getElementById('filtroSubitem').onchange=renderGraficoMaster
+renderGraficoMaster()
 }
+function popularItens(){
+let sel=document.getElementById('filtroItem')
+if(!sel)return
+let itens=[...new Set(allData.map(i=>(i.subitem||'').split('.')[0]))]
+sel.innerHTML='<option value="todos">TODOS ITENS</option>'+itens.sort((a,b)=>a.localeCompare(b,undefined,{numeric:true})).map(i=>`<option value="${i}">ITEM ${i}</option>`).join('')
+}
+function popularSubitens(){
+let sel=document.getElementById('filtroSubitem')
+let selItem=document.getElementById('filtroItem')
+if(!sel||!selItem)return
+let v=selItem.value
+let lista=v==='todos'?allData:allData.filter(i=>(i.subitem||'').startsWith(v+'.'))
+sel.innerHTML=lista.map(i=>`<option value="${i.id}">${i.subitem} - ${(i.descricao||'-').substring(0,40)}</option>`).join('')
+} 
+function renderGraficoMaster(){
+let el=document.getElementById('chartMaster')
+if(!el)return
+let ctx=el.getContext('2d')
+if(chartMaster)chartMaster.destroy()
+let tipo=document.getElementById('tipoGrafico').value
+let selItem=document.getElementById('filtroItem').value
+let selSub=document.getElementById('filtroSubitem').value
+let labels=['JAN','FEV','MAR','ABR','MAI','JUN','JUL','AGO','SET','OUT','NOV','DEZ']
+let datasets=[]
+if(tipo==='item'){
+let mapa={}
+let base=selItem==='todos'?allData:allData.filter(i=>(i.subitem||'').startsWith(selItem+'.'))
+base.forEach(i=>{
+let item=(i.subitem||'').split('.')[0]
+if(!mapa[item])mapa[item]=[]
+mapa[item].push(i)
+})
+datasets=Object.keys(mapa).map(k=>{
+let lista=mapa[k]
+return{
+label:'ITEM '+k,
+data:[
+mediaMes(lista,'jan'),mediaMes(lista,'fev'),mediaMes(lista,'mar'),
+mediaMes(lista,'abr'),mediaMes(lista,'mai'),mediaMes(lista,'jun'),
+mediaMes(lista,'jul'),mediaMes(lista,'ago'),mediaMes(lista,'set'),
+mediaMes(lista,'out'),mediaMes(lista,'nov'),mediaMes(lista,'dez')
+],
+borderWidth:2,
+fill:false
+}
+})
+}
+if(tipo==='subitem'){
+let i=allData.find(x=>String(x.id)===String(selSub))
+if(!i)return
+datasets=[{
+label:i.subitem,
+data:[
+Number(i.jan??0),Number(i.fev??0),Number(i.mar??0),
+Number(i.abr??0),Number(i.mai??0),Number(i.jun??0),
+Number(i.jul??0),Number(i.ago??0),Number(i.set??0),
+Number(i.out??0),Number(i.nov??0),Number(i.dez??0)
+],
+borderWidth:3,
+fill:false
+}]
+}
+chartMaster=new Chart(ctx,{
+type:'line',
+data:{labels,datasets},
+options:{responsive:true,plugins:{legend:{labels:{color:'#cbd5f5'}}},scales:{y:{beginAtZero:true,max:100}}}
+})
+}
+function mediaMes(lista,mes){
+return Math.round(lista.reduce((a,c)=>a+Number(c[mes]??0),0)/lista.length)
+}
+function getGraficoBase64(){
+let canvas=document.getElementById('chartMaster')
+if(!canvas)return null
+return canvas.toDataURL('image/png',1.0)
+}
+
 
 </script>
   
