@@ -36,6 +36,8 @@ body { background: #020617; color: #f8fafc; font-family: 'Inter', sans-serif; ma
 select{position:relative;z-index:10;pointer-events:auto;}
 tr{position:relative;z-index:1;}
 select{cursor:pointer}
+#tab-perfis{background:#1e293b;color:#38bdf8;font-weight:600;}
+
   
 </style>
 
@@ -65,6 +67,7 @@ select{cursor:pointer}
 <button onclick="switchTab('mensal')" id="tab-mensal" class="tab-btn">Monitoramento</button>
 <button onclick="switchTab('analise')" id="tab-analise" class="tab-btn">Gráficos</button>
 <button onclick="switchTab('concluidos')" id="tab-concluidos" class="tab-btn">100% Cumpridos</button>
+<button id="tab-perfis" onclick="switchTab('perfis')" class="tab-btn hidden">PERFIS</button>
 </nav>
 
 <div class="flex gap-2 mb-3 items-center justify-between">
@@ -329,6 +332,11 @@ return
 userP=data
 userP.nivel_acesso=Number(userP.nivel_acesso||0)
 
+if(userP.nivel_acesso==1){
+let btn=document.getElementById('tab-perfis')
+if(btn)btn.classList.remove('hidden')
+}
+
 let {data:pList}=await client
 .from('perfis')
 .select('*')
@@ -514,11 +522,24 @@ document.getElementById('pdf-container').innerHTML=`<span class="text-xs text-em
   
 function renderConcluidos(){let lista=allData.filter(i=>Math.max(Number(i.jan||0),Number(i.fev||0),Number(i.mar||0),Number(i.abr||0),Number(i.mai||0),Number(i.jun||0),Number(i.jul||0),Number(i.ago||0),Number(i.set||0),Number(i.out||0),Number(i.nov||0),Number(i.dez||0))>=100);let mapa={};lista.forEach(i=>{let chave=modoGrupo==='item'?i.subitem.split('.')[0]:i.subitem;if(!mapa[chave])mapa[chave]=[];mapa[chave].push(i)});document.getElementById('concluidos-container').innerHTML=Object.keys(mapa).map(k=>`<div class="card-micro bg-status-green"><span class="percent-big">${mapa[k].length}</span><span class="text-[7px] text-white/50 ml-1">${modoGrupo==='item'?'ITEM':'SUB'} ${k}</span></div>`).join('');document.getElementById('concluidos-list').innerHTML=Object.keys(mapa).map(k=>`<div class="mb-3"><div class="text-emerald-400 font-bold mb-1">${modoGrupo==='item'?'ITEM':'SUBITEM'} ${k} (${mapa[k].length})</div>${mapa[k].map(i=>`<div class="ml-2 text-[10px]">• <b>${i.subitem}</b> - ${i.descricao}</div>`).join('')}</div>`).join('')}
 
-function switchTab(t){localStorage.setItem('activeTab',t);document.querySelectorAll('.tab-view').forEach(v=>v.classList.add('hidden'));document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('tab-active'));document.getElementById('view-'+t).classList.remove('hidden');document.getElementById('tab-'+t).classList.add('tab-active');if(t==='analise'){
+function switchTab(t){
+localStorage.setItem('activeTab',t)
+document.querySelectorAll('.tab-view').forEach(v=>v.classList.add('hidden'))
+document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('tab-active'))
+document.getElementById('view-'+t).classList.remove('hidden')
+document.getElementById('tab-'+t).classList.add('tab-active')
+if(t==='analise'){
 setTimeout(()=>{
 initPainelGrafico()
 },300)
-}}
+}
+if(t==='perfis'){
+setTimeout(()=>{
+carregarPerfis()
+},200)
+}
+}
+
 function fecharDrill(){filtroItemAtivo=null;renderResumo();document.getElementById('btn-voltar').style.display='none'}
 function logout(){localStorage.clear();location.reload()}
 </script>
