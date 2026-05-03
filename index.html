@@ -340,7 +340,16 @@ let podeEditar=userP.nivel_acesso==1||(userP.nivel_acesso!=1&&i.responsavel_id==
 return `<tr class="border-b border-white/5 tr-hover ${bg}">
 <td class="p-2 font-black text-blue-400">${i.subitem}</td>
 <td class="p-2 td-desc">${i.descricao||'-'}</td>
-<td class="text-xs">${i.responsavel||'-'}</td>
+<td class="text-xs">
+${userP.nivel_acesso==1?
+`<select onchange="salvarResponsavel('${i.id}',this.value)" class="bg-slate-800 text-xs p-1 rounded w-full">
+<option value="">-</option>
+${(window.perfis||[]).map(p=>`<option value="${p.id}" ${p.nome_completo===i.responsavel?'selected':''}>${p.nome_completo}</option>`).join('')}
+</select>`
+:
+(i.responsavel||'-')
+}
+</td>
 <td class="text-xs">${i.setor||'-'}</td>
 <td class="td-data">${dataFormatada}</td>
 <td class="td-mes opacity-40">${jan}%</td>
