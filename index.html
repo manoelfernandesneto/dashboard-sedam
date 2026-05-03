@@ -146,9 +146,108 @@ class="mb-2 text-xs bg-red-600 px-2 py-1 rounded">
 <div id="concluidos-list" class="space-y-2 text-[10px] text-slate-400"></div>
 </div>
 </div>
+
+<div id="view-perfis" class="tab-view hidden">
+<div class="flex gap-2 mb-3">
+<input id="p_nome" placeholder="Nome completo" class="bg-slate-800 p-2 rounded text-xs w-1/4">
+<input id="p_user" placeholder="Username" class="bg-slate-800 p-2 rounded text-xs w-1/5">
+<input id="p_cargo" placeholder="Cargo" class="bg-slate-800 p-2 rounded text-xs w-1/5">
+<input id="p_setor" placeholder="Setor" class="bg-slate-800 p-2 rounded text-xs w-1/5">
+<select id="p_nivel" class="bg-slate-800 p-2 rounded text-xs w-1/6">
+<option value="1">Nível 1</option>
+<option value="2">Nível 2</option>
+<option value="3">Nível 3</option>
+</select>
+<button onclick="salvarPerfil()" class="bg-emerald-600 px-3 py-2 rounded text-xs">SALVAR</button>
+</div>
+<div id="listaPerfis" class="text-xs"></div>
+</div>
+  
 </div>
 
 <script>
+async function carregarPerfis(){
+if(userP.nivel_acesso!=1)return
+let {data,error}=await client.from('perfis').select('*').order('nome_completo')
+if(error){console.error(error);return}
+window.perfis=data||[]
+let html=window.perfis.map(p=>`
+<div class="flex items-center justify-between border-b border-white/10 py-1">
+<div>
+<b>${p.nome_completo}</b> | ${p.cargo||'-'} | N${p.nivel_acesso||'-'} | ${p.setor||'-'}
+</div>
+<div class="flex gap-2">
+<button onclick="editarPerfil('${p.id}')" class="bg-blue-600 px-2 py-1 rounded">Editar</button>
+<button onclick="excluirPerfil('${p.id}')" class="bg-red-600 px-2 py-1 rounded">Excluir</button>
+</div>
+</div>
+`).join('')
+document.getElementById('listaPerfis').innerHTML=html
+}
+
+  let editPerfilId=null
+async function salvarPerfil(){
+if(userP.nivel_acesso!=1){alert("Sem permissão");return}
+let nome=document.getElementById('p_nome').value.trim()
+let user=document.getElementById('p_user').value.trim()
+let cargo=document.getElementById('p_cargo').value.trim()
+let setor=document.getElementById('p_setor').value.trim()
+let nivel=parseInt(document.getElementById('p_nivel').value||0)
+if(!nome||!user){alert("Preencha nome e username");return}
+let payload={
+nome_completo:nome,
+username:user,
+cargo:cargo,
+setor:setor,
+nivel_acesso:nivel
+}
+let res
+if(editPerfilId){
+res=await client.from('perfis').update(payload).eq('id',editPerfilId)
+}else{
+res=await client.from('perfis').insert(payload)
+}
+if(res.error){console.error(res.error);alert("Erro ao salvar");return}
+editPerfilId=null
+limparFormPerfil()
+await carregarPerfis()
+await atualizarResponsaveis()
+}
+
+  function editarPerfil(id){
+let p=(window.perfis||[]).find(x=>x.id==id)
+if(!p)return
+editPerfilId=id
+document.getElementById('p_nome').value=p.nome_completo||''
+document.getElementById('p_user').value=p.username||''
+document.getElementById('p_cargo').value=p.cargo||''
+document.getElementById('p_setor').value=p.setor||''
+document.getElementById('p_nivel').value=p.nivel_acesso||3
+}
+
+async function excluirPerfil(id){
+if(userP.nivel_acesso!=1)return
+if(!confirm("Excluir perfil?"))return
+let {error}=await client.from('perfis').delete().eq('id',id)
+if(error){console.error(error);alert("Erro ao excluir");return}
+await carregarPerfis()
+await atualizarResponsaveis()
+}
+
+  function limparFormPerfil(){
+document.getElementById('p_nome').value=''
+document.getElementById('p_user').value=''
+document.getElementById('p_cargo').value=''
+document.getElementById('p_setor').value=''
+document.getElementById('p_nivel').value='3'
+}
+
+  async function atualizarResponsaveis(){
+let {data}=await client.from('perfis').select('*')
+window.perfis=data||[]
+}
+  
+
 function parseSubitemParts(s){
 let [i,rest]=String(s||'0.0').split('.')
 let n1=parseInt(i)||0
@@ -214,7 +313,56 @@ let userP=null
 let allData=[]
 let myChart=null
 function login(){let u=document.getElementById('u').value.trim().toLowerCase();client.from('perfis').select('*').eq('username',u).single().then(({data,error})=>{if(error||!data){alert("Usuário não encontrado");return}localStorage.setItem("uid",data.id);init(data.id)})}
-async function init(uid){let {data,error}=await client.from('perfis').select('*').eq('id',uid).single();if(error||!data){alert("Erro perfil");return}userP=data;userP.nivel_acesso=Number(userP.nivel_acesso||0);let {data:pList}=await client.from('perfis').select('*').order('nome_completo');window.perfis=pList||[];document.getElementById('login-screen').classList.add('hidden');document.getElementById('dashboard').classList.remove('hidden');document.getElementById('dataInicio').value='2025-01-01';document.getElementById('dataFim').value='2028-01-01';filtroDataInicio='2025-01-01';filtroDataFim='2028-01-01';const lastTab=localStorage.getItem('activeTab')||'resumo';switchTab(lastTab);document.getElementById('user-info').innerText=data.nome_completo+" | "+(data.cargo||'-')+" (Nível "+data.nivel_acesso+")";if(data.nivel_acesso<=2){document.getElementById('pdf-container').innerHTML=`<button onclick="gerarRelatorioPDF()" class="btn-pdf">PDF A4</button>`}carregarDados()}
+
+async function init(uid){
+let {data,error}=await client
+.from('perfis')
+.select('*')
+.eq('id',uid)
+.single()
+
+if(error||!data){
+alert("Erro perfil")
+return
+}
+
+userP=data
+userP.nivel_acesso=Number(userP.nivel_acesso||0)
+
+let {data:pList}=await client
+.from('perfis')
+.select('*')
+.order('nome_completo')
+
+window.perfis=pList||[]
+
+document.getElementById('login-screen').classList.add('hidden')
+document.getElementById('dashboard').classList.remove('hidden')
+
+document.getElementById('dataInicio').value='2025-01-01'
+document.getElementById('dataFim').value='2028-01-01'
+
+filtroDataInicio='2025-01-01'
+filtroDataFim='2028-01-01'
+
+const lastTab=localStorage.getItem('activeTab')||'resumo'
+switchTab(lastTab)
+
+document.getElementById('user-info').innerText=
+data.nome_completo+" | "+(data.cargo||'-')+" (Nível "+data.nivel_acesso+")"
+
+if(data.nivel_acesso<=2){
+document.getElementById('pdf-container').innerHTML=
+`<button onclick="gerarRelatorioPDF()" class="btn-pdf">PDF A4</button>`
+}
+
+/* 🔥 PATCH 008 — CARREGAR PAINEL DE PERFIS */
+if(userP.nivel_acesso==1){
+carregarPerfis()
+}
+
+carregarDados()
+}
 
 async function carregarDados(){
 let query = client.from('deliberacoes').select('*')
