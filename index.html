@@ -257,34 +257,58 @@ document.getElementById('listaPerfis').innerHTML=html
 let editPerfilId=null
 async function salvarPerfil(){
 if(userP.nivel_acesso!=1)return
-let payload={
-nome_completo:document.getElementById('p_nome').value.trim(),
-username:document.getElementById('p_user').value.trim(),
-cargo:document.getElementById('p_cargo').value.trim(),
-setor:document.getElementById('p_setor').value.trim(),
-nivel_acesso:Number(document.getElementById('p_nivel').value||3)
-}
-if(!payload.nome_completo||!payload.username){
+
+let nome=document.getElementById('p_nome').value.trim()
+let user=document.getElementById('p_user').value.trim().toLowerCase()
+let cargo=document.getElementById('p_cargo').value.trim()
+let setor=document.getElementById('p_setor').value.trim()
+let nivel=Number(document.getElementById('p_nivel').value||3)
+
+if(!nome||!user){
 alert("Preencha nome e username")
 return
 }
+
+let payload={
+nome_completo:nome,
+username:user,
+cargo:cargo,
+setor:setor,
+nivel_acesso:nivel
+}
+
 let res
+
 if(editPerfilId){
 res=await client.from('perfis').update(payload).eq('id',editPerfilId)
 }else{
 res=await client.from('perfis').insert(payload)
 }
-if(res.error){console.error(res.error);alert("Erro ao salvar");return}
+
+if(res.error){
+console.error(res.error)
+alert("Erro ao salvar")
+return
+}
+
+/* 🔥 LIMPA ESTADO */
 editPerfilId=null
-limparFormPerfil()
+document.getElementById('p_nome').value=''
+document.getElementById('p_user').value=''
+document.getElementById('p_cargo').value=''
+document.getElementById('p_setor').value=''
+document.getElementById('p_nivel').value='3'
+
 await carregarPerfis()
-await atualizarResponsaveis()
+await atualizarResponsaveis?.()
+
+alert("Salvo com sucesso")
 }
 
 function editarPerfil(id){
-let p=window.perfis.find(x=>x.id==id)
+let p=window.perfis.find(x=>String(x.id)===String(id))
 if(!p)return
-editPerfilId=id
+editPerfilId=p.id
 document.getElementById('p_nome').value=p.nome_completo||''
 document.getElementById('p_user').value=p.username||''
 document.getElementById('p_cargo').value=p.cargo||''
@@ -426,10 +450,11 @@ switchTab(lastTab)
 document.getElementById('user-info').innerText=
 data.nome_completo+" | "+(data.cargo||'-')+" (Nível "+data.nivel_acesso+")"
 
-if(data.nivel_acesso<=2){
-document.getElementById('pdf-container').innerHTML=
-`<button onclick="gerarRelatorioPDF()" class="btn-pdf">PDF A4</button>`
-}
+if(data.nivel_acesso<=2)
+document.getElementById('pdf-container').innerHTML=`
+<button onclick="gerarRelatorioPDF()" class="btn-pdf">PDF A4</button>
+<button onclick="backupCompleto()" class="bg-purple-600 px-3 py-1 rounded ml-2">BACKUP</button>
+`
 
 /* 🔥 PATCH 008 — CARREGAR PAINEL DE PERFIS */
 if(userP.nivel_acesso==1){
@@ -684,29 +709,60 @@ selSub.innerHTML=lista.map(i=>`<option value="${i.subitem}">${i.subitem}</option
 renderChart()
 }
 
-function gerarRelatorioPDF(){
+async function gerarRelatorioPDF(){
 const {jsPDF}=window.jspdf
-let doc=new jsPDF('p','mm','a4')
-doc.setFontSize(12)
-doc.text("RELATÓRIO TAG SEDAM 2026",10,10)
-doc.setFontSize(8)
-doc.text("Painel Analítico - Evolução por Item/Subitem",10,15)
-let img=getGraficoBase64()
-if(img){
-doc.addImage(img,'PNG',10,20,190,80)
+
+let query=client.from('deliberacoes').select('*')
+
+/* 🔒 FILTRO POR USUÁRIO */
+if(userP.nivel_acesso!=1){
+query=query.eq('responsavel_id',userP.id)
 }
-let startY=110
-let rows=allData.map(i=>{
-let total=Math.max(Number(i.jan??0),Number(i.fev??0),Number(i.mar??0),Number(i.abr??0),Number(i.mai??0),Number(i.jun??0),Number(i.jul??0),Number(i.ago??0),Number(i.set??0),Number(i.out??0),Number(i.nov??0),Number(i.dez??0))
-return[i.subitem,(i.descricao||'-').substring(0,40),i.responsavel||'-',total+'%']
+
+let {data,error}=await query
+
+if(error||!data){
+alert("Erro ao gerar PDF")
+return
+}
+
+let doc=new jsPDF()
+doc.setFontSize(10)
+/* 🔥 TÍTULO PERSONALIZADO */
+doc.text(
+userP.nivel_acesso==1
+? "RELATÓRIO GERAL - TAG SEDAM"
+: "RELATÓRIO INDIVIDUAL - "+(userP.nome_completo||''),
+10,10
+)
+
+let rows=data.map(i=>{
+let total=Math.max(
+Number(i.jan||0),Number(i.fev||0),Number(i.mar||0),
+Number(i.abr||0),Number(i.mai||0),Number(i.jun||0),
+Number(i.jul||0),Number(i.ago||0),Number(i.set||0),
+Number(i.out||0),Number(i.nov||0),Number(i.dez||0)
+)
+return[
+i.subitem,
+(i.descricao||'').substring(0,40),
+i.responsavel||'-',
+total+'%'
+]
 })
+
 doc.autoTable({
-head:[['Item','Descrição','Responsável','%']],
+head:[['Subitem','Descrição','Responsável','%']],
 body:rows,
-startY:startY,
+startY:15,
 styles:{fontSize:6}
 })
-doc.save("relatorio_tag.pdf")
+
+doc.save(
+userP.nivel_acesso==1
+? "relatorio_geral.pdf"
+: "relatorio_"+(userP.username||'usuario')+".pdf"
+)
 }
 
 function mesFromData(data){
@@ -962,6 +1018,62 @@ lista=lista.sort((a,b)=>a.subitem.localeCompare(b.subitem,undefined,{numeric:tru
 sel.innerHTML=lista.map(i=>`<option value="${i.id}">${i.subitem} - ${truncarTexto(i.descricao||'-',60)}</option>`).join('')
 }
 }
+
+async function backupCompleto(){
+alert("Gerando backup completo...")
+let {data:delib}=await client.from('deliberacoes').select('*')
+let {data:perfis}=await client.from('perfis').select('*')
+gerarCSV(delib,"deliberacoes")
+gerarCSV(perfis,"perfis")
+gerarJSON({deliberacoes:delib,perfis:perfis})
+gerarPDFBackup(delib)
+alert("Backup concluído")
+}
+
+  function gerarCSV(dados,nome){
+if(!dados||!dados.length)return
+let cols=Object.keys(dados[0])
+let csv=cols.join(";")+"\n"
+dados.forEach(l=>{
+csv+=cols.map(c=>`"${(l[c]??'').toString().replace(/"/g,'""')}"`).join(";")+"\n"
+})
+let blob=new Blob([csv],{type:"text/csv"})
+let a=document.createElement("a")
+a.href=URL.createObjectURL(blob)
+a.download=nome+"_"+Date.now()+".csv"
+a.click()
+
+function gerarJSON(obj){
+let blob=new Blob([JSON.stringify(obj,null,2)],{type:"application/json"})
+let a=document.createElement("a")
+a.href=URL.createObjectURL(blob)
+a.download="backup_completo_"+Date.now()+".json"
+a.click()
+}
+
+function gerarPDFBackup(dados){
+const {jsPDF}=window.jspdf
+let doc=new jsPDF()
+doc.setFontSize(10)
+doc.text("BACKUP DELIBERAÇÕES",10,10)
+let rows=dados.map(i=>[
+i.subitem,
+(i.descricao||'').substring(0,40),
+i.responsavel||'-',
+Math.max(
+i.jan||0,i.fev||0,i.mar||0,i.abr||0,i.mai||0,
+i.jun||0,i.jul||0,i.ago||0,i.set||0,i.out||0,i.nov||0,i.dez||0
+)+'%'
+])
+doc.autoTable({
+head:[['Subitem','Descrição','Responsável','%']],
+body:rows,
+startY:15,
+styles:{fontSize:6}
+})
+doc.save("backup_deliberacoes.pdf")
+}
+    
 
 </script>
   
