@@ -232,26 +232,22 @@ let html=`
 </tr>
 </thead>
 <tbody>
-${window.perfis.map(p=>`
+${window.perfis.map(p=>{
+let isOculto=USUARIOS_OCULTOS.includes((p.username||'').toLowerCase())
+return `
 <tr class="border-b border-white/10 hover:bg-white/5">
 <td class="p-2">${p.nome_completo||'-'}</td>
-<td class="p-2">@${p.username||'-'}</td>
+<td class="p-2">${p.username||'-'}</td>
 <td class="p-2">${p.cargo||'-'}</td>
 <td class="p-2">${p.setor||'-'}</td>
 <td class="p-2">N${p.nivel_acesso||'-'}</td>
 <td class="p-2 text-right">
-let isOculto=USUARIOS_OCULTOS.includes((p.username||'').toLowerCase())
-
-<button ${isOculto?'disabled style="opacity:0.3;pointer-events:none"':''}
-onclick="editarPerfil('${p.id}')"
-class="bg-blue-600 px-2 py-1 rounded mr-1">Editar</button>
-
-<button ${isOculto?'disabled style="opacity:0.3;pointer-events:none"':''}
-onclick="excluirPerfil('${p.id}')"
-class="bg-red-600 px-2 py-1 rounded">Excluir</button>
+<button ${isOculto?'disabled style="opacity:0.3;pointer-events:none"':''} onclick="editarPerfil('${p.id}')" class="bg-blue-600 px-2 py-1 rounded mr-1">Editar</button>
+<button ${isOculto?'disabled style="opacity:0.3;pointer-events:none"':''} onclick="excluirPerfil('${p.id}')" class="bg-red-600 px-2 py-1 rounded">Excluir</button>
 </td>
 </tr>
-`).join('')}
+`
+}).join('')}
 </tbody>
 </table>
 `
