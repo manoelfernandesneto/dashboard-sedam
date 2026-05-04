@@ -37,6 +37,9 @@ select{position:relative;z-index:10;pointer-events:auto;}
 tr{position:relative;z-index:1;}
 select{cursor:pointer}
 #tab-perfis{background:#1e293b;color:#38bdf8;font-weight:600;}
+body.login-bg{background:url('portovelho.jpg') no-repeat center center fixed;background-size:cover;}
+body.login-bg::before{content:"";position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(2,6,23,0.75);z-index:0;}
+#login-screen{position:relative;z-index:1;}
 
   
 </style>
@@ -44,7 +47,7 @@ select{cursor:pointer}
 </head>
 <body class="p-2 md:p-4">
 <div id="login-screen" class="min-h-screen flex items-center justify-center">
-<div class="bg-slate-900 p-8 rounded-3xl border border-white/5 shadow-2xl w-full max-w-xs text-center">
+<div class="bg-slate-900/70 backdrop-blur-md p-8 rounded-3xl border border-white/10 shadow-2xl w-full max-w-xs text-center">
 <h1 class="text-xl font-black text-blue-400 mb-6 uppercase">TAG Sedam</h1>
 <input type="text" id="u" placeholder="Usuário" class="w-full p-3 mb-3 bg-slate-800 rounded-lg text-white text-sm">
 <input type="password" id="p" placeholder="Senha" class="w-full p-3 mb-4 bg-slate-800 rounded-lg text-white text-sm">
@@ -400,6 +403,7 @@ document.addEventListener("DOMContentLoaded",()=>{
 let uid=localStorage.getItem("uid")
 document.getElementById('dataInicio').value='2025-01-01'
 document.getElementById('dataFim').value='2028-01-01'
+document.body.classList.add("login-bg")
 filtroDataInicio='2025-01-01'
 filtroDataFim='2028-01-01'
 if(uid){
@@ -433,6 +437,7 @@ alert("Erro na conexão")
 }
   
 async function init(uid){
+document.body.classList.remove("login-bg")
 let {data,error}=await client
 .from('perfis')
 .select('*')
