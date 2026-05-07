@@ -84,14 +84,20 @@ color:#5f564d;
 white-space:pre-wrap;
 }
 .btn-pdf{
-background:#b08968;
-color:white;
-padding:6px 12px;
-border-radius:8px;
+background:linear-gradient(135deg,#b08968,#d2b48c);
+color:#000;
+padding:8px 14px;
+border-radius:14px;
 font-size:10px;
 font-weight:900;
 text-transform:uppercase;
-transition:0.3s;
+transition:0.25s;
+border:2px solid rgba(0,0,0,0.08);
+box-shadow:0 4px 12px rgba(0,0,0,0.12);
+}
+.btn-pdf:hover{
+transform:translateY(-1px) scale(1.02);
+filter:brightness(1.03);
 }
 .td-mes{
 font-size:12px;
@@ -674,30 +680,6 @@ pdfBox.innerHTML=''
 
 /* 📄 BOTÃO PDF */
 if(data.nivel_acesso<=2){
-let btnPdf=document.createElement('button')
-let btnResumo=document.createElement('button')
-btnResumo.innerText='PDF RESUMO'
-btnResumo.className='btn-pdf'
-btnResumo.onclick=gerarPDFResumo
-pdfBox.appendChild(btnResumo)
-
-let btnMonitor=document.createElement('button')
-btnMonitor.innerText='PDF MONITORAMENTO'
-btnMonitor.className='btn-pdf'
-btnMonitor.onclick=gerarPDFMonitoramento
-pdfBox.appendChild(btnMonitor)
-
-let btnGrafico=document.createElement('button')
-btnGrafico.innerText='PDF GRÁFICOS'
-btnGrafico.className='btn-pdf'
-btnGrafico.onclick=gerarPDFGraficos
-pdfBox.appendChild(btnGrafico)
-
-let btnCumpridos=document.createElement('button')
-btnCumpridos.innerText='PDF 100%'
-btnCumpridos.className='btn-pdf'
-btnCumpridos.onclick=gerarPDFCumpridos
-pdfBox.appendChild(btnCumpridos)
 }
 
 /* 💾 BOTÃO BACKUP (APENAS ADMIN) */
@@ -880,9 +862,69 @@ ${(window.perfis||[]).map(p=>`<option value="${p.id}" ${p.nome_completo===i.resp
 </tr>`
 }).join('')
 if(userP&&userP.nivel_acesso<=2){
-document.getElementById('pdf-container').innerHTML=`<button onclick="gerarRelatorioPDF()" class="btn-pdf">PDF A4</button><span class="text-xs text-emerald-400 font-black">${new Set(allData.map(x=>getItemKey(x))).size}</span><span class="text-[9px] text-slate-500"> ITENS</span><span class="text-xs text-emerald-400 font-black ml-2">${totalRegistros}</span><span class="text-[9px] text-slate-500"> SUBITENS</span>`
+
+document.getElementById('pdf-container').innerHTML=`
+
+<div class="flex gap-2 items-center flex-wrap">
+
+<button onclick="gerarPDFResumo()" class="btn-pdf">
+PDF RESUMO
+</button>
+
+<button onclick="gerarPDFMonitoramento()" class="btn-pdf">
+PDF MONITOR
+</button>
+
+<button onclick="gerarPDFGraficos()" class="btn-pdf">
+PDF GRÁFICOS
+</button>
+
+<button onclick="gerarPDFCumpridos()" class="btn-pdf">
+PDF 100%
+</button>
+
+<span class="text-xs text-emerald-400 font-black ml-2">
+${new Set(allData.map(x=>getItemKey(x))).size}
+</span>
+
+<span class="text-[9px] text-slate-500">
+ITENS
+</span>
+
+<span class="text-xs text-emerald-400 font-black ml-2">
+${totalRegistros}
+</span>
+
+<span class="text-[9px] text-slate-500">
+SUBITENS
+</span>
+
+</div>
+
+`
+
 }else{
-document.getElementById('pdf-container').innerHTML=`<span class="text-xs text-emerald-400 font-black">${new Set(allData.map(x=>getItemKey(x))).size}</span><span class="text-[9px] text-slate-500"> ITENS</span><span class="text-xs text-emerald-400 font-black ml-2">${totalRegistros}</span><span class="text-[9px] text-slate-500"> SUBITENS</span>`
+
+document.getElementById('pdf-container').innerHTML=`
+
+<span class="text-xs text-emerald-400 font-black">
+${new Set(allData.map(x=>getItemKey(x))).size}
+</span>
+
+<span class="text-[9px] text-slate-500">
+ITENS
+</span>
+
+<span class="text-xs text-emerald-400 font-black ml-2">
+${totalRegistros}
+</span>
+
+<span class="text-[9px] text-slate-500">
+SUBITENS
+</span>
+
+`
+
 }
 }
   
@@ -1389,7 +1431,11 @@ const {jsPDF}=window.jspdf
 
 let doc=new jsPDF('l','mm','a4')
 
-let lista=[...allData].sort(compareSubitem)
+let lista=[...allData]
+.sort(compareSubitem)
+.sort((a,b)=>{
+return parseFloat(a.subitem)-parseFloat(b.subitem)
+})
 
 doc.setFontSize(14)
 doc.text('MONITORAMENTO COMPLETO - TAG SEDAM 2026',10,12)
@@ -1456,7 +1502,22 @@ let doc=new jsPDF('p','mm','a4')
 
 doc.setFontSize(14)
 doc.text('ANÁLISE GRÁFICA - TAG SEDAM 2026',10,12)
+let canvas=document.getElementById('chartMaster')
 
+if(canvas){
+
+let img=canvas.toDataURL('image/png',1.0)
+
+doc.addImage(
+img,
+'PNG',
+10,
+20,
+190,
+80
+)
+
+}
 let meses=['JAN','FEV','MAR','ABR','MAI']
 
 let y=30
@@ -1502,7 +1563,7 @@ doc.setFontSize(10)
 doc.text(
 'O painel gráfico evidencia a evolução percentual das metas estratégicas monitoradas, permitindo análise temporal do desempenho institucional. O melhor desempenho consolidado ocorreu em '+melhorMes+', atingindo média geral de '+maior+'% de execução.',
 10,
-120,
+130,
 {maxWidth:185}
 )
 
