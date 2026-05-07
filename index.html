@@ -1494,12 +1494,91 @@ if(chartMaster)chartMaster.destroy()
 let tipo=document.getElementById('tipoGrafico').value
 let selItem=document.getElementById('filtroItem').value
 let selSub=document.getElementById('filtroSubitem').value
+window.graficoAtualInfo={
+tipo:tipo,
+item:selItem,
+subitem:selSub
+}
 let meses=['JAN','FEV','MAR','ABR','MAI','JUN','JUL','AGO','SET','OUT','NOV','DEZ']
 let mesAtual=getMesAtualIndex()
 let labels=meses.slice(0,mesAtual+1)
 let cores=['#22c55e','#3b82f6','#f59e0b','#facc15','#a855f7','#06b6d4','#84cc16','#f97316','#eab308','#14b8a6','#6366f1','#ec4899']
 let datasets=[]
 if(tipo==='item'){
+
+if(selSub==='todos'){
+
+let itens=[...new Set(allData.map(i=>(i.item||'').toString()))]
+
+let datasets=itens.map((it,idx)=>{
+
+let lista=allData.filter(x=>(x.item||'').toString()===it)
+
+let arr=[]
+
+for(let m=0;m<=mesAtual;m++){
+
+let mesKey=['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'][m]
+
+let soma=lista.reduce((a,c)=>a+Number(c[mesKey]??0),0)
+
+arr.push(Math.round(soma/(lista.length||1)))
+
+}
+
+let cores=[
+'#2563eb',
+'#16a34a',
+'#dc2626',
+'#ca8a04',
+'#9333ea',
+'#0891b2',
+'#ea580c',
+'#0f766e',
+'#4f46e5',
+'#be123c'
+]
+
+return{
+label:'ITEM '+it,
+data:arr,
+borderWidth:2,
+borderColor:cores[idx%cores.length],
+backgroundColor:cores[idx%cores.length],
+tension:0.3
+}
+
+})
+
+chartMaster=new Chart(ctx,{
+type:'line',
+data:{
+labels,
+datasets
+},
+options:{
+responsive:true,
+plugins:{
+legend:{
+display:true,
+labels:{
+color:'#000'
+}
+}
+},
+scales:{
+y:{
+beginAtZero:true,
+max:100
+}
+}
+}
+})
+
+return
+
+}
+
 if(!selSub||selSub==='todos')return
 let lista=allData.filter(i=>(i.numitem||'').toString()===selSub)
 if(!lista.length)return
@@ -1680,38 +1759,62 @@ img,
 90
 )
 
-let meses=['jan','fev','mar','abr','mai']
-let nomes=['JAN','FEV','MAR','ABR','MAI']
+let info=window.graficoAtualInfo||{}
 
-let melhorMes=''
-let maior=-1
+let textoIA=''
 
-meses.forEach((m,idx)=>{
+if(info.tipo==='item'){
+
+if(info.subitem==='todos'){
+
+textoIA=
+'O gráfico apresentado demonstra a evolução consolidada de TODOS os itens estratégicos monitorados no TAG SEDAM 2026, permitindo análise comparativa entre os grupos de ações institucionais ao longo do período avaliado. A visualização evidencia diferenças de desempenho, ritmo de execução e maturidade operacional entre os itens monitorados.'
+
+}else{
+
+let itemAtual=info.subitem
+
+let lista=allData.filter(i=>(i.item||'').toString()===itemAtual)
 
 let media=Math.round(
-allData.reduce((acc,c)=>acc+Number(c[m]||0),0)/(allData.length||1)
+lista.reduce((acc,c)=>{
+return acc+getTotal(c)
+},0)/(lista.length||1)
 )
 
-if(media>maior){
-maior=media
-melhorMes=nomes[idx]
+textoIA=
+'O gráfico demonstra especificamente a evolução do ITEM '+itemAtual+' do TAG SEDAM 2026, apresentando comportamento operacional das ações vinculadas a este grupo estratégico. A média consolidada atual do item encontra-se em '+media+'%, permitindo avaliação objetiva da execução, progresso mensal e efetividade das entregas relacionadas.'
+
 }
 
-})
+}else{
+
+let subAtual=info.subitem
+
+let reg=allData.find(x=>String(x.id)===String(subAtual))
+
+if(reg){
+
+let total=getTotal(reg)
+
+textoIA=
+'O gráfico apresentado refere-se exclusivamente ao SUBITEM '+reg.subitem+', vinculado ao ITEM '+reg.item+'. O comportamento gráfico demonstra a evolução temporal específica desta ação estratégica, atualmente com execução consolidada de '+total+'%, permitindo acompanhamento individualizado da entrega institucional monitorada.'
+
+}else{
+
+textoIA=
+'O gráfico apresenta análise evolutiva consolidada das metas monitoradas.'
+
+}
+
+}
 
 doc.setFontSize(10)
 
 doc.text(
-'O painel gráfico apresenta análise evolutiva consolidada das metas estratégicas vinculadas ao TAG SEDAM 2026. Os indicadores demonstram comportamento progressivo da execução institucional, permitindo visualização comparativa dos percentuais atingidos ao longo dos meses monitorados.',
+textoIA,
 10,
 125,
-{maxWidth:190}
-)
-
-doc.text(
-'O melhor desempenho médio consolidado ocorreu em '+melhorMes+', alcançando '+maior+'% de execução global.',
-10,
-145,
 {maxWidth:190}
 )
 
