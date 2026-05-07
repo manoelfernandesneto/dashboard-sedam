@@ -299,6 +299,7 @@ class="mb-2 text-xs bg-red-600 px-2 py-1 rounded">
 <tr class="text-[8px] text-slate-500 uppercase border-b border-white/10">
 <th>Sub-Item</th>
 <th>Descrição</th>
+<th>Produtos</th>
 <th>Responsável(is)</th>
 <th>Setor</th>
 <th>Data Início</th>
@@ -868,6 +869,7 @@ let podeEditar=userP.nivel_acesso==1||(userP.nivel_acesso!=1&&i.responsavel_id==
 return `<tr class="border-b border-white/5 tr-hover ${bg}">
 <td class="p-2 font-black text-blue-400">${i.subitem}</td>
 <td class="p-2 td-desc">${i.descricao||'-'}</td>
+<td class="p-2 td-desc text-[10px] text-slate-700">${i.produto||'-'}</td>
 <td class="text-xs">
 ${userP.nivel_acesso===1?
 `<select onchange="salvarResponsavel('${i.id}',this.value)" class="bg-slate-800 text-xs p-1 rounded w-full">
@@ -1007,7 +1009,7 @@ background:#dcfce7;
 
 <div
 style="
-font-size:34px;
+font-size:42px;
 font-weight:900;
 line-height:1;
 color:#166534;
@@ -1024,7 +1026,7 @@ margin-top:6px;
 color:#000;
 "
 >
-TOTAL 100%
+TOTAL DE CARDS 100%
 </div>
 
 </div>
@@ -1302,7 +1304,7 @@ Number(i.dez||0)
 return[
 i.subitem||'-',
 i.descricao||'-',
-i.responsavel||'-',
+i.produto||'-',
 total+'%'
 ]
 
@@ -1310,7 +1312,7 @@ total+'%'
 
 doc.autoTable({
 startY:24,
-head:[['Subitem','Descrição Completa','Responsável','Total']],
+head:[['Subitem','Descrição Completa','Produtos','Responsável','Total']],
 body:rows,
 theme:'grid',
 styles:{
@@ -1557,7 +1559,8 @@ sel.innerHTML=lista.map(i=>`<option value="${i.num}">ITEM ${i.num} - ${truncarTe
 }else{
 let lista=selItem==='todos'?allData:allData.filter(i=>(i.numitem||'').toString()===selItem)
 lista=lista.sort((a,b)=>(a.subitem||'').localeCompare(b.subitem||'',undefined,{numeric:true}))
-sel.innerHTML=lista.map(i=>`<option value="${i.id}">${i.subitem} - ${truncarTexto(i.descricao||'-',60)}</option>`).join('')
+sel.innerHTML=lista.map(i=>`<option value="${i.id}">${i.subitem} - ${truncarTexto((i.descricao||'-')+
+(i.produto?'\n\nPRODUTOS:\n'+i.produto:''),60)}</option>`).join('')
 }
 }
 function renderGraficoMaster(){
@@ -1762,314 +1765,255 @@ callback:(v)=>v+'%'
 
 }
 function mediaMes(lista,mes){return Math.round(lista.reduce((a,c)=>a+Number(c[mes]??0),0)/lista.length)}
+
 async function backupCompleto(){
 let {data:delib}=await client.from('deliberacoes').select('*')
 let {data:perfis}=await client.from('perfis').select('*')
-gerarCSV(delib,"deliberacoes");gerarCSV(perfis,"perfis")
+gerarCSV(delib,"deliberacoes")
+gerarCSV(perfis,"perfis")
 gerarJSON({deliberacoes:delib,perfis:perfis})
 gerarPDFBackup(delib)
 }
-function gerarCSV(d,n){if(!d||!d.length)return;let c=Object.keys(d[0]);let csv=c.join(";")+"\n";d.forEach(l=>{csv+=c.map(k=>`"${(l[k]??'').toString().replace(/"/g,'""')}"`).join(";")+"\n"});let b=new Blob([csv],{type:"text/csv"});let a=document.createElement("a");a.href=URL.createObjectURL(b);a.download=n+"_"+Date.now()+".csv";a.click()}
-function gerarJSON(o){let b=new Blob([JSON.stringify(o,null,2)],{type:"application/json"});let a=document.createElement("a");a.href=URL.createObjectURL(b);a.download="backup_"+Date.now()+".json";a.click()}
-
+function gerarCSV(d,n){
+if(!d||!d.length)return
+let c=Object.keys(d[0])
+let csv=c.join(";")+"\n"
+d.forEach(l=>{
+csv+=c.map(k=>`"${(l[k]??'').toString().replace(/"/g,'""')}"`).join(";")+"\n"
+})
+let b=new Blob([csv],{type:"text/csv"})
+let a=document.createElement("a")
+a.href=URL.createObjectURL(b)
+a.download=n+"_"+Date.now()+".csv"
+a.click()
+}
+function gerarJSON(o){
+let b=new Blob([JSON.stringify(o,null,2)],{type:"application/json"})
+let a=document.createElement("a")
+a.href=URL.createObjectURL(b)
+a.download="backup_"+Date.now()+".json"
+a.click()
+}
 const NOTA_TECNICA_PDF=`As informações constantes neste painel, gráficos, indicadores e relatórios possuem caráter preliminar e meramente informativo, sendo baseadas nos dados declarados e apresentados até o presente momento pelos jurisdicionados envolvidos. Ressalta-se que tais informações ainda não passaram pela análise técnica de consistência documental, verificação de evidências, validação metodológica e conferência conclusiva pela equipe técnica de auditores designados. A validação oficial ocorrerá posteriormente, por meio da análise técnica dos relatórios de execução, documentos comprobatórios e demais evidências encaminhadas pelos órgãos e entidades responsáveis, culminando na emissão do respectivo Relatório de Monitoramento e demais manifestações técnicas oficiais do Tribunal de Contas.`
-  
-function gerarPDFBackup(d){const {jsPDF}=window.jspdf;let doc=new jsPDF();doc.setFontSize(10);doc.text("BACKUP DELIBERAÇÕES",10,10);let rows=d.map(i=>[i.subitem,(i.descricao||'').substring(0,40),i.responsavel||'-',Math.max(i.jan||0,i.fev||0,i.mar||0,i.abr||0,i.mai||0,i.jun||0,i.jul||0,i.ago||0,i.set||0,i.out||0,i.nov||0,i.dez||0)+'%']);doc.autoTable({head:[['Subitem','Descrição','Responsável','%']],body:rows,startY:15,styles:{fontSize:6}});doc.save("backup_deliberacoes.pdf")}
-async function gerarPDFResumo(){
-
+function gerarPDFBackup(d){
 const {jsPDF}=window.jspdf
-
+let doc=new jsPDF()
+doc.setFontSize(10)
+doc.text("BACKUP DELIBERAÇÕES",10,10)
+let rows=d.map(i=>[
+i.subitem,
+(i.descricao||'').substring(0,40),
+i.responsavel||'-',
+Math.max(i.jan||0,i.fev||0,i.mar||0,i.abr||0,i.mai||0,i.jun||0,i.jul||0,i.ago||0,i.set||0,i.out||0,i.nov||0,i.dez||0)+'%'
+])
+doc.autoTable({
+head:[['Subitem','Descrição','Responsável','%']],
+body:rows,
+startY:15,
+styles:{fontSize:6},
+didDrawPage:function(){
+doc.setFontSize(6)
+doc.text(NOTA_TECNICA_PDF,10,285,{maxWidth:190})
+}
+})
+doc.save("backup_deliberacoes.pdf")
+}
+async function gerarPDFResumo(){
+const {jsPDF}=window.jspdf
 let doc=new jsPDF('p','mm','a4')
-
 let lista=[...allData].sort(compareSubitem)
-
 doc.setFontSize(14)
 doc.text('RESUMO EXECUTIVO - TAG SEDAM 2026',10,12)
-
 let rows=lista.map(i=>{
-
 let total=getTotal(i)
-
 return[
 i.subitem||'-',
 i.descricao||'-',
+i.produto||'-',
 total+'%'
 ]
-
 })
-
 doc.autoTable({
 startY:20,
-head:[['Subitem','Descrição','%']],
+head:[['Subitem','Descrição Completa','Produto Estratégico','%']],
 body:rows,
 styles:{
 fontSize:7,
 overflow:'linebreak'
 },
 columnStyles:{
-0:{cellWidth:22},
-1:{cellWidth:145},
-2:{cellWidth:20,halign:'center'}
+0:{cellWidth:18},
+1:{cellWidth:92},
+2:{cellWidth:62},
+3:{cellWidth:18}
 },
 didDrawPage:function(){
 let p=doc.internal.getCurrentPageInfo().pageNumber
 let t=doc.internal.getNumberOfPages()
-doc.setFontSize(7)
+doc.setFontSize(6)
+doc.text(NOTA_TECNICA_PDF,10,282,{maxWidth:175})
 doc.text('Página '+p+' de '+t,195,290,{align:'right'})
 }
 })
-
 doc.save('pdf_resumo_tag_sedam.pdf')
-
 }
-
 async function gerarPDFMonitoramento(){
-
 const {jsPDF}=window.jspdf
-
 let doc=new jsPDF('l','mm','a4')
-
-let lista=[...allData]
-.sort(compareSubitem)
-.sort((a,b)=>{
-return parseFloat(a.subitem)-parseFloat(b.subitem)
-})
-
+let lista=[...allData].sort(compareSubitem)
 doc.setFontSize(14)
 doc.text('MONITORAMENTO COMPLETO - TAG SEDAM 2026',10,12)
-
-let rows=lista.map(i=>[
+let rows=lista.map(i=>{
+let total=getTotal(i)
+return[
 i.subitem||'-',
 i.descricao||'-',
 i.produto||'-',
 i.responsavel||'-',
-i.jan||0,
-i.fev||0,
-i.mar||0,
-i.abr||0,
-i.mai||0,
-getTotal(i)+'%'
-])
-
+(i.jan||0)+'%',
+(i.fev||0)+'%',
+(i.mar||0)+'%',
+(i.abr||0)+'%',
+(i.mai||0)+'%',
+total+'%'
+]
+})
 doc.autoTable({
 startY:20,
-head:[['Sub','Descrição','Produtos','Responsável','JAN','FEV','MAR','ABR','MAI','TOTAL']],
+head:[['Sub','Descrição Completa','Produtos','Responsável','JAN','FEV','MAR','ABR','MAI','TOTAL']],
 body:rows,
+theme:'grid',
 styles:{
 fontSize:6,
-overflow:'linebreak'
+overflow:'linebreak',
+cellPadding:2,
+valign:'middle'
+},
+headStyles:{
+fillColor:[180,150,110],
+textColor:[0,0,0],
+fontStyle:'bold'
 },
 columnStyles:{
-0:{cellWidth:15},
-1:{cellWidth:78},
-2:{cellWidth:70},
-3:{cellWidth:42},
+0:{cellWidth:14},
+1:{cellWidth:82},
+2:{cellWidth:72},
+3:{cellWidth:40},
 4:{cellWidth:10},
 5:{cellWidth:10},
 6:{cellWidth:10},
 7:{cellWidth:10},
 8:{cellWidth:10},
-9:{cellWidth:15}
+9:{cellWidth:16}
+},
+margin:{
+left:5,
+right:5,
+bottom:18
+},
 didDrawPage:function(){
 let p=doc.internal.getCurrentPageInfo().pageNumber
 let t=doc.internal.getNumberOfPages()
+doc.setFontSize(6)
+doc.text(NOTA_TECNICA_PDF,10,192,{maxWidth:250})
 doc.setFontSize(7)
 doc.text('Página '+p+' de '+t,285,200,{align:'right'})
 }
 })
-
 let finalY=doc.lastAutoTable.finalY+10
-
 doc.setFontSize(10)
-
-doc.text(
-'Resumo Inteligente: O painel de monitoramento demonstra acompanhamento detalhado da evolução mensal dos subitens estratégicos do TAG SEDAM 2026, permitindo rastreabilidade operacional, verificação de desempenho institucional e consolidação das entregas executadas pelas unidades responsáveis.',
-10,
-finalY,
-{maxWidth:260}
-)
-
+let total100=lista.filter(i=>getTotal(i)>=100).length
+let media=Math.round(lista.reduce((acc,c)=>acc+getTotal(c),0)/(lista.length||1))
+doc.text('O monitoramento consolidado demonstra '+lista.length+' subitens estratégicos acompanhados, sendo '+total100+' integralmente cumpridos (100%). A média geral consolidada do painel corresponde a '+media+'% de execução. A análise evidencia o comportamento evolutivo das entregas institucionais, permitindo rastreabilidade operacional, acompanhamento gerencial, fiscalização técnica e validação futura das evidências vinculadas aos produtos estratégicos declarados pelos jurisdicionados.',10,finalY,{maxWidth:260})
 doc.save('pdf_monitoramento_tag_sedam.pdf')
-
 }
-
 async function gerarPDFGraficos(){
-
 const {jsPDF}=window.jspdf
-
 let doc=new jsPDF('p','mm','a4')
-
 doc.setFontSize(14)
-
-doc.text(
-'ANÁLISE GRÁFICA - TAG SEDAM 2026',
-10,
-12
-)
-
+doc.text('ANÁLISE GRÁFICA - TAG SEDAM 2026',10,12)
 let canvas=document.getElementById('chartMaster')
-
 if(!canvas){
 alert('Gráfico não encontrado')
 return
 }
-
 let img=canvas.toDataURL('image/png',1.0)
-
-doc.addImage(
-img,
-'PNG',
-10,
-20,
-190,
-90
-)
-
+doc.addImage(img,'PNG',10,20,190,90)
 let info=window.graficoAtualInfo||{}
-
 let textoIA=''
-
-if(info.tipo==='item'){
-
 if(info.tipo==='todos'){
-
-let abr=info.abril||0
-let mai=info.maio||0
-let dif=mai-abr
-
-textoIA=
-'O gráfico apresentado demonstra a evolução consolidada do conjunto TOTAL de itens e subitens monitorados no TAG SEDAM 2026. Observa-se evolução média global de '+abr+'% no mês de abril para '+mai+'% no mês de maio, representando crescimento consolidado de '+dif+' pontos percentuais. O comportamento gráfico evidencia avanço institucional das ações estratégicas monitoradas, permitindo análise integrada da efetividade operacional e da maturidade das entregas executadas pelas unidades responsáveis.'
-
-}else{
-
-let itemAtual=info.subitem
-
-let lista=allData.filter(i=>(i.item||'').toString()===itemAtual)
-
-let abril=Math.round(
-lista.reduce((acc,c)=>{
-return acc+Number(c.abr||0)
-},0)/(lista.length||1)
-)
-
-let maio=Math.round(
-lista.reduce((acc,c)=>{
-return acc+Number(c.mai||0)
-},0)/(lista.length||1)
-)
-
-let evolucao=maio-abril
-
-textoIA=
-'O gráfico demonstra especificamente a evolução do ITEM '+itemAtual+' do TAG SEDAM 2026. Observa-se evolução consolidada de '+abril+'% no mês de abril para '+maio+'% no mês de maio, representando variação positiva de '+evolucao+' pontos percentuais. O comportamento evidencia avanço operacional das ações vinculadas a este grupo estratégico, permitindo avaliação objetiva da execução, progresso mensal e efetividade das entregas relacionadas.'
-}
-
-}else{
-
-let subAtual=info.subitem
-
-let reg=allData.find(x=>String(x.id)===String(subAtual))
-
+let jan=info.jan||0
+let fev=info.fev||0
+let mar=info.mar||0
+let abr=info.abr||0
+let mai=info.mai||0
+textoIA='O gráfico apresentado demonstra a evolução consolidada do TOTAL GERAL dos itens e subitens monitorados no TAG SEDAM 2026. Os percentuais apurados indicam: JAN '+jan+'%, FEV '+fev+'%, MAR '+mar+'%, ABR '+abr+'% e MAI '+mai+'%. Observa-se comportamento evolutivo institucional das ações estratégicas monitoradas, permitindo análise consolidada da maturidade operacional, efetividade das entregas e desempenho progressivo das unidades responsáveis.'
+}else if(info.tipo==='item'){
+let itemAtual=info.item||'-'
+let lista=allData.filter(i=>(i.item||i.numitem||'').toString()===itemAtual.toString())
+let abr=Math.round(lista.reduce((acc,c)=>acc+Number(c.abr||0),0)/(lista.length||1))
+let mai=Math.round(lista.reduce((acc,c)=>acc+Number(c.mai||0),0)/(lista.length||1))
+let evolucao=mai-abr
+textoIA='O gráfico apresentado refere-se especificamente ao ITEM '+itemAtual+' do TAG SEDAM 2026. A análise consolidada demonstra média percentual de '+abr+'% no mês de abril e '+mai+'% no mês de maio, representando evolução de '+evolucao+' pontos percentuais. Os resultados evidenciam o comportamento operacional dos subitens vinculados ao referido item estratégico, permitindo avaliação comparativa da execução das ações, produtos entregues e desempenho institucional associado.'
+}else if(info.tipo==='subitem'){
+let reg=allData.find(x=>String(x.id)===String(info.subitem))
 if(reg){
-
-let total=getTotal(reg)
-
-textoIA=
-'O gráfico apresentado refere-se exclusivamente ao SUBITEM '+reg.subitem+', vinculado ao ITEM '+reg.item+'. O comportamento gráfico demonstra a evolução temporal específica desta ação estratégica, atualmente com execução consolidada de '+total+'%, permitindo acompanhamento individualizado da entrega institucional monitorada.'
-
+textoIA='O gráfico apresentado refere-se ao SUBITEM '+reg.subitem+', vinculado ao ITEM '+(reg.item||'-')+'. O comportamento gráfico demonstra a evolução temporal da execução da ação estratégica monitorada, atualmente com percentual consolidado de '+getTotal(reg)+'%. A análise permite rastreamento individualizado da entrega institucional, produtos associados, desempenho mensal e evolução progressiva da execução vinculada à unidade responsável.'
 }else{
-
-textoIA=
-'O gráfico apresenta análise evolutiva consolidada das metas monitoradas.'
-
+textoIA='O gráfico apresenta análise evolutiva das metas monitoradas.'
 }
-
 }
-
 doc.setFontSize(10)
-
-doc.text(
-textoIA,
-10,
-125,
-{maxWidth:190}
-)
-
+doc.text(textoIA,10,125,{maxWidth:190})
 let totalPages=doc.internal.getNumberOfPages()
-
 for(let i=1;i<=totalPages;i++){
-
 doc.setPage(i)
-
-doc.setFontSize(7)
-
-doc.text(
-'Página '+i+' de '+totalPages,
-195,
-290,
-{align:'right'}
-)
-
+doc.setFontSize(6)
+doc.text(NOTA_TECNICA_PDF,10,282,{maxWidth:190})
+doc.text('Página '+i+' de '+totalPages,195,290,{align:'right'})
 }
-
 doc.save('pdf_graficos_tag_sedam.pdf')
-
 }
-
 async function gerarPDFCumpridos(){
-
 const {jsPDF}=window.jspdf
-
 let doc=new jsPDF('p','mm','a4')
-
-let lista=allData
-.filter(i=>getTotal(i)>=100)
-.sort(compareSubitem)
-
+let lista=allData.filter(i=>getTotal(i)>=100).sort(compareSubitem)
 doc.setFontSize(14)
-
 doc.text('SUBITENS 100% CUMPRIDOS - TAG SEDAM 2026',10,12)
-
+doc.setFontSize(10)
+doc.text('TOTAL DE SUBITENS COM 100% DE EXECUÇÃO: '+lista.length,10,18)
 let rows=lista.map(i=>[
 i.subitem||'-',
 i.descricao||'-',
+i.produto||'-',
 i.responsavel||'-'
 ])
-
 doc.autoTable({
 startY:20,
-head:[['Subitem','Descrição','Responsável']],
+head:[['Subitem','Descrição Completa','Produto','Responsável']],
 body:rows,
 styles:{
 fontSize:7,
 overflow:'linebreak'
 },
 columnStyles:{
-0:{cellWidth:22},
-1:{cellWidth:120},
-2:{cellWidth:45}
+0:{cellWidth:18},
+1:{cellWidth:92},
+2:{cellWidth:60},
+3:{cellWidth:30}
 },
 didDrawPage:function(){
 let p=doc.internal.getCurrentPageInfo().pageNumber
 let t=doc.internal.getNumberOfPages()
-doc.setFontSize(7)
+doc.setFontSize(6)
+doc.text(NOTA_TECNICA_PDF,10,282,{maxWidth:190})
 doc.text('Página '+p+' de '+t,195,290,{align:'right'})
 }
 })
-
 let finalY=doc.lastAutoTable.finalY+10
-
 doc.setFontSize(10)
-
-doc.text(
-'O painel de subitens concluídos evidencia as ações estratégicas integralmente executadas, refletindo maturidade operacional, capacidade de entrega institucional e aderência às metas pactuadas no TAG SEDAM 2026.',
-10,
-finalY,
-{maxWidth:185}
-)
-
+doc.text('O painel de subitens concluídos evidencia as ações estratégicas integralmente executadas, refletindo maturidade operacional, capacidade de entrega institucional e aderência às metas pactuadas no TAG SEDAM 2026.',10,finalY,{maxWidth:185})
 doc.save('pdf_100_cumpridos_tag_sedam.pdf')
-
 }
 
 </script>
