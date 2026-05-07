@@ -1466,17 +1466,31 @@ if(!mapa[n])mapa[n]={num:n,descricao:i.descricaoitem||'-'}
 })
 let lista=Object.values(mapa).sort((a,b)=>a.num.localeCompare(b.num,undefined,{numeric:true}))
 
-let abrTotal=Math.round(
-allData.reduce((acc,c)=>acc+Number(c.abr||0),0)/(allData.length||1)
+function mediaMesGlobal(mes){
+
+let validos=allData.filter(x=>
+Number(x[mes]||0)>0
 )
 
-let maiTotal=Math.round(
-allData.reduce((acc,c)=>acc+Number(c.mai||0),0)/(allData.length||1)
+if(!validos.length)return 0
+
+return Math.round(
+validos.reduce((acc,c)=>{
+return acc+Number(c[mes]||0)
+},0)/validos.length
 )
+
+}
+
+let janTotal=mediaMesGlobal('jan')
+let fevTotal=mediaMesGlobal('fev')
+let marTotal=mediaMesGlobal('mar')
+let abrTotal=mediaMesGlobal('abr')
+let maiTotal=mediaMesGlobal('mai')
 
 sel.innerHTML=
 `<option value="todos">
-TOTAL DE ITENS/SUBITENS (${abrTotal}% → ${maiTotal}%)
+TOTAL GERAL (${janTotal}% • ${fevTotal}% • ${marTotal}% • ${abrTotal}% • ${maiTotal}%)
 </option>`+
 
 lista.map(i=>
@@ -1507,78 +1521,174 @@ sel.innerHTML=lista.map(i=>`<option value="${i.id}">${i.subitem} - ${truncarText
 }
 }
 function renderGraficoMaster(){
-let el=document.getElementById('chartMaster');if(!el)return
-let ctx=el.getContext('2d');if(!ctx)return
+
+let el=document.getElementById('chartMaster')
+if(!el)return
+
+let ctx=el.getContext('2d')
+if(!ctx)return
+
 if(chartMaster)chartMaster.destroy()
+
 let tipo=document.getElementById('tipoGrafico').value
 let selItem=document.getElementById('filtroItem').value
 let selSub=document.getElementById('filtroSubitem').value
+
 window.graficoAtualInfo={
 tipo:tipo,
 item:selItem,
 subitem:selSub
 }
+
 let meses=['JAN','FEV','MAR','ABR','MAI','JUN','JUL','AGO','SET','OUT','NOV','DEZ']
+let mesesKey=['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez']
+
 let mesAtual=getMesAtualIndex()
+
 let labels=meses.slice(0,mesAtual+1)
+
 let cores=['#22c55e','#3b82f6','#f59e0b','#facc15','#a855f7','#06b6d4','#84cc16','#f97316','#eab308','#14b8a6','#6366f1','#ec4899']
+
 let datasets=[]
+
+function mediaMes(lista,mes){
+
+let validos=lista.filter(x=>
+Number(x[mes]||0)>0
+)
+
+if(!validos.length)return 0
+
+return Math.round(
+validos.reduce((acc,c)=>{
+return acc+Number(c[mes]||0)
+},0)/validos.length
+)
+
+}
+
 if(tipo==='item'){
 
 if(selSub==='todos'){
+
 window.graficoAtualInfo={
 tipo:'todos',
-abril:Math.round(
-allData.reduce((acc,c)=>acc+Number(c.abr||0),0)/(allData.length||1)
-),
-maio:Math.round(
-allData.reduce((acc,c)=>acc+Number(c.mai||0),0)/(allData.length||1)
-)
+jan:mediaMes(allData,'jan'),
+fev:mediaMes(allData,'fev'),
+mar:mediaMes(allData,'mar'),
+abr:mediaMes(allData,'abr'),
+mai:mediaMes(allData,'mai')
 }
-let itens=[...new Set(allData.map(i=>(i.item||'').toString()))]
-
-let datasets=itens.map((it,idx)=>{
-
-let lista=allData.filter(x=>(x.item||'').toString()===it)
 
 let arr=[]
 
 for(let m=0;m<=mesAtual;m++){
 
-let mesKey=['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'][m]
+let mesKey=mesesKey[m]
 
-let soma=lista.reduce((a,c)=>a+Number(c[mesKey]??0),0)
-
-arr.push(Math.round(soma/(lista.length||1)))
+arr.push(
+mediaMes(allData,mesKey)
+)
 
 }
 
-let cores=[
-'#2563eb',
-'#16a34a',
-'#dc2626',
-'#ca8a04',
-'#9333ea',
-'#0891b2',
-'#ea580c',
-'#0f766e',
-'#4f46e5',
-'#be123c'
+datasets=[{
+label:'TOTAL GERAL',
+data:arr,
+backgroundColor:cores.slice(0,mesAtual+1),
+borderRadius:6
+}]
+
+}else{
+
+if(!selSub)return
+
+let lista=allData.filter(i=>
+(i.numitem||i.item||'').toString()===selSub
+)
+
+if(!lista.length)return
+
+let arr=[]
+
+for(let m=0;m<=mesAtual;m++){
+
+let mesKey=mesesKey[m]
+
+arr.push(
+mediaMes(lista,mesKey)
+)
+
+}
+
+window.graficoAtualInfo={
+tipo:'item',
+item:selSub,
+jan:arr[0]||0,
+fev:arr[1]||0,
+mar:arr[2]||0,
+abr:arr[3]||0,
+mai:arr[4]||0
+}
+
+datasets=[{
+label:'ITEM '+selSub,
+data:arr,
+backgroundColor:cores.slice(0,mesAtual+1),
+borderRadius:6
+}]
+
+}
+
+}
+
+if(tipo==='subitem'){
+
+let i=allData.find(x=>
+String(x.id)===String(selSub)
+)
+
+if(!i)return
+
+let valores=[
+Number(i.jan??0),
+Number(i.fev??0),
+Number(i.mar??0),
+Number(i.abr??0),
+Number(i.mai??0),
+Number(i.jun??0),
+Number(i.jul??0),
+Number(i.ago??0),
+Number(i.set??0),
+Number(i.out??0),
+Number(i.nov??0),
+Number(i.dez??0)
 ]
 
-return{
-label:'ITEM '+it,
-data:arr,
-borderWidth:2,
-borderColor:cores[idx%cores.length],
-backgroundColor:cores[idx%cores.length],
-tension:0.3
+window.graficoAtualInfo={
+tipo:'subitem',
+item:i.item||'',
+subitem:i.subitem||'',
+jan:valores[0]||0,
+fev:valores[1]||0,
+mar:valores[2]||0,
+abr:valores[3]||0,
+mai:valores[4]||0
 }
 
-})
+datasets=[{
+label:i.subitem,
+data:valores.slice(0,mesAtual+1),
+backgroundColor:cores.slice(0,mesAtual+1),
+borderRadius:6
+}]
+
+}
+
+if(!datasets.length)return
 
 chartMaster=new Chart(ctx,{
-type:'line',
+type:'bar',
 data:{
 labels,
 datasets
@@ -1589,42 +1699,27 @@ plugins:{
 legend:{
 display:true,
 labels:{
-color:'#000'
+color:'#000000'
+}
+},
+tooltip:{
+callbacks:{
+label:(ctx)=>ctx.raw+'%'
 }
 }
 },
 scales:{
 y:{
 beginAtZero:true,
-max:100
+max:100,
+ticks:{
+callback:(v)=>v+'%'
+}
 }
 }
 }
 })
 
-return
-
-}
-
-if(!selSub||selSub==='todos')return
-let lista=allData.filter(i=>(i.numitem||'').toString()===selSub)
-if(!lista.length)return
-let arr=[]
-for(let m=0;m<=mesAtual;m++){
-let mesKey=['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'][m]
-let soma=lista.reduce((a,c)=>a+Number(c[mesKey]??0),0)
-arr.push(Math.round(soma/(lista.length||1)))
-}
-datasets=[{label:'ITEM '+selSub,data:arr,backgroundColor:cores.slice(0,mesAtual+1),borderRadius:6}]
-}
-if(tipo==='subitem'){
-let i=allData.find(x=>String(x.id)===String(selSub))
-if(!i)return
-let valores=[Number(i.jan??0),Number(i.fev??0),Number(i.mar??0),Number(i.abr??0),Number(i.mai??0),Number(i.jun??0),Number(i.jul??0),Number(i.ago??0),Number(i.set??0),Number(i.out??0),Number(i.nov??0),Number(i.dez??0)]
-datasets=[{label:i.subitem,data:valores.slice(0,mesAtual+1),backgroundColor:cores.slice(0,mesAtual+1),borderRadius:6}]
-}
-if(!datasets.length)return
-chartMaster=new Chart(ctx,{type:'bar',data:{labels,datasets},options:{responsive:true,plugins:{legend:{display:true,labels:{color:'#cbd5f5'}},tooltip:{callbacks:{label:(ctx)=>ctx.raw+'%'}}},scales:{y:{beginAtZero:true,max:100,ticks:{callback:(v)=>v+'%'}}}}})
 }
 function mediaMes(lista,mes){return Math.round(lista.reduce((a,c)=>a+Number(c[mes]??0),0)/lista.length)}
 async function backupCompleto(){
