@@ -318,12 +318,9 @@ class="mb-2 text-xs bg-red-600 px-2 py-1 rounded">
 </div>
 </div>
 
-<!-- ABA 3: ANÁLISE GRÁFICA (MULTINÍVEL + CARRY-FORWARD) -->
+<!-- ABA 3: ANÁLISE GRÁFICA -->
 <div id="view-analise" class="tab-view hidden">
-<div class="grid grid-cols-1 md:grid-cols-3 gap-3 mb-3">
-<select id="tipoGrafico" class="bg-slate-800 p-2 rounded text-sm">
-<option value="subitem">POR SUBITEM</option>
-</select>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-3">
 <select id="filtroItem" class="bg-slate-800 p-2 rounded text-sm"></select>
 <select id="filtroSubitem" class="bg-slate-800 p-2 rounded text-sm"></select>
 </div>
@@ -332,9 +329,6 @@ class="mb-2 text-xs bg-red-600 px-2 py-1 rounded">
 <div id="descSubitem" class="text-xs text-slate-300 mt-2 px-2"></div>
 </div>
 <div id="ranking" class="mt-6 text-xs"></div>
-<div class="flex gap-2 mb-4">
-
-</div>
 </div>
 
 <!-- ABA 4: 100% CUMPRIDOS (LISTA DESCRITIVA) -->
@@ -929,167 +923,105 @@ SUBITENS
   
 function renderConcluidos(){
 
-let lista=allData
+let box=document.getElementById('concluidos-container')
+let lista=document.getElementById('concluidos-list')
+
+if(!box||!lista)return
+
+box.innerHTML=''
+lista.innerHTML=''
+
+let dados=[...allData]
 .filter(i=>getTotal(i)>=100)
 .sort(compareSubitem)
 
-let mapa={}
+dados.forEach(i=>{
 
-lista.forEach(i=>{
+let card=document.createElement('div')
 
-let chave=modoGrupo==='item'
-?(i.item||'-')
-:(i.subitem||'-')
+card.className='card-micro bg-status-green hover:scale-105 transition'
 
-if(!mapa[chave])mapa[chave]=[]
-
-mapa[chave].push(i)
-
-})
-
-let keys=Object.keys(mapa)
+let item=i.item||'-'
+let sub=i.subitem||'-'
 
 if(modoGrupo==='item'){
 
-keys=keys.sort((a,b)=>{
-return parseFloat(a)-parseFloat(b)
+card.innerHTML=`
+<div class="text-center leading-tight w-full">
+<div class="text-[8px] font-black text-slate-700 uppercase mb-1">
+ITEM
+</div>
+<div style="font-size:26px;font-weight:900;line-height:1;color:#2f5130;">
+${item}
+</div>
+<div style="font-size:10px;font-weight:700;opacity:.8;margin-top:2px;">
+${sub}
+</div>
+</div>
+`
+
+}else{
+
+card.innerHTML=`
+<div class="text-center leading-tight w-full">
+<div class="text-[8px] font-black text-slate-700 uppercase mb-1">
+SUBITEM
+</div>
+<div style="font-size:22px;font-weight:900;line-height:1;color:#2f5130;">
+${sub}
+</div>
+<div style="font-size:10px;font-weight:700;opacity:.8;margin-top:2px;">
+ITEM ${item}
+</div>
+</div>
+`
+
+}
+
+box.appendChild(card)
+
+let div=document.createElement('div')
+
+div.className='border-b border-white/10 pb-2'
+
+div.innerHTML=`
+<div class="font-bold text-emerald-400">
+${sub}
+</div>
+<div class="text-slate-300 mt-1">
+${i.descricao||'-'}
+</div>
+<div class="text-[10px] text-yellow-300 mt-1">
+<b>Produto:</b> ${i.produto||'-'}
+</div>
+<div class="text-[10px] text-slate-500 mt-1">
+<b>Responsável:</b> ${i.responsavel||'-'}
+</div>
+`
+
+lista.appendChild(div)
+
 })
 
-}else{
+let total=document.createElement('div')
 
-keys=keys.sort(compareSubitem)
+total.className='card-micro bg-status-green'
 
-}
-
-let totalCards=keys.length
-
-document.getElementById('concluidos-container').innerHTML=
-
+total.innerHTML=`
+<div class="text-center leading-tight w-full">
+<div class="text-[8px] font-black uppercase text-slate-700 mb-1">
+TOTAL
+</div>
+<div style="font-size:34px;font-weight:900;color:#2f5130;">
+${dados.length}
+</div>
+<div style="font-size:10px;font-weight:700;">
+100%
+</div>
+</div>
 `
 
-<div 
-class="card-micro bg-status-green flex flex-col items-center justify-center"
-style="
-min-height:92px;
-padding:8px;
-border:3px solid #166534;
-background:#dcfce7;
-"
->
-
-<div
-style="
-font-size:42px;
-font-weight:900;
-line-height:1;
-color:#166534;
-"
->
-${totalCards}
-</div>
-
-<div
-style="
-font-size:12px;
-font-weight:900;
-margin-top:6px;
-color:#000;
-"
->
-TOTAL DE CARDS 100%
-</div>
-
-</div>
-
-`+
-
-keys.map(k=>{
-
-let reg=mapa[k][0]
-
-let numeroGrande=''
-let numeroPequeno=''
-
-if(modoGrupo==='item'){
-
-numeroGrande=reg.item||'-'
-numeroPequeno=reg.subitem||'-'
-
-}else{
-
-numeroGrande=reg.subitem||'-'
-numeroPequeno=reg.item||'-'
-
-}
-
-return `
-
-<div 
-class="card-micro bg-status-green flex flex-col items-center justify-center"
-style="
-min-height:92px;
-padding:8px;
-"
->
-
-<div
-style="
-font-size:28px;
-font-weight:900;
-line-height:1;
-color:#4b4038;
-"
->
-${numeroGrande}
-</div>
-
-<div
-style="
-font-size:13px;
-font-weight:900;
-line-height:1;
-margin-top:8px;
-color:#000000;
-"
->
-${numeroPequeno}
-</div>
-
-</div>
-
-`
-
-}).join('')
-
-document.getElementById('concluidos-list').innerHTML=
-
-keys.map(k=>`
-
-<div class="mb-3">
-
-<div class="text-emerald-400 font-bold mb-1">
-
-${modoGrupo==='item'
-?'ITEM '+k
-:'SUBITEM '+k}
-
-(${mapa[k].length})
-
-</div>
-
-${mapa[k].map(i=>`
-
-<div class="ml-2 text-[10px]">
-
-• <b>${i.subitem}</b> - ${i.descricao}
-
-</div>
-
-`).join('')}
-
-</div>
-
-`).join('')
+box.prepend(total)
 
 }
 
