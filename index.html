@@ -939,8 +939,8 @@ let mapa={}
 lista.forEach(i=>{
 
 let chave=modoGrupo==='item'
-?i.subitem.split('.')[0]
-:i.subitem
+?(i.item||String(i.subitem).split('.')[0])
+:(i.subitem||i.identificador||'')
 
 if(!mapa[chave])mapa[chave]=[]
 
@@ -950,26 +950,54 @@ mapa[chave].push(i)
 
 document.getElementById('concluidos-container').innerHTML=
 
-Object.keys(mapa).map(k=>`
+Object.keys(mapa).map(k=>{
+
+let itemMaior=''
+let itemMenor=''
+
+if(modoGrupo==='item'){
+
+itemMaior=String(k).split('.')[0]
+itemMenor='ITEM'
+
+}else{
+
+itemMaior=String(k)
+itemMenor=(String(k).split('.')[0]||'')
+
+}
+
+return `
 
 <div class="card-micro bg-status-green flex flex-col items-center justify-center">
 
-<span class="percent-big" style="font-size:22px;">
-${String(k).split('.')[0]}
+<span 
+class="percent-big"
+style="
+font-size:22px;
+line-height:1;
+"
+>
+${itemMaior}
 </span>
 
 <span 
-class="text-[11px] font-black leading-none"
-style="color:#000000!important;"
+style="
+font-size:11px;
+font-weight:900;
+color:#000000;
+line-height:1;
+margin-top:4px;
+"
 >
-${String(k).includes('.')?String(k).split('.')[1]:'0'}
+${itemMenor}
 </span>
 
 </div>
 
-</div>
+`
 
-`).join('')
+}).join('')
 
 document.getElementById('concluidos-list').innerHTML=
 
@@ -978,8 +1006,13 @@ Object.keys(mapa).map(k=>`
 <div class="mb-3">
 
 <div class="text-emerald-400 font-bold mb-1">
-${modoGrupo==='item'?'ITEM':'SUBITEM'} ${k}
+
+${modoGrupo==='item'
+?'ITEM '+k
+:'SUBITEM '+k}
+
 (${mapa[k].length})
+
 </div>
 
 ${mapa[k].map(i=>`
