@@ -320,15 +320,29 @@ class="mb-2 text-xs bg-red-600 px-2 py-1 rounded">
 
 <!-- ABA 3: ANÁLISE GRÁFICA -->
 <div id="view-analise" class="tab-view hidden">
+
+<select id="tipoGrafico" class="hidden">
+<option value="subitem" selected>POR SUBITEM</option>
+</select>
+
 <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-3">
+
 <select id="filtroItem" class="bg-slate-800 p-2 rounded text-sm"></select>
+
 <select id="filtroSubitem" class="bg-slate-800 p-2 rounded text-sm"></select>
+
 </div>
+
 <div class="bg-slate-900/40 p-4 rounded-xl mb-4">
+
 <canvas id="chartMaster"></canvas>
+
 <div id="descSubitem" class="text-xs text-slate-300 mt-2 px-2"></div>
+
 </div>
+
 <div id="ranking" class="mt-6 text-xs"></div>
+
 </div>
 
 <!-- ABA 4: 100% CUMPRIDOS (LISTA DESCRITIVA) -->
