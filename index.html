@@ -936,20 +936,105 @@ if(typeof renderChart==="function")renderChart()
 }
 async function gerarRelatorioPDF(){
 const {jsPDF}=window.jspdf
-let query=client.from('deliberacoes').select('*')
-if(userP.nivel_acesso!=1){query=query.eq('responsavel_id',userP.id)}
-let {data,error}=await query
-if(error||!data){alert("Erro ao gerar PDF");return}
-let doc=new jsPDF()
-doc.setFontSize(10)
-doc.text(userP.nivel_acesso==1?"RELATÓRIO GERAL - TAG SEDAM":"RELATÓRIO INDIVIDUAL - "+(userP.nome_completo||''),10,10)
-let rows=data.map(i=>{
-let total=Math.max(Number(i.jan||0),Number(i.fev||0),Number(i.mar||0),Number(i.abr||0),Number(i.mai||0),Number(i.jun||0),Number(i.jul||0),Number(i.ago||0),Number(i.set||0),Number(i.out||0),Number(i.nov||0),Number(i.dez||0))
-return[i.subitem,(i.descricao||'').substring(0,40),i.responsavel||'-',total+'%']
-})
-doc.autoTable({head:[['Subitem','Descrição','Responsável','%']],body:rows,startY:15,styles:{fontSize:6}})
-doc.save(userP.nivel_acesso==1?"relatorio_geral.pdf":"relatorio_"+(userP.username||'usuario')+".pdf")
+
+let query=client
+.from('deliberacoes')
+.select('*')
+
+if(userP.nivel_acesso!=1){
+query=query.eq('responsavel_id',userP.id)
 }
+
+let {data,error}=await query
+
+if(error||!data){
+alert("Erro ao gerar PDF")
+return
+}
+
+let doc=new jsPDF('p','mm','a4')
+
+doc.setFontSize(12)
+doc.setTextColor(0,0,0)
+
+doc.text(
+userP.nivel_acesso==1
+?"RELATÓRIO GERAL - TAG SEDAM"
+:"RELATÓRIO INDIVIDUAL - "+(userP.nome_completo||''),
+10,
+10
+)
+
+let rows=data.map(i=>{
+
+let total=Math.max(
+Number(i.jan||0),
+Number(i.fev||0),
+Number(i.mar||0),
+Number(i.abr||0),
+Number(i.mai||0),
+Number(i.jun||0),
+Number(i.jul||0),
+Number(i.ago||0),
+Number(i.set||0),
+Number(i.out||0),
+Number(i.nov||0),
+Number(i.dez||0)
+)
+
+return[
+i.subitem||'-',
+i.descricao||'-',
+i.responsavel||'-',
+total+'%'
+]
+
+})
+
+doc.autoTable({
+startY:15,
+head:[['Subitem','Descrição Completa','Responsável','%']],
+body:rows,
+theme:'grid',
+styles:{
+fontSize:7,
+cellPadding:2,
+overflow:'linebreak',
+valign:'middle',
+textColor:[0,0,0]
+},
+headStyles:{
+fillColor:[180,150,110],
+textColor:[0,0,0],
+fontStyle:'bold'
+},
+columnStyles:{
+0:{cellWidth:18},
+1:{cellWidth:110},
+2:{cellWidth:42},
+3:{cellWidth:15,halign:'center'}
+},
+margin:{
+left:5,
+right:5
+},
+didDrawPage:function(data){
+doc.setFontSize(7)
+doc.text(
+'Tribunal de Contas do Estado de Rondônia - TAG SEDAM 2026',
+10,
+290
+)
+}
+})
+
+doc.save(
+userP.nivel_acesso==1
+?'relatorio_geral.pdf'
+:'relatorio_'+(userP.username||'usuario')+'.pdf'
+)
+}
+  
 function mesFromData(data){return['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'][new Date(data).getMonth()]}
 async function salvar(valor,id,campo){
 let v=parseFloat(String(valor).replace(',','.'));if(isNaN(v))v=0
