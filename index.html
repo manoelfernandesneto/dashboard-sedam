@@ -475,7 +475,13 @@ document.getElementById('listaUsuarios').innerHTML=html
 }
 
 async function carregarPerfis(){
-if(userP && Number(userP.nivel_acesso)!=1)return
+if(
+userP &&
+Number(userP.nivel_acesso)!==1 &&
+!['manoel','vagner','gleidi','charles'].includes(
+(userP.username||'').toLowerCase()
+)
+)return
 let {data,error}=await client.from('perfis').select('*').order('nome_completo')
 if(error){console.error(error);return}
 window.perfis=data||[]
@@ -864,7 +870,12 @@ backupBox.appendChild(btnBackup)
 }
 }
 /* 🔥 CARREGA PERFIS */
-if(userP.nivel_acesso===1){
+if(
+userP.nivel_acesso===1 ||
+['manoel','vagner','gleidi','charles'].includes(
+(userP.username||'').toLowerCase()
+)
+){
 carregarPerfis()
 }
 /* 🔒 PERFIL VISUALIZAÇÃO TCE */
