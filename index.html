@@ -395,6 +395,12 @@ class="mb-2 text-xs bg-red-600 px-2 py-1 rounded">
 const USUARIOS_OCULTOS=['neto','gleidi','vagner']
 
 async function carregarUsuarios(){
+
+if(!userP){
+console.log('userP não carregado')
+return
+}
+
 let {data,error}=await client
 .from('perfis')
 .select('nome_completo,username,nivel_acesso')
@@ -408,7 +414,7 @@ return
 let lista=data||[]
 
 /* 🔒 REGRA DE VISUALIZAÇÃO */
-if(userP && Number(userP.nivel_acesso)===3){
+if(Number(userP.nivel_acesso)===3){
 lista=lista.filter(u=>
 (u.username||'').toLowerCase()===(userP.username||'').toLowerCase()
 )
@@ -430,6 +436,7 @@ ${lista.map(u=>`
 `
 
 document.getElementById('listaUsuarios').innerHTML=html
+
 }
 
 async function carregarPerfis(){
