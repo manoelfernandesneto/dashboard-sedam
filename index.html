@@ -7,6 +7,7 @@
 <title>Monitoramento TAG Sedam 2026</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="config.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
@@ -606,9 +607,10 @@ const lastTab=localStorage.getItem('activeTab')
 if(lastTab)switchTab(lastTab)
 }
 })
-const S_URL='https://zvtzbiqfwhggysiuiuxh.supabase.co'
-const S_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp2dHpiaXFmd2hnZ3lzaXVpdXhoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc1ODYyMjcsImV4cCI6MjA5MzE2MjIyN30.tCnFZv2B6Kmd9KsyZM8CHClZqsq7Nyu-8nxyYVs_ZMQ'
-const client=supabase.createClient(S_URL,S_KEY)
+const client=supabase.createClient(
+window.S_URL,
+window.S_KEY
+)
 let userP=null
 let allData=[]
 let myChart=null
