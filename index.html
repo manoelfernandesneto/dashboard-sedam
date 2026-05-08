@@ -1503,7 +1503,6 @@ ${i.subitem} - ${truncarTexto((i.descricao||'-')+(i.produto?' PRODUTOS: '+i.prod
 sel.innerHTML=html
 }
 }
-
 function renderGraficoMaster(){
 
 let el=document.getElementById('chartMaster')
@@ -1537,16 +1536,12 @@ let datasets=[]
 
 function mediaMes(lista,mes){
 
-let validos=lista.filter(x=>
-Number(x[mes]||0)>0
-)
-
-if(!validos.length)return 0
+if(!lista||!lista.length)return 0
 
 return Math.round(
-validos.reduce((acc,c)=>{
+lista.reduce((acc,c)=>{
 return acc+Number(c[mes]||0)
-},0)/validos.length
+},0)/(lista.length||1)
 )
 
 }
@@ -1554,15 +1549,6 @@ return acc+Number(c[mes]||0)
 if(tipo==='item'){
 
 if(selSub==='todos'){
-
-window.graficoAtualInfo={
-tipo:'todos',
-jan:mediaMes(allData,'jan'),
-fev:mediaMes(allData,'fev'),
-mar:mediaMes(allData,'mar'),
-abr:mediaMes(allData,'abr'),
-mai:mediaMes(allData,'mai')
-}
 
 let arr=[]
 
@@ -1574,6 +1560,15 @@ arr.push(
 mediaMes(allData,mesKey)
 )
 
+}
+
+window.graficoAtualInfo={
+tipo:'todos',
+jan:arr[0]||0,
+fev:arr[1]||0,
+mar:arr[2]||0,
+abr:arr[3]||0,
+mai:arr[4]||0
 }
 
 datasets=[{
@@ -1627,31 +1622,20 @@ borderRadius:6
 }
 
 if(tipo==='subitem'){
+
 if(selSub==='TOTAL'){
 
-function mediaMes(lista,mes){
+let valores=[]
 
-let validos=lista.filter(x=>
-Number(x[mes]||0)>0
-)
+for(let m=0;m<=mesAtual;m++){
 
-if(!validos.length)return 0
+let mesKey=mesesKey[m]
 
-return Math.round(
-validos.reduce((acc,c)=>{
-return acc+Number(c[mes]||0)
-},0)/validos.length
+valores.push(
+mediaMes(allData,mesKey)
 )
 
 }
-
-let valores=[
-mediaMes(allData,'jan'),
-mediaMes(allData,'fev'),
-mediaMes(allData,'mar'),
-mediaMes(allData,'abr'),
-mediaMes(allData,'mai')
-]
 
 window.graficoAtualInfo={
 tipo:'todos',
@@ -1665,17 +1649,11 @@ mai:valores[4]||0
 datasets=[{
 label:'TOTAL GERAL TAG SEDAM',
 data:valores,
-backgroundColor:[
-'#22c55e',
-'#3b82f6',
-'#f59e0b',
-'#facc15',
-'#a855f7'
-],
+backgroundColor:cores.slice(0,mesAtual+1),
 borderRadius:8
 }]
 
-labels=['JAN','FEV','MAR','ABR','MAI']
+labels=meses.slice(0,mesAtual+1)
 
 document.getElementById('descSubitem').innerHTML=`
 <div class="text-sm font-black text-emerald-400 mb-2">
@@ -1692,8 +1670,8 @@ MAI: <b>${valores[4]}%</b>
 </div>
 `
 
-}
-else{
+}else{
+
 let i=allData.find(x=>
 String(x.id)===String(selSub)
 )
@@ -1732,8 +1710,22 @@ data:valores.slice(0,mesAtual+1),
 backgroundColor:cores.slice(0,mesAtual+1),
 borderRadius:6
 }]
+
+document.getElementById('descSubitem').innerHTML=`
+<div class="text-sm font-black text-emerald-400 mb-2">
+SUBITEM ${i.subitem}
+</div>
+<div class="text-xs leading-relaxed text-slate-300">
+${i.descricao||'-'}
+<br><br>
+<b>Produto:</b> ${i.produto||'-'}
+<br><br>
+<b>Responsável:</b> ${i.responsavel||'-'}
+</div>
+`
+
 }
-  
+
 }
 
 if(!datasets.length)return
@@ -1778,20 +1770,12 @@ callback:(v)=>v+'%'
 }
 }
 }
-}
+},
+plugins:[ChartDataLabels]
 })
 
 }
-function mediaMes(lista,mes){return Math.round(lista.reduce((a,c)=>a+Number(c[mes]??0),0)/lista.length)}
 
-async function backupCompleto(){
-let {data:delib}=await client.from('deliberacoes').select('*')
-let {data:perfis}=await client.from('perfis').select('*')
-gerarCSV(delib,"deliberacoes")
-gerarCSV(perfis,"perfis")
-gerarJSON({deliberacoes:delib,perfis:perfis})
-gerarPDFBackup(delib)
-}
 function gerarCSV(d,n){
 if(!d||!d.length)return
 let c=Object.keys(d[0])
