@@ -1504,139 +1504,36 @@ sel.innerHTML=html
 }
 }
 function renderGraficoMaster(){
-
 let el=document.getElementById('chartMaster')
 if(!el)return
-
 let ctx=el.getContext('2d')
 if(!ctx)return
-
 if(chartMaster)chartMaster.destroy()
-
 let tipo=document.getElementById('tipoGrafico').value
 let selItem=document.getElementById('filtroItem').value
 let selSub=document.getElementById('filtroSubitem').value
-
 window.graficoAtualInfo={
 tipo:tipo,
 item:selItem,
 subitem:selSub
 }
-
 let meses=['JAN','FEV','MAR','ABR','MAI','JUN','JUL','AGO','SET','OUT','NOV','DEZ']
 let mesesKey=['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez']
-
 let mesAtual=getMesAtualIndex()
-
 let labels=meses.slice(0,mesAtual+1)
-
 let cores=['#22c55e','#3b82f6','#f59e0b','#facc15','#a855f7','#06b6d4','#84cc16','#f97316','#eab308','#14b8a6','#6366f1','#ec4899']
-
 let datasets=[]
-
 function mediaMes(lista,mes){
-
 if(!lista||!lista.length)return 0
-
-return Math.round(
-lista.reduce((acc,c)=>{
-return acc+Number(c[mes]||0)
-},0)/(lista.length||1)
-)
-
+return Math.round(lista.reduce((acc,c)=>acc+Number(c[mes]||0),0)/(lista.length||1))
 }
-
-if(tipo==='item'){
-
-if(selSub==='todos'){
-
-let arr=[]
-
-for(let m=0;m<=mesAtual;m++){
-
-let mesKey=mesesKey[m]
-
-arr.push(
-mediaMes(allData,mesKey)
-)
-
-}
-
-window.graficoAtualInfo={
-tipo:'todos',
-jan:arr[0]||0,
-fev:arr[1]||0,
-mar:arr[2]||0,
-abr:arr[3]||0,
-mai:arr[4]||0
-}
-
-datasets=[{
-label:'TOTAL GERAL',
-data:arr,
-backgroundColor:cores.slice(0,mesAtual+1),
-borderRadius:6
-}]
-
-}else{
-
-if(!selSub)return
-
-let lista=allData.filter(i=>
-(i.numitem||i.item||'').toString()===selSub
-)
-
-if(!lista.length)return
-
-let arr=[]
-
-for(let m=0;m<=mesAtual;m++){
-
-let mesKey=mesesKey[m]
-
-arr.push(
-mediaMes(lista,mesKey)
-)
-
-}
-
-window.graficoAtualInfo={
-tipo:'item',
-item:selSub,
-jan:arr[0]||0,
-fev:arr[1]||0,
-mar:arr[2]||0,
-abr:arr[3]||0,
-mai:arr[4]||0
-}
-
-datasets=[{
-label:'ITEM '+selSub,
-data:arr,
-backgroundColor:cores.slice(0,mesAtual+1),
-borderRadius:6
-}]
-
-}
-
-}
-
 if(tipo==='subitem'){
-
 if(selSub==='TOTAL'){
-
 let valores=[]
-
 for(let m=0;m<=mesAtual;m++){
-
 let mesKey=mesesKey[m]
-
-valores.push(
-mediaMes(allData,mesKey)
-)
-
+valores.push(mediaMes(allData,mesKey))
 }
-
 window.graficoAtualInfo={
 tipo:'todos',
 jan:valores[0]||0,
@@ -1645,16 +1542,12 @@ mar:valores[2]||0,
 abr:valores[3]||0,
 mai:valores[4]||0
 }
-
 datasets=[{
 label:'TOTAL GERAL TAG SEDAM',
 data:valores,
 backgroundColor:cores.slice(0,mesAtual+1),
 borderRadius:8
 }]
-
-labels=meses.slice(0,mesAtual+1)
-
 document.getElementById('descSubitem').innerHTML=`
 <div class="text-sm font-black text-emerald-400 mb-2">
 TOTAL GERAL CONSOLIDADO DO TAG SEDAM 2026
@@ -1669,30 +1562,23 @@ ABR: <b>${valores[3]}%</b> |
 MAI: <b>${valores[4]}%</b>
 </div>
 `
-
 }else{
-
-let i=allData.find(x=>
-String(x.id)===String(selSub)
-)
-
+let i=allData.find(x=>String(x.id)===String(selSub))
 if(!i)return
-
 let valores=[
-Number(i.jan??0),
-Number(i.fev??0),
-Number(i.mar??0),
-Number(i.abr??0),
-Number(i.mai??0),
-Number(i.jun??0),
-Number(i.jul??0),
-Number(i.ago??0),
-Number(i.set??0),
-Number(i.out??0),
-Number(i.nov??0),
-Number(i.dez??0)
+Number(i.jan||0),
+Number(i.fev||0),
+Number(i.mar||0),
+Number(i.abr||0),
+Number(i.mai||0),
+Number(i.jun||0),
+Number(i.jul||0),
+Number(i.ago||0),
+Number(i.set||0),
+Number(i.out||0),
+Number(i.nov||0),
+Number(i.dez||0)
 ]
-
 window.graficoAtualInfo={
 tipo:'subitem',
 item:i.item||'',
@@ -1703,14 +1589,12 @@ mar:valores[2]||0,
 abr:valores[3]||0,
 mai:valores[4]||0
 }
-
 datasets=[{
 label:i.subitem,
 data:valores.slice(0,mesAtual+1),
 backgroundColor:cores.slice(0,mesAtual+1),
 borderRadius:6
 }]
-
 document.getElementById('descSubitem').innerHTML=`
 <div class="text-sm font-black text-emerald-400 mb-2">
 SUBITEM ${i.subitem}
@@ -1723,13 +1607,9 @@ ${i.descricao||'-'}
 <b>Responsável:</b> ${i.responsavel||'-'}
 </div>
 `
-
 }
-
 }
-
 if(!datasets.length)return
-
 chartMaster=new Chart(ctx,{
 type:'bar',
 data:{
@@ -1742,7 +1622,7 @@ plugins:{
 legend:{
 display:true,
 labels:{
-color:'#000000'
+color:'#000'
 }
 },
 tooltip:{
@@ -1773,7 +1653,6 @@ callback:(v)=>v+'%'
 },
 plugins:[ChartDataLabels]
 })
-
 }
 
 function gerarCSV(d,n){
