@@ -1460,6 +1460,7 @@ ITEM ${i.num} - ${truncarTexto(i.descricao,60)}
 ).join('')
 
 }
+
 function atualizarLista3(){
 let sel=document.getElementById('filtroSubitem')
 let tipo=document.getElementById('tipoGrafico').value
@@ -1475,12 +1476,34 @@ if(!mapa[n])mapa[n]={num:n,descricao:i.descricaoitem||'-'}
 let lista=Object.values(mapa).sort((a,b)=>a.num.localeCompare(b.num,undefined,{numeric:true}))
 sel.innerHTML=lista.map(i=>`<option value="${i.num}">ITEM ${i.num} - ${truncarTexto(i.descricao,60)}</option>`).join('')
 }else{
-let lista=selItem==='todos'?allData:allData.filter(i=>(i.numitem||'').toString()===selItem)
+let mediaMes=(mes)=>{
+let validos=allData.filter(x=>Number(x[mes]||0)>0)
+if(!validos.length)return 0
+return Math.round(validos.reduce((acc,c)=>acc+Number(c[mes]||0),0)/validos.length)
+}
+let jan=mediaMes('jan')
+let fev=mediaMes('fev')
+let mar=mediaMes('mar')
+let abr=mediaMes('abr')
+let mai=mediaMes('mai')
+let html=`
+<option value="TOTAL">
+TOTAL GERAL (${jan}% • ${fev}% • ${mar}% • ${abr}% • ${mai}%)
+</option>
+`
+let lista=selItem==='todos'
+?allData
+:allData.filter(i=>(i.numitem||'').toString()===selItem)
 lista=lista.sort((a,b)=>(a.subitem||'').localeCompare(b.subitem||'',undefined,{numeric:true}))
-sel.innerHTML=lista.map(i=>`<option value="${i.id}">${i.subitem} - ${truncarTexto((i.descricao||'-')+
-(i.produto?'\n\nPRODUTOS:\n'+i.produto:''),60)}</option>`).join('')
+html+=lista.map(i=>`
+<option value="${i.id}">
+${i.subitem} - ${truncarTexto((i.descricao||'-')+(i.produto?' PRODUTOS: '+i.produto:''),70)}
+</option>
+`).join('')
+sel.innerHTML=html
 }
 }
+
 function renderGraficoMaster(){
 
 let el=document.getElementById('chartMaster')
@@ -1604,7 +1627,73 @@ borderRadius:6
 }
 
 if(tipo==='subitem'){
+if(selSub==='TOTAL'){
 
+function mediaMes(lista,mes){
+
+let validos=lista.filter(x=>
+Number(x[mes]||0)>0
+)
+
+if(!validos.length)return 0
+
+return Math.round(
+validos.reduce((acc,c)=>{
+return acc+Number(c[mes]||0)
+},0)/validos.length
+)
+
+}
+
+let valores=[
+mediaMes(allData,'jan'),
+mediaMes(allData,'fev'),
+mediaMes(allData,'mar'),
+mediaMes(allData,'abr'),
+mediaMes(allData,'mai')
+]
+
+window.graficoAtualInfo={
+tipo:'todos',
+jan:valores[0]||0,
+fev:valores[1]||0,
+mar:valores[2]||0,
+abr:valores[3]||0,
+mai:valores[4]||0
+}
+
+datasets=[{
+label:'TOTAL GERAL TAG SEDAM',
+data:valores,
+backgroundColor:[
+'#22c55e',
+'#3b82f6',
+'#f59e0b',
+'#facc15',
+'#a855f7'
+],
+borderRadius:8
+}]
+
+labels=['JAN','FEV','MAR','ABR','MAI']
+
+document.getElementById('descSubitem').innerHTML=`
+<div class="text-sm font-black text-emerald-400 mb-2">
+TOTAL GERAL CONSOLIDADO DO TAG SEDAM 2026
+</div>
+<div class="text-xs leading-relaxed text-slate-300">
+O gráfico demonstra a evolução média consolidada de todos os itens e subitens monitorados no Plano de Ação do TAG SEDAM 2026.
+<br><br>
+JAN: <b>${valores[0]}%</b> |
+FEV: <b>${valores[1]}%</b> |
+MAR: <b>${valores[2]}%</b> |
+ABR: <b>${valores[3]}%</b> |
+MAI: <b>${valores[4]}%</b>
+</div>
+`
+
+}
+else{
 let i=allData.find(x=>
 String(x.id)===String(selSub)
 )
@@ -1643,7 +1732,8 @@ data:valores.slice(0,mesAtual+1),
 backgroundColor:cores.slice(0,mesAtual+1),
 borderRadius:6
 }]
-
+}
+  
 }
 
 if(!datasets.length)return
@@ -1667,6 +1757,16 @@ tooltip:{
 callbacks:{
 label:(ctx)=>ctx.raw+'%'
 }
+},
+datalabels:{
+color:'#000',
+anchor:'end',
+align:'top',
+font:{
+weight:'bold',
+size:12
+},
+formatter:(v)=>v+'%'
 }
 },
 scales:{
