@@ -877,14 +877,10 @@ let adminsTCERO=[
 'gleidi'
 ]
 
+let podeVerPerfisSedam=
+Number(userP.nivel_acesso)===1
 /* 🔥 PERFIS */
-
-if(
-Number(userP.nivel_acesso)===1 ||
-adminsTCERO.includes(
-(userP.username||'').toLowerCase()
-)
-){
+if(podeVerPerfisSedam){
 
 let btn=document.getElementById('tab-perfis')
 
@@ -1021,12 +1017,7 @@ backupBox.appendChild(btnBackup)
 
 /* 🔥 CARREGA PERFIS */
 
-if(
-userP.nivel_acesso===1 ||
-adminsTCERO.includes(
-(userP.username||'').toLowerCase()
-)
-){
+if(podeVerPerfisSedam){
 carregarPerfis()
 }
 
