@@ -1011,6 +1011,14 @@ renderResumo()
 renderTable()
 renderConcluidos()
 
+let ultimaTab=
+localStorage.getItem('activeTab')||
+'resumo'
+
+setTimeout(()=>{
+switchTab(ultimaTab)
+},100)
+
 if(typeof atualizarLista3==='function'){
 atualizarLista3()
 }
