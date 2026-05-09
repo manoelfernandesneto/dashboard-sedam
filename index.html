@@ -2236,7 +2236,8 @@ let vencimentoGrafico='-'
 if(info.tipo==='subitem'){
 
 let registro=allData.find(x=>
-String(x.id)===String(info.subitem)
+String(x.id)===String(info.subitem)||
+String(x.subitem)===String(info.subitem)
 )
 
 if(registro){
@@ -2401,7 +2402,8 @@ textoIA=
 }else if(info.tipo==='subitem'){
 
 let reg=allData.find(x=>
-String(x.id)===String(info.subitem)
+String(x.id)===String(info.subitem)||
+String(x.subitem)===String(info.subitem)
 )
 
 if(reg){
