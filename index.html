@@ -1238,20 +1238,19 @@ let total=document.createElement('div')
 
 total.className='rounded-2xl shadow-2xl flex items-center justify-center p-3'
 
-total.style.background='linear-gradient(135deg,#0f172a,#1e3a8a,#0f172a)'
+total.style.background='linear-gradient(135deg,#bbf7d0,#86efac,#dcfce7)'
 total.style.minHeight='120px'
 
 total.innerHTML=`
 <div class="text-center w-full">
-<div style="font-size:12px;font-weight:900;color:#ffffff;">
+<div style="font-size:9px;font-weight:900;color:#166534;line-height:1;">
 TOTAL GERAL
 </div>
 
-<div style="font-size:46px;font-weight:900;color:#ffffff;">
+<div style="font-size:34px;font-weight:900;color:#166534;line-height:1;">
 ${dados.length}
 </div>
-
-<div style="font-size:16px;font-weight:900;color:#bfdbfe;">
+<div style="font-size:11px;font-weight:900;color:#166534;line-height:1.1;">
 SUBITENS 100%
 </div>
 </div>
@@ -1288,23 +1287,23 @@ box.appendChild(card)
 
 let div=document.createElement('div')
 
-div.className='border-b border-slate-400 pb-5 mb-5'
+div.className='border-b border-slate-300 pb-1 mb-1'
 
 div.innerHTML=`
 
-<div style="font-size:22px;font-weight:900;color:#000000;">
+<div style="font-size:15px;font-weight:900;color:#000000;line-height:1;">
 ${i.subitem}
 </div>
 
-<div style="font-size:19px;line-height:1.8;color:#000000;font-weight:700;margin-top:10px;">
+<div style="font-size:11px;line-height:1.05;color:#000000;font-weight:700;margin-top:1px;">
 ${i.descricao||'-'}
 </div>
 
-<div style="font-size:17px;line-height:1.7;color:#0f172a;font-weight:900;margin-top:10px;">
+<div style="font-size:10px;line-height:1;color:#0f172a;font-weight:900;margin-top:1px;">
 PRODUTO: ${i.produto||'-'}
 </div>
 
-<div style="font-size:16px;line-height:1.7;color:#1e3a8a;font-weight:900;margin-top:10px;">
+<div style="font-size:10px;line-height:1;color:#1e3a8a;font-weight:900;margin-top:1px;">
 RESPONSÁVEL: ${i.responsavel||'-'}
 </div>
 `
