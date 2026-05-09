@@ -2928,12 +2928,12 @@ let senha=document.getElementById('tc_senha').value.trim()
 
 let cargo=document.getElementById('tc_cargo').value.trim()
 
+let permissao_pdf=
+document.getElementById('tc_pdf').value==='SIM'
+
 let nivel=Number(
 document.getElementById('tc_nivel').value||4
 )
-
-let permissao_pdf=
-document.getElementById('tc_pdf').value==='SIM'
 
 let visualizacao=
 document.getElementById('tc_visualizacao').value||'SUBITEM'
@@ -2982,9 +2982,17 @@ document.getElementById('tc_nome').value=''
 document.getElementById('tc_user').value=''
 document.getElementById('tc_senha').value=''
 document.getElementById('tc_cargo').value=''
-document.getElementById('tc_nivel').value='4'
 document.getElementById('tc_pdf').value='NÃO'
+document.getElementById('tc_nivel').value='4'
 document.getElementById('tc_visualizacao').value='SUBITEM'
+
+let btn=document.getElementById('btnSalvarTCERO')
+
+if(btn){
+btn.innerText='INSERIR'
+btn.classList.remove('bg-amber-600')
+btn.classList.add('bg-blue-700')
+}
 
 await carregarTCERO()
 
