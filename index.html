@@ -2862,7 +2862,7 @@ window.perfisTCERO=data||[]
 
 let podeEditar=
 ['manoel','vagner','gleidi'].includes(
-(userP.username||'').toLowerCase()
+((window.userP&&window.userP.username)||'').toLowerCase()
 )
 
 document.getElementById('boxCadastroTCERO').style.display=
