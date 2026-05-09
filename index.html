@@ -2759,7 +2759,48 @@ maxWidth:260
 doc.save('pdf_100_cumpridos_tag_sedam.pdf')
 
 }
+function editarTCERO(id){
 
+let p=(window.perfisTCERO||[])
+.find(x=>String(x.id)===String(id))
+
+if(!p){
+alert('Perfil não encontrado')
+return
+}
+
+window.editTCEROId=p.id
+
+let nome=document.getElementById('tc_nome')
+let user=document.getElementById('tc_user')
+let senha=document.getElementById('tc_senha')
+let cargo=document.getElementById('tc_cargo')
+let nivel=document.getElementById('tc_nivel')
+let pdf=document.getElementById('tc_pdf')
+let visual=document.getElementById('tc_visualizacao')
+
+if(nome)nome.value=p.nome_completo||''
+if(user)user.value=p.username||''
+if(senha)senha.value=p.senha||''
+if(cargo)cargo.value=p.cargo||''
+if(nivel)nivel.value=p.nivel_acesso||4
+if(pdf)pdf.value=p.permissao_pdf?'SIM':'NÃO'
+if(visual)visual.value=p.visualizacao||'SUBITEM'
+
+let btn=document.getElementById('btnSalvarTCERO')
+
+if(btn){
+btn.innerText='ATUALIZAR'
+btn.classList.remove('bg-blue-600')
+btn.classList.add('bg-amber-600')
+}
+
+window.scrollTo({
+top:0,
+behavior:'smooth'
+})
+
+}
 async function carregarTCERO(){
 
 let {data,error}=await client
@@ -2832,18 +2873,28 @@ document.getElementById('listaTCERO').innerHTML=html
 
 async function salvarPerfilTCERO(){
 
-if(!['manoel','vagner'].includes((userP.username||'').toLowerCase())){
-alert('Sem permissão')
-return
-}
+let nome=document.getElementById('tc_nome').value.trim()
 
-let nome=t_nome.value.trim()
-let user=t_user.value.trim().toLowerCase()
-let senha=t_senha.value.trim()
-let cargo=t_cargo.value.trim()
+let user=document.getElementById('tc_user').value
+.trim()
+.toLowerCase()
 
-if(!nome||!user||!senha){
-alert('Preencha os campos')
+let senha=document.getElementById('tc_senha').value.trim()
+
+let cargo=document.getElementById('tc_cargo').value.trim()
+
+let nivel=Number(
+document.getElementById('tc_nivel').value||4
+)
+
+let permissao_pdf=
+document.getElementById('tc_pdf').value==='SIM'
+
+let visualizacao=
+document.getElementById('tc_visualizacao').value||'SUBITEM'
+
+if(!nome||!user){
+alert('Preencha nome e usuário')
 return
 }
 
@@ -2852,43 +2903,100 @@ nome_completo:nome,
 username:user,
 senha:senha,
 cargo:cargo,
-orgao:'TCERO',
-nivel_acesso:'4',
-somente_visualizacao:true,
-permissao_pdf:false
+nivel_acesso:nivel,
+permissao_pdf:permissao_pdf,
+visualizacao:visualizacao
 }
 
-await client
-.from('perfis')
+let res=null
+
+if(window.editTCEROId){
+
+res=await client
+.from('perfistce')
+.update(payload)
+.eq('id',window.editTCEROId)
+
+}else{
+
+res=await client
+.from('perfistce')
 .insert(payload)
 
-carregarTCERO()
+}
 
-t_nome.value=''
-t_user.value=''
-t_senha.value=''
-t_cargo.value=''
+if(res.error){
+console.error(res.error)
+alert('Erro ao salvar')
+return
+}
+
+window.editTCEROId=null
+
+document.getElementById('tc_nome').value=''
+document.getElementById('tc_user').value=''
+document.getElementById('tc_senha').value=''
+document.getElementById('tc_cargo').value=''
+document.getElementById('tc_nivel').value='4'
+document.getElementById('tc_pdf').value='NÃO'
+document.getElementById('tc_visualizacao').value='SUBITEM'
+
+await carregarTCERO()
+
+alert('Registro salvo com sucesso')
 
 }
 
 async function excluirTCERO(id){
 
-if(!['manoel','vagner'].includes((userP.username||'').toLowerCase())){
+if(
+!['manoel','vagner','gleidi']
+.includes(
+(userP.username||'').toLowerCase()
+)
+){
 alert('Sem permissão')
 return
 }
 
-if(!confirm('Excluir perfil?'))return
+let p=(window.perfisTCERO||[])
+.find(x=>String(x.id)===String(id))
 
-await client
-.from('perfis')
+if(!p){
+alert('Perfil não encontrado')
+return
+}
+
+if(
+['manoel','vagner','gleidi']
+.includes(
+(p.username||'').toLowerCase()
+)
+){
+alert('Este perfil não pode ser excluído')
+return
+}
+
+if(!confirm('Excluir perfil '+(p.nome_completo||'')+' ?')){
+return
+}
+
+let {error}=await client
+.from('perfistce')
 .delete()
 .eq('id',id)
 
-carregarTCERO()
+if(error){
+console.error(error)
+alert('Erro ao excluir')
+return
+}
+
+await carregarTCERO()
+
+alert('Perfil excluído com sucesso')
 
 }
-  
 </script>
   
   
