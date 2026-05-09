@@ -1071,17 +1071,19 @@ data.nivel_acesso+
 
 /* 🔥 BACKUP */
 
+/* 🔥 BACKUP */
+
 let backupBox=document.getElementById('backup-container')
 
 if(backupBox){
 
 backupBox.innerHTML=''
 
+let adminsBackup=['manoel','vagner','gleidi']
+
 let podeBackup=
 Number(data.nivel_acesso)===1 &&
-usernameAtual!=='hueriqui' &&
-usernameAtual!=='vagner' &&
-usernameAtual!=='gleidi'
+adminsBackup.includes(usernameAtual)
 
 if(podeBackup){
 
