@@ -836,7 +836,6 @@ await carregarDados()
 
 }
 async function init(uid){
-
 document.body.classList.remove("login-bg")
 
 let tabelaLogin='perfis'
@@ -871,47 +870,52 @@ window.userP=data
 
 userP.nivel_acesso=Number(userP.nivel_acesso||0)
 
-let adminsTCERO=[
-'manoel',
-'vagner',
-'gleidi'
-]
-
-let podeVerPerfisSedam=
+let adminsSedamNivel1=
 Number(userP.nivel_acesso)===1
-/* 🔥 PERFIS */
-if(podeVerPerfisSedam){
 
-let btn=document.getElementById('tab-perfis')
+let adminsTCERO=['manoel','vagner','gleidi']
 
-if(btn){
-btn.classList.remove('hidden')
-btn.style.display='inline-flex'
+let usernameAtual=
+(userP.username||'').toLowerCase()
+
+/* 🔥 PERFIS SEDAM */
+
+let tabPerfis=document.getElementById('tab-perfis')
+
+if(adminsSedamNivel1){
+
+if(tabPerfis){
+tabPerfis.classList.remove('hidden')
+tabPerfis.style.display='inline-flex'
 }
 
 }else{
 
-let btn=document.getElementById('tab-perfis')
-
-if(btn){
-btn.style.display='none'
+if(tabPerfis){
+tabPerfis.style.display='none'
 }
 
 }
 
-/* 🔥 TCERO */
+/* 🔥 PERFIS TCE-RO */
 
-if(
-adminsTCERO.includes(
-(userP.username||'').toLowerCase()
-)
-){
+let podeVerTCERO=
+adminsTCERO.includes(usernameAtual) &&
+usernameAtual!=='hueriqui'
 
 let tabTCERO=document.getElementById('tab-tcero')
+
+if(podeVerTCERO){
 
 if(tabTCERO){
 tabTCERO.classList.remove('hidden')
 tabTCERO.style.display='inline-flex'
+}
+
+}else{
+
+if(tabTCERO){
+tabTCERO.style.display='none'
 }
 
 }
@@ -932,7 +936,7 @@ let {data:tList}=await client
 
 window.perfisTCERO=tList||[]
 
-/* 🔥 DASHBOARD */
+/* 🔥 LOGIN */
 
 document.getElementById('login-screen')
 .classList.add('hidden')
@@ -956,27 +960,19 @@ data.nivel_acesso+
 
 /* 🔥 BACKUP */
 
-setTimeout(()=>{
-
 let backupBox=document.getElementById('backup-container')
 
-if(!backupBox)return
+if(backupBox){
 
 backupBox.innerHTML=''
 
-let bloqueadosBackup=[
-'hueriqui',
-'vagner',
-'gleidi'
-]
-
 let podeBackup=
-Number(userP.nivel_acesso)===1 &&
-!bloqueadosBackup.includes(
-(userP.username||'').toLowerCase()
-)
+Number(data.nivel_acesso)===1 &&
+usernameAtual!=='hueriqui' &&
+usernameAtual!=='vagner' &&
+usernameAtual!=='gleidi'
 
-if(!podeBackup)return
+if(podeBackup){
 
 let btnBackup=document.createElement('button')
 
@@ -984,28 +980,21 @@ btnBackup.id='btnBackup'
 
 btnBackup.innerText='BACKUP'
 
-btnBackup.style.background='#6d28d9'
-btnBackup.style.color='#ffffff'
-btnBackup.style.fontWeight='900'
-btnBackup.style.padding='10px 18px'
-btnBackup.style.borderRadius='14px'
-btnBackup.style.border='none'
-btnBackup.style.cursor='pointer'
-btnBackup.style.marginLeft='0px'
-btnBackup.style.display='inline-flex'
-btnBackup.style.alignItems='center'
-btnBackup.style.justifyContent='center'
-btnBackup.style.minWidth='120px'
+btnBackup.className='bg-purple-700 hover:bg-purple-800 text-white font-black px-4 py-2 rounded-xl shadow-lg'
 
 btnBackup.onclick=function(){
 
-if(typeof gerarPDFBackup==='function'){
+if(typeof backupCompleto==='function'){
 
-gerarPDFBackup(allData||[])
+backupCompleto()
+
+}else if(typeof gerarJSON==='function'){
+
+gerarJSON(allData||[])
 
 }else{
 
-alert('Função BACKUP não encontrada.')
+alert('Função de backup não encontrada.')
 
 }
 
@@ -1013,15 +1002,17 @@ alert('Função BACKUP não encontrada.')
 
 backupBox.appendChild(btnBackup)
 
-},300)
+}
+
+}
 
 /* 🔥 CARREGA PERFIS */
 
-if(podeVerPerfisSedam){
+if(adminsSedamNivel1){
 carregarPerfis()
 }
 
-/* 🔥 SOMENTE LEITURA */
+/* 🔥 VISUALIZAÇÃO N4 */
 
 if(userP.nivel_acesso===4){
 
@@ -1052,7 +1043,8 @@ let txt=(b.innerText||'').toUpperCase()
 if(
 txt.includes('SALVAR')||
 txt.includes('EXCLUIR')||
-txt.includes('ALTERAR')
+txt.includes('ALTERAR')||
+txt.includes('INSERIR')
 ){
 b.style.display='none'
 }
@@ -1061,8 +1053,7 @@ b.style.display='none'
 
 if(!userP.permissao_pdf){
 
-document.querySelectorAll('.btn-pdf')
-.forEach(b=>{
+document.querySelectorAll('.btn-pdf').forEach(b=>{
 b.style.display='none'
 })
 
@@ -1073,9 +1064,10 @@ b.style.display='none'
 /* 🔥 ÚLTIMA ABA */
 
 switchTab(
-localStorage.getItem('activeTab')||
-'resumo'
+localStorage.getItem('activeTab')||'resumo'
 )
+
+/* 🔥 DADOS */
 
 await carregarDados()
 
