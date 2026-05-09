@@ -761,7 +761,7 @@ await carregarPerfis()
 await atualizarResponsaveis()
 }
 
-  function limparFormPerfil(){
+function limparFormPerfil(){
 document.getElementById('p_nome').value=''
 document.getElementById('p_user').value=''
 document.getElementById('p_cargo').value=''
@@ -769,18 +769,17 @@ document.getElementById('p_setor').value=''
 document.getElementById('p_nivel').value='3'
 }
 
-  async function atualizarResponsaveis(){
+async function atualizarResponsaveis(){
 let {data}=await client.from('perfis').select('*')
 window.perfis=data||[]
 }
-  
 
 function parseSubitemParts(s){
 let [i,rest]=String(s||'0.0').split('.')
 let n1=parseInt(i)||0
 let n2=parseInt((rest||'0').replace(/[^\d].*$/,''))||0
 let suf=(rest||'').replace(/^\d+/,'')||''
-return {n1,n2,suf}
+return{n1,n2,suf}
 }
 function compareSubitem(a,b){
 let pa=parseSubitemParts(a.subitem)
@@ -790,30 +789,37 @@ if(pa.n2!==pb.n2)return pa.n2-pb.n2
 return pa.suf.localeCompare(pb.suf)
 }
 function getItemKey(i){
-return (i.item&&i.item!==''?i.item:(String(i.subitem||'0.0').split('.')[0]))
+return(i.item&&i.item!==''?i.item:(String(i.subitem||'0.0').split('.')[0]))
 }
 function getTotal(i){
 return Math.max(
-Number(i.jan||0),Number(i.fev||0),Number(i.mar||0),Number(i.abr||0),Number(i.mai||0),
-Number(i.jun||0),Number(i.jul||0),Number(i.ago||0),Number(i.set||0),Number(i.out||0),Number(i.nov||0),Number(i.dez||0)
+Number(i.jan||0),
+Number(i.fev||0),
+Number(i.mar||0),
+Number(i.abr||0),
+Number(i.mai||0),
+Number(i.jun||0),
+Number(i.jul||0),
+Number(i.ago||0),
+Number(i.set||0),
+Number(i.out||0),
+Number(i.nov||0),
+Number(i.dez||0)
 )
 }
-  
 function formatarDataBR(dataStr){
 if(!dataStr)return'-'
 let p=dataStr.split('-')
 if(p.length!==3)return dataStr
 return p[2]+'/'+p[1]+'/'+p[0]
 }
-
 let ocultarConcluidos=false
 function parseDataLocal(dataStr){
-if(!dataStr) return null
+if(!dataStr)return null
 let p=dataStr.split('-')
-if(p.length!==3) return null
+if(p.length!==3)return null
 return new Date(Number(p[0]),Number(p[1])-1,Number(p[2]),12,0,0)
 }
-  
 let filtroDataInicio=null
 let filtroDataFim=null
 let filtroItemAtivo=null
@@ -821,35 +827,40 @@ const descItens={"1":"Planejamento Estratégico e Governança","2":"Análise e R
 let modoResumo='subitem'
 let modoGrupo='subitem'
 document.addEventListener("DOMContentLoaded",()=>{
-
-let userLocal=localStorage.getItem("user")
-
-let uid=null
-
-try{
-
-let u=JSON.parse(userLocal||'{}')
-
-if(u&&u.id){
-uid=u.id
-}
-
-}catch(e){
-uid=null
-}
-
 document.getElementById('dataInicio').value='2025-01-01'
 document.getElementById('dataFim').value='2028-01-01'
 document.body.classList.add("login-bg")
 filtroDataInicio='2025-01-01'
 filtroDataFim='2028-01-01'
-if(uid&&String(uid)!=='undefined'&&String(uid)!=='null'){
-init(uid)
-}else{
 localStorage.removeItem('uid')
+let userLocal=localStorage.getItem('user')
+if(userLocal){
+try{
+let perfil=JSON.parse(userLocal)
+if(perfil&&perfil.username){
+window.userP=perfil
+userP=perfil
+document.body.classList.remove('login-bg')
+document.getElementById('login-screen').classList.add('hidden')
+document.getElementById('dashboard').classList.remove('hidden')
+document.getElementById('user-info').innerHTML=
+(perfil.nome_completo||'-')+
+' • '+
+(perfil.cargo||'-')+
+' • '+
+(perfil.origem||'-')
+switchTab(localStorage.getItem('activeTab')||'resumo')
+carregarDados()
+return
+}
+}catch(e){
+console.log(e)
 localStorage.removeItem('user')
+}
+}
 const lastTab=localStorage.getItem('activeTab')
-if(lastTab)switchTab(lastTab)
+if(lastTab){
+switchTab(lastTab)
 }
 })
 const client=supabase.createClient(
@@ -859,7 +870,6 @@ window.S_KEY
 let userP=null
 let allData=[]
 let myChart=null
-
 async function login(){
 let usuario=document.getElementById('u').value.trim().toLowerCase()
 let senha=document.getElementById('p').value.trim()
@@ -901,9 +911,6 @@ return
 }
 window.userP=perfil
 userP=perfil
-if(perfil.id){
-localStorage.setItem('uid',perfil.id)
-}
 localStorage.setItem('user',JSON.stringify(perfil))
 document.body.classList.remove('login-bg')
 document.getElementById('login-screen').classList.add('hidden')
@@ -915,7 +922,7 @@ document.getElementById('user-info').innerHTML=
 ' • '+
 (perfil.origem||'-')
 if(
-perfil.origem==='TCERO' &&
+perfil.origem==='TCERO'&&
 (
 perfil.username==='manoel'||
 perfil.username==='vagner'||
@@ -928,20 +935,19 @@ tab.classList.remove('hidden')
 }
 }
 if(
-perfil.origem==='TCERO' &&
+perfil.origem==='TCERO'&&
 Number(perfil.nivel_acesso)===4
 ){
 document.getElementById('tab-perfis').style.display='none'
 document.getElementById('tab-usuarios').style.display='none'
 }
-/* 🔥 BACKUP */
 let backupBox=document.getElementById('backup-container')
 if(backupBox){
 backupBox.innerHTML=''
 let adminsBackup=['manoel','vagner','gleidi']
 let usernameAtual=(perfil.username||'').toLowerCase()
 let podeBackup=
-Number(perfil.nivel_acesso)===1 &&
+Number(perfil.nivel_acesso)===1&&
 adminsBackup.includes(usernameAtual)
 if(podeBackup){
 let btnBackup=document.createElement('button')
@@ -960,252 +966,9 @@ alert('Função de backup não encontrada.')
 backupBox.appendChild(btnBackup)
 }
 }
-switchTab(
-localStorage.getItem('activeTab')||'resumo'
-)
+switchTab(localStorage.getItem('activeTab')||'resumo')
 await sincronizarResponsaveis()
 await carregarDados()
-}
-
-async function init(uid){
-document.body.classList.remove("login-bg")
-
-let tabelaLogin='perfis'
-
-let {data,error}=await client
-.from('perfis')
-.select('*')
-.eq('id',uid)
-.single()
-
-if(error||!data){
-
-let r2=await client
-.from('perfistce')
-.select('*')
-.eq('id',uid)
-.single()
-
-data=r2.data
-error=r2.error
-tabelaLogin='perfistce'
-
-}
-
-if(error||!data){
-alert("Erro perfil")
-return
-}
-
-userP=data
-window.userP=data
-
-userP.nivel_acesso=Number(userP.nivel_acesso||0)
-
-let adminsSedamNivel1=
-Number(userP.nivel_acesso)===1
-
-let adminsTCERO=['manoel','vagner','gleidi']
-
-let usernameAtual=
-(userP.username||'').toLowerCase()
-
-/* 🔥 PERFIS SEDAM */
-
-let tabPerfis=document.getElementById('tab-perfis')
-
-if(adminsSedamNivel1){
-
-if(tabPerfis){
-tabPerfis.classList.remove('hidden')
-tabPerfis.style.display='inline-flex'
-}
-
-}else{
-
-if(tabPerfis){
-tabPerfis.style.display='none'
-}
-
-}
-
-/* 🔥 PERFIS TCE-RO */
-
-let podeVerTCERO=
-adminsTCERO.includes(usernameAtual) &&
-usernameAtual!=='hueriqui'
-
-let tabTCERO=document.getElementById('tab-tcero')
-
-if(podeVerTCERO){
-
-if(tabTCERO){
-tabTCERO.classList.remove('hidden')
-tabTCERO.style.display='inline-flex'
-}
-
-}else{
-
-if(tabTCERO){
-tabTCERO.style.display='none'
-}
-
-}
-
-/* 🔥 CARREGA PERFIS */
-
-let {data:pList}=await client
-.from('perfis')
-.select('*')
-.order('nome_completo')
-
-window.perfis=pList||[]
-
-let {data:tList}=await client
-.from('perfistce')
-.select('*')
-.order('nome_completo')
-
-window.perfisTCERO=tList||[]
-
-/* 🔥 LOGIN */
-
-document.getElementById('login-screen')
-.classList.add('hidden')
-
-document.getElementById('dashboard')
-.classList.remove('hidden')
-
-document.getElementById('dataInicio').value='2025-01-01'
-document.getElementById('dataFim').value='2028-01-01'
-
-filtroDataInicio='2025-01-01'
-filtroDataFim='2028-01-01'
-
-document.getElementById('user-info').innerText=
-data.nome_completo+
-" | "+
-(data.cargo||'-')+
-" (Nível "+
-data.nivel_acesso+
-")"
-/* 🔥 BACKUP */
-
-let backupBox=document.getElementById('backup-container')
-
-if(backupBox){
-
-backupBox.innerHTML=''
-
-let adminsBackup=['manoel','vagner','gleidi']
-
-let usernameAtual=(data.username||'').toLowerCase()
-
-let podeBackup=
-Number(data.nivel_acesso)===1 &&
-adminsBackup.includes(usernameAtual)
-
-console.log('BACKUP CHECK',usernameAtual,data.nivel_acesso,podeBackup)
-
-if(podeBackup){
-
-let btnBackup=document.createElement('button')
-
-btnBackup.id='btnBackup'
-
-btnBackup.innerText='BACKUP'
-
-btnBackup.className='bg-purple-700 hover:bg-purple-800 text-white font-black px-4 py-2 rounded-xl shadow-lg'
-
-btnBackup.onclick=function(){
-
-if(typeof backupCompleto==='function'){
-
-backupCompleto()
-
-}else if(typeof gerarJSON==='function'){
-
-gerarJSON(allData||[])
-
-}else{
-
-alert('Função de backup não encontrada.')
-
-}
-
-}
-
-backupBox.appendChild(btnBackup)
-
-}
-
-}
-
-/* 🔥 CARREGA PERFIS */
-
-if(adminsSedamNivel1){
-carregarPerfis()
-}
-
-/* 🔥 VISUALIZAÇÃO N4 */
-
-if(userP.nivel_acesso===4){
-
-document.querySelectorAll('input').forEach(x=>{
-x.disabled=true
-})
-
-document.querySelectorAll('textarea').forEach(x=>{
-x.disabled=true
-})
-
-document.querySelectorAll('select').forEach(x=>{
-
-if(
-x.id!=='filtroItem' &&
-x.id!=='filtroSubitem' &&
-x.id!=='tipoGrafico'
-){
-x.disabled=true
-}
-
-})
-
-document.querySelectorAll('button').forEach(b=>{
-
-let txt=(b.innerText||'').toUpperCase()
-
-if(
-txt.includes('SALVAR')||
-txt.includes('EXCLUIR')||
-txt.includes('ALTERAR')||
-txt.includes('INSERIR')
-){
-b.style.display='none'
-}
-
-})
-
-if(!userP.permissao_pdf){
-
-document.querySelectorAll('.btn-pdf').forEach(b=>{
-b.style.display='none'
-})
-
-}
-
-}
-
-/* 🔥 ÚLTIMA ABA */
-
-switchTab(
-localStorage.getItem('activeTab')||'resumo'
-)
-
-/* 🔥 DADOS */
-
-await carregarDados()
-
 }
 
 async function carregarDados(){
