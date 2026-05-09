@@ -895,8 +895,10 @@ return
 }
 
 window.userP=perfil
+userP=perfil
 
 localStorage.setItem('user',JSON.stringify(perfil))
+localStorage.setItem('uid',perfil.id)
 
 document.body.classList.remove('login-bg')
 
@@ -1068,9 +1070,6 @@ data.nome_completo+
 " (Nível "+
 data.nivel_acesso+
 ")"
-
-/* 🔥 BACKUP */
-
 /* 🔥 BACKUP */
 
 let backupBox=document.getElementById('backup-container')
@@ -1081,9 +1080,13 @@ backupBox.innerHTML=''
 
 let adminsBackup=['manoel','vagner','gleidi']
 
+let usernameAtual=(data.username||'').toLowerCase()
+
 let podeBackup=
 Number(data.nivel_acesso)===1 &&
 adminsBackup.includes(usernameAtual)
+
+console.log('BACKUP CHECK',usernameAtual,data.nivel_acesso,podeBackup)
 
 if(podeBackup){
 
