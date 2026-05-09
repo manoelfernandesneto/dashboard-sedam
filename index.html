@@ -2786,7 +2786,6 @@ let senha=document.getElementById('tc_senha')
 let cargo=document.getElementById('tc_cargo')
 let nivel=document.getElementById('tc_nivel')
 let pdf=document.getElementById('tc_pdf')
-let visual=document.getElementById('tc_visualizacao')
 
 if(nome)nome.value=p.nome_completo||''
 if(user)user.value=p.username||''
@@ -2794,7 +2793,6 @@ if(senha)senha.value=p.senha||''
 if(cargo)cargo.value=p.cargo||''
 if(nivel)nivel.value=p.nivel_acesso||4
 if(pdf)pdf.value=p.permissao_pdf?'true':'false'
-if(visual)visual.value=p.visualizacao||'SUBITEM'
 
 let btn=document.getElementById('btnSalvarTCERO')
 
@@ -2935,9 +2933,6 @@ let nivel=Number(
 document.getElementById('tc_nivel').value||4
 )
 
-let visualizacao=
-document.getElementById('tc_visualizacao').value||'SUBITEM'
-
 if(!nome||!user){
 alert('Preencha nome e usuário')
 return
@@ -2949,8 +2944,7 @@ username:user,
 senha:senha,
 cargo:cargo,
 nivel_acesso:nivel,
-permissao_pdf:permissao_pdf,
-visualizacao:visualizacao
+permissao_pdf:permissao_pdf
 }
 
 let res=null
