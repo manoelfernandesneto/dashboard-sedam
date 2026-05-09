@@ -2089,6 +2089,7 @@ body:rows,
 startY:15,
 styles:{fontSize:6},
 didDrawPage:function(){
+doc.setTextColor(90,90,90)
 doc.setFontSize(6)
 doc.text(NOTA_TECNICA_PDF,10,285,{maxWidth:190})
 }
@@ -2125,11 +2126,31 @@ columnStyles:{
 3:{cellWidth:18}
 },
 didDrawPage:function(){
+doc.setTextColor(90,90,90)
 let p=doc.internal.getCurrentPageInfo().pageNumber
 let t=doc.internal.getNumberOfPages()
 doc.setFontSize(6)
-doc.text(NOTA_TECNICA_PDF,10,282,{maxWidth:175})
-doc.text('Página '+p+' de '+t,195,290,{align:'right'})
+doc.setFontSize(4.5)
+
+doc.text(
+NOTA_TECNICA_PDF,
+10,
+262,
+{
+maxWidth:165,
+align:'justify'
+}
+)
+doc.setFontSize(7)
+
+doc.text(
+'Página '+p+' de '+t,
+200,
+287,
+{
+align:'right'
+}
+)
 }
 })
 doc.save('pdf_resumo_tag_sedam.pdf')
@@ -2189,12 +2210,32 @@ right:5,
 bottom:18
 },
 didDrawPage:function(){
+doc.setTextColor(90,90,90)
 let p=doc.internal.getCurrentPageInfo().pageNumber
 let t=doc.internal.getNumberOfPages()
 doc.setFontSize(6)
-doc.text(NOTA_TECNICA_PDF,10,178,{maxWidth:250})
+doc.setFontSize(4.5)
+
+doc.text(
+NOTA_TECNICA_PDF,
+10,
+170,
+{
+maxWidth:225,
+align:'justify'
+}
+)
 doc.setFontSize(7)
-doc.text('Página '+p+' de '+t,285,200,{align:'right'})
+doc.setFontSize(7)
+
+doc.text(
+'Página '+p+' de '+t,
+290,
+196,
+{
+align:'right'
+}
+)
 }
 })
 let finalY=doc.lastAutoTable.finalY+10
@@ -2492,10 +2533,21 @@ columnStyles:{
 3:{cellWidth:30}
 },
 didDrawPage:function(){
+doc.setTextColor(90,90,90)
 let p=doc.internal.getCurrentPageInfo().pageNumber
 let t=doc.internal.getNumberOfPages()
 doc.setFontSize(6)
-doc.text(NOTA_TECNICA_PDF,10,268,{maxWidth:190})
+doc.setFontSize(4.5)
+
+doc.text(
+NOTA_TECNICA_PDF,
+10,
+262,
+{
+maxWidth:165,
+align:'justify'
+}
+)
 doc.text('Página '+p+' de '+t,195,290,{align:'right'})
 }
 })
