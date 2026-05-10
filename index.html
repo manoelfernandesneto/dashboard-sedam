@@ -26,24 +26,26 @@ body:not(.login-bg){background:#f5f0e6!important;}
 body.login-bg{background:url('portovelho.png') center center/cover no-repeat fixed!important;}
 #bandeiraFlutuante{
 position:fixed;
-top:18px;
-right:18px;
-width:180px;
+top:70px;
+left:85px;
+width:320px;
 z-index:999;
 pointer-events:none;
-animation:flamular 5s ease-in-out infinite;
-filter:drop-shadow(0 8px 20px rgba(0,0,0,.25));
+animation:flamularForte 2.2s ease-in-out infinite;
+filter:drop-shadow(0 12px 28px rgba(0,0,0,.38));
 transform-origin:left center;
-opacity:.95;
+opacity:.98;
 display:none;
 }
 body.login-bg #bandeiraFlutuante{display:block;}
-@keyframes flamular{
-0%{transform:perspective(900px) rotateY(0deg) translateY(0px)}
-25%{transform:perspective(900px) rotateY(-6deg) translateY(-2px)}
-50%{transform:perspective(900px) rotateY(4deg) translateY(1px)}
-75%{transform:perspective(900px) rotateY(-5deg) translateY(-1px)}
-100%{transform:perspective(900px) rotateY(0deg) translateY(0px)}
+@keyframes flamularForte{
+0%{transform:perspective(1200px) rotateY(0deg) rotateZ(0deg) skewY(0deg) translateY(0px)}
+15%{transform:perspective(1200px) rotateY(-14deg) rotateZ(-1deg) skewY(-2deg) translateY(-3px)}
+30%{transform:perspective(1200px) rotateY(10deg) rotateZ(1deg) skewY(1deg) translateY(2px)}
+45%{transform:perspective(1200px) rotateY(-12deg) rotateZ(-1deg) skewY(-2deg) translateY(-2px)}
+60%{transform:perspective(1200px) rotateY(8deg) rotateZ(1deg) skewY(1deg) translateY(2px)}
+75%{transform:perspective(1200px) rotateY(-10deg) rotateZ(-1deg) skewY(-1deg) translateY(-1px)}
+100%{transform:perspective(1200px) rotateY(0deg) rotateZ(0deg) skewY(0deg) translateY(0px)}
 }
 
 .card-micro{
