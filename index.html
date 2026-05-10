@@ -309,41 +309,41 @@ SAIR
 
 </header>
 
-<nav class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-7 gap-3 mb-5">
+<nav class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-7 gap-2 mb-4">
 
-<button onclick="switchTab('resumo')" id="tab-resumo" class="tab-btn tab-active flex flex-col items-center justify-center rounded-3xl p-5 min-h-[120px] bg-gradient-to-br from-[#f6efe6] to-[#efe3d2] border border-[#d8b78a] shadow-[0_8px_25px_rgba(0,0,0,0.08)] hover:scale-[1.02] hover:shadow-[0_12px_30px_rgba(0,0,0,0.12)] transition-all duration-300">
-<div class="text-4xl mb-2">📊</div>
-<div class="text-[15px] font-black tracking-wide uppercase text-[#7a5b35]">Resumo</div>
+<button onclick="switchTab('resumo')" id="tab-resumo" class="tab-btn tab-active flex flex-col items-center justify-center rounded-2xl p-3 min-h-[82px] bg-gradient-to-br from-[#f6efe6] to-[#efe3d2] border border-[#d8b78a] shadow-[0_4px_14px_rgba(0,0,0,0.08)] hover:scale-[1.01] transition-all duration-300">
+<div class="text-2xl mb-1">📊</div>
+<div class="text-[11px] font-black tracking-wide uppercase text-[#7a5b35] text-center leading-tight">Resumo</div>
 </button>
 
-<button onclick="switchTab('mensal')" id="tab-mensal" class="tab-btn flex flex-col items-center justify-center rounded-3xl p-5 min-h-[120px] bg-white/80 border border-[#e5d6c3] shadow-[0_8px_25px_rgba(0,0,0,0.08)] hover:scale-[1.02] hover:shadow-[0_12px_30px_rgba(0,0,0,0.12)] transition-all duration-300">
-<div class="text-4xl mb-2">📑</div>
-<div class="text-[15px] font-black tracking-wide uppercase text-[#6e5a45]">Monitoramento</div>
+<button onclick="switchTab('mensal')" id="tab-mensal" class="tab-btn flex flex-col items-center justify-center rounded-2xl p-3 min-h-[82px] bg-white/90 border border-[#e5d6c3] shadow-[0_4px_14px_rgba(0,0,0,0.08)] hover:scale-[1.01] transition-all duration-300">
+<div class="text-2xl mb-1">📑</div>
+<div class="text-[11px] font-black tracking-wide uppercase text-[#6e5a45] text-center leading-tight">Monitoramento</div>
 </button>
 
-<button onclick="switchTab('analise')" id="tab-analise" class="tab-btn flex flex-col items-center justify-center rounded-3xl p-5 min-h-[120px] bg-white/80 border border-[#e5d6c3] shadow-[0_8px_25px_rgba(0,0,0,0.08)] hover:scale-[1.02] hover:shadow-[0_12px_30px_rgba(0,0,0,0.12)] transition-all duration-300">
-<div class="text-4xl mb-2">📈</div>
-<div class="text-[15px] font-black tracking-wide uppercase text-[#6e5a45]">Gráficos</div>
+<button onclick="switchTab('analise')" id="tab-analise" class="tab-btn flex flex-col items-center justify-center rounded-2xl p-3 min-h-[82px] bg-white/90 border border-[#e5d6c3] shadow-[0_4px_14px_rgba(0,0,0,0.08)] hover:scale-[1.01] transition-all duration-300">
+<div class="text-2xl mb-1">📈</div>
+<div class="text-[11px] font-black tracking-wide uppercase text-[#6e5a45] text-center leading-tight">Gráficos</div>
 </button>
 
-<button onclick="switchTab('concluidos')" id="tab-concluidos" class="tab-btn flex flex-col items-center justify-center rounded-3xl p-5 min-h-[120px] bg-white/80 border border-[#e5d6c3] shadow-[0_8px_25px_rgba(0,0,0,0.08)] hover:scale-[1.02] hover:shadow-[0_12px_30px_rgba(0,0,0,0.12)] transition-all duration-300">
-<div class="text-4xl mb-2">🏆</div>
-<div class="text-[15px] font-black tracking-wide uppercase text-[#6e5a45]">100% Cumpridos</div>
+<button onclick="switchTab('concluidos')" id="tab-concluidos" class="tab-btn flex flex-col items-center justify-center rounded-2xl p-3 min-h-[82px] bg-white/90 border border-[#e5d6c3] shadow-[0_4px_14px_rgba(0,0,0,0.08)] hover:scale-[1.01] transition-all duration-300">
+<div class="text-2xl mb-1">🏆</div>
+<div class="text-[11px] font-black tracking-wide uppercase text-[#6e5a45] text-center leading-tight">100% Cumpridos</div>
 </button>
 
-<button id="tab-perfis" onclick="switchTab('perfis')" class="tab-btn hidden flex flex-col items-center justify-center rounded-3xl p-5 min-h-[120px] bg-gradient-to-br from-[#f6efe6] to-[#efe3d2] border border-[#d8b78a] shadow-[0_8px_25px_rgba(0,0,0,0.08)] hover:scale-[1.02] hover:shadow-[0_12px_30px_rgba(0,0,0,0.12)] transition-all duration-300">
-<div class="text-4xl mb-2">👥</div>
-<div class="text-[15px] font-black tracking-wide uppercase text-[#7a5b35]">Perfis Sedam</div>
+<button id="tab-perfis" onclick="switchTab('perfis')" class="tab-btn hidden flex flex-col items-center justify-center rounded-2xl p-3 min-h-[82px] bg-gradient-to-br from-[#f6efe6] to-[#efe3d2] border border-[#d8b78a] shadow-[0_4px_14px_rgba(0,0,0,0.08)] hover:scale-[1.01] transition-all duration-300">
+<div class="text-2xl mb-1">👥</div>
+<div class="text-[11px] font-black tracking-wide uppercase text-[#7a5b35] text-center leading-tight">Perfis Sedam</div>
 </button>
 
-<button id="tab-tcero" onclick="switchTab('tcero')" class="tab-btn hidden flex flex-col items-center justify-center rounded-3xl p-5 min-h-[120px] bg-white/80 border border-[#e5d6c3] shadow-[0_8px_25px_rgba(0,0,0,0.08)] hover:scale-[1.02] hover:shadow-[0_12px_30px_rgba(0,0,0,0.12)] transition-all duration-300">
-<div class="text-4xl mb-2">🛡️</div>
-<div class="text-[15px] font-black tracking-wide uppercase text-[#6e5a45]">Perfis TCE-RO</div>
+<button id="tab-tcero" onclick="switchTab('tcero')" class="tab-btn hidden flex flex-col items-center justify-center rounded-2xl p-3 min-h-[82px] bg-white/90 border border-[#e5d6c3] shadow-[0_4px_14px_rgba(0,0,0,0.08)] hover:scale-[1.01] transition-all duration-300">
+<div class="text-2xl mb-1">🛡️</div>
+<div class="text-[11px] font-black tracking-wide uppercase text-[#6e5a45] text-center leading-tight">Perfis TCE-RO</div>
 </button>
 
-<button id="tab-usuarios" onclick="switchTab('usuarios')" class="tab-btn flex flex-col items-center justify-center rounded-3xl p-5 min-h-[120px] bg-white/80 border border-[#e5d6c3] shadow-[0_8px_25px_rgba(0,0,0,0.08)] hover:scale-[1.02] hover:shadow-[0_12px_30px_rgba(0,0,0,0.12)] transition-all duration-300">
-<div class="text-4xl mb-2">👤</div>
-<div class="text-[15px] font-black tracking-wide uppercase text-[#6e5a45]">Usuários Sedam</div>
+<button id="tab-usuarios" onclick="switchTab('usuarios')" class="tab-btn flex flex-col items-center justify-center rounded-2xl p-3 min-h-[82px] bg-white/90 border border-[#e5d6c3] shadow-[0_4px_14px_rgba(0,0,0,0.08)] hover:scale-[1.01] transition-all duration-300">
+<div class="text-2xl mb-1">👤</div>
+<div class="text-[11px] font-black tracking-wide uppercase text-[#6e5a45] text-center leading-tight">Usuários Sedam</div>
 </button>
 
 </nav>
