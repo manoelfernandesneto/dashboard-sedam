@@ -321,34 +321,41 @@ SAIR
 
 </header>
 
-<nav class="flex gap-1 mb-4 border-b border-white/5 overflow-x-auto">
+<nav class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-7 gap-3 mb-5">
 
-<button onclick="switchTab('resumo')" id="tab-resumo" class="tab-btn tab-active">
-Resumo
+<button onclick="switchTab('resumo')" id="tab-resumo" class="tab-btn tab-active flex flex-col items-center justify-center rounded-3xl p-5 min-h-[120px] bg-gradient-to-br from-[#f6efe6] to-[#efe3d2] border border-[#d8b78a] shadow-[0_8px_25px_rgba(0,0,0,0.08)] hover:scale-[1.02] hover:shadow-[0_12px_30px_rgba(0,0,0,0.12)] transition-all duration-300">
+<div class="text-4xl mb-2">📊</div>
+<div class="text-[15px] font-black tracking-wide uppercase text-[#7a5b35]">Resumo</div>
 </button>
 
-<button onclick="switchTab('mensal')" id="tab-mensal" class="tab-btn">
-Monitoramento
+<button onclick="switchTab('mensal')" id="tab-mensal" class="tab-btn flex flex-col items-center justify-center rounded-3xl p-5 min-h-[120px] bg-white/80 border border-[#e5d6c3] shadow-[0_8px_25px_rgba(0,0,0,0.08)] hover:scale-[1.02] hover:shadow-[0_12px_30px_rgba(0,0,0,0.12)] transition-all duration-300">
+<div class="text-4xl mb-2">📑</div>
+<div class="text-[15px] font-black tracking-wide uppercase text-[#6e5a45]">Monitoramento</div>
 </button>
 
-<button onclick="switchTab('analise')" id="tab-analise" class="tab-btn">
-Gráficos
+<button onclick="switchTab('analise')" id="tab-analise" class="tab-btn flex flex-col items-center justify-center rounded-3xl p-5 min-h-[120px] bg-white/80 border border-[#e5d6c3] shadow-[0_8px_25px_rgba(0,0,0,0.08)] hover:scale-[1.02] hover:shadow-[0_12px_30px_rgba(0,0,0,0.12)] transition-all duration-300">
+<div class="text-4xl mb-2">📈</div>
+<div class="text-[15px] font-black tracking-wide uppercase text-[#6e5a45]">Gráficos</div>
 </button>
 
-<button onclick="switchTab('concluidos')" id="tab-concluidos" class="tab-btn">
-100% Cumpridos
+<button onclick="switchTab('concluidos')" id="tab-concluidos" class="tab-btn flex flex-col items-center justify-center rounded-3xl p-5 min-h-[120px] bg-white/80 border border-[#e5d6c3] shadow-[0_8px_25px_rgba(0,0,0,0.08)] hover:scale-[1.02] hover:shadow-[0_12px_30px_rgba(0,0,0,0.12)] transition-all duration-300">
+<div class="text-4xl mb-2">🏆</div>
+<div class="text-[15px] font-black tracking-wide uppercase text-[#6e5a45]">100% Cumpridos</div>
 </button>
 
-<button id="tab-perfis" onclick="switchTab('perfis')" class="tab-btn hidden">
-PERFIS SEDAM
+<button id="tab-perfis" onclick="switchTab('perfis')" class="tab-btn hidden flex flex-col items-center justify-center rounded-3xl p-5 min-h-[120px] bg-gradient-to-br from-[#f6efe6] to-[#efe3d2] border border-[#d8b78a] shadow-[0_8px_25px_rgba(0,0,0,0.08)] hover:scale-[1.02] hover:shadow-[0_12px_30px_rgba(0,0,0,0.12)] transition-all duration-300">
+<div class="text-4xl mb-2">👥</div>
+<div class="text-[15px] font-black tracking-wide uppercase text-[#7a5b35]">Perfis Sedam</div>
 </button>
 
-<button id="tab-tcero" onclick="switchTab('tcero')" class="tab-btn hidden">
-PERFIS TCE-RO
+<button id="tab-tcero" onclick="switchTab('tcero')" class="tab-btn hidden flex flex-col items-center justify-center rounded-3xl p-5 min-h-[120px] bg-white/80 border border-[#e5d6c3] shadow-[0_8px_25px_rgba(0,0,0,0.08)] hover:scale-[1.02] hover:shadow-[0_12px_30px_rgba(0,0,0,0.12)] transition-all duration-300">
+<div class="text-4xl mb-2">🛡️</div>
+<div class="text-[15px] font-black tracking-wide uppercase text-[#6e5a45]">Perfis TCE-RO</div>
 </button>
 
-<button id="tab-usuarios" onclick="switchTab('usuarios')" class="tab-btn">
-USUÁRIOS SEDAM
+<button id="tab-usuarios" onclick="switchTab('usuarios')" class="tab-btn flex flex-col items-center justify-center rounded-3xl p-5 min-h-[120px] bg-white/80 border border-[#e5d6c3] shadow-[0_8px_25px_rgba(0,0,0,0.08)] hover:scale-[1.02] hover:shadow-[0_12px_30px_rgba(0,0,0,0.12)] transition-all duration-300">
+<div class="text-4xl mb-2">👤</div>
+<div class="text-[15px] font-black tracking-wide uppercase text-[#6e5a45]">Usuários Sedam</div>
 </button>
 
 </nav>
