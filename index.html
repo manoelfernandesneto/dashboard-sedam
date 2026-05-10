@@ -1682,30 +1682,25 @@ columnStyles:{
 3:{cellWidth:14,halign:'center'}
 },
 margin:{
+top:20,
+bottom:38,
 left:5,
-right:5,
-bottom:20
+right:5
 },
 didDrawPage:function(data){
-
-let pageCount=doc.internal.getNumberOfPages()
-let pageCurrent=doc.internal.getCurrentPageInfo().pageNumber
-
+let pageHeight=doc.internal.pageSize.height
+let pageWidth=doc.internal.pageSize.width
+let p=doc.internal.getCurrentPageInfo().pageNumber
+let t=doc.internal.getNumberOfPages()
+doc.setFillColor(255,255,255)
+doc.rect(0,pageHeight-34,pageWidth,34,'F')
+doc.setTextColor(90,90,90)
 doc.setFontSize(7)
-
-doc.text(
-'Tribunal de Contas do Estado de Rondônia - TAG SEDAM 2026',
-6,
-290
-)
-
-doc.text(
-'Página '+pageCurrent+' de '+pageCount,
-195,
-290,
-{align:'right'}
-)
-
+doc.text('Tribunal de Contas do Estado de Rondônia - TAG SEDAM 2026',6,pageHeight-26)
+doc.setFontSize(4)
+doc.text(NOTA_TECNICA_PDF,10,pageHeight-18,{maxWidth:pageWidth-55,align:'justify'})
+doc.setFontSize(7)
+doc.text('Página '+p+' de '+t,pageWidth-10,pageHeight-6,{align:'right'})
 }
 })
 
@@ -2210,12 +2205,28 @@ Math.max(i.jan||0,i.fev||0,i.mar||0,i.abr||0,i.mai||0,i.jun||0,i.jul||0,i.ago||0
 doc.autoTable({
 head:[['Subitem','Descrição','Responsável','%']],
 body:rows,
-startY:15,
+startY:24,
 styles:{fontSize:6},
-didDrawPage:function(){
+margin:{
+top:20,
+bottom:38,
+left:5,
+right:5
+},
+didDrawPage:function(data){
+let pageHeight=doc.internal.pageSize.height
+let pageWidth=doc.internal.pageSize.width
+let p=doc.internal.getCurrentPageInfo().pageNumber
+let t=doc.internal.getNumberOfPages()
+doc.setFillColor(255,255,255)
+doc.rect(0,pageHeight-34,pageWidth,34,'F')
 doc.setTextColor(90,90,90)
-doc.setFontSize(6)
-doc.text(NOTA_TECNICA_PDF,10,285,{maxWidth:190})
+doc.setFontSize(7)
+doc.text('Tribunal de Contas do Estado de Rondônia - TAG SEDAM 2026',6,pageHeight-26)
+doc.setFontSize(4)
+doc.text(NOTA_TECNICA_PDF,10,pageHeight-18,{maxWidth:pageWidth-55,align:'justify'})
+doc.setFontSize(7)
+doc.text('Página '+p+' de '+t,pageWidth-10,pageHeight-6,{align:'right'})
 }
 })
 doc.save("backup_deliberacoes.pdf")
@@ -2236,7 +2247,7 @@ total+'%'
 ]
 })
 doc.autoTable({
-startY:20,
+startY:24,
 head:[['Subitem','Descrição Completa','Produto Estratégico','%']],
 body:rows,
 styles:{
@@ -2249,32 +2260,26 @@ columnStyles:{
 2:{cellWidth:62},
 3:{cellWidth:18}
 },
-didDrawPage:function(){
-doc.setTextColor(90,90,90)
+margin:{
+top:20,
+bottom:38,
+left:5,
+right:5
+},
+didDrawPage:function(data){
+let pageHeight=doc.internal.pageSize.height
+let pageWidth=doc.internal.pageSize.width
 let p=doc.internal.getCurrentPageInfo().pageNumber
 let t=doc.internal.getNumberOfPages()
-doc.setFontSize(6)
-doc.setFontSize(4)
-
-doc.text(
-NOTA_TECNICA_PDF,
-10,
-248,
-{
-maxWidth:150,
-align:'left'
-}
-)
+doc.setFillColor(255,255,255)
+doc.rect(0,pageHeight-34,pageWidth,34,'F')
+doc.setTextColor(90,90,90)
 doc.setFontSize(7)
-
-doc.text(
-'Página '+p+' de '+t,
-198,
-293,
-{
-align:'right'
-}
-)
+doc.text('Tribunal de Contas do Estado de Rondônia - TAG SEDAM 2026',6,pageHeight-26)
+doc.setFontSize(4)
+doc.text(NOTA_TECNICA_PDF,10,pageHeight-18,{maxWidth:pageWidth-55,align:'justify'})
+doc.setFontSize(7)
+doc.text('Página '+p+' de '+t,pageWidth-10,pageHeight-6,{align:'right'})
 }
 })
 doc.save('pdf_resumo_tag_sedam.pdf')
@@ -2301,7 +2306,7 @@ total+'%'
 ]
 })
 doc.autoTable({
-startY:20,
+startY:24,
 head:[['Sub','Descrição Completa','Produtos','Responsável','JAN','FEV','MAR','ABR','MAI','TOTAL']],
 body:rows,
 theme:'grid',
@@ -2329,37 +2334,25 @@ columnStyles:{
 9:{cellWidth:16}
 },
 margin:{
+top:20,
+bottom:38,
 left:5,
-right:5,
-bottom:18
+right:5
 },
-didDrawPage:function(){
-doc.setTextColor(90,90,90)
+didDrawPage:function(data){
+let pageHeight=doc.internal.pageSize.height
+let pageWidth=doc.internal.pageSize.width
 let p=doc.internal.getCurrentPageInfo().pageNumber
 let t=doc.internal.getNumberOfPages()
-doc.setFontSize(6)
+doc.setFillColor(255,255,255)
+doc.rect(0,pageHeight-34,pageWidth,34,'F')
+doc.setTextColor(90,90,90)
+doc.setFontSize(7)
+doc.text('Tribunal de Contas do Estado de Rondônia - TAG SEDAM 2026',6,pageHeight-26)
 doc.setFontSize(4)
-
-doc.text(
-NOTA_TECNICA_PDF,
-10,
-160,
-{
-maxWidth:225,
-align:'justify'
-}
-)
+doc.text(NOTA_TECNICA_PDF,10,pageHeight-18,{maxWidth:pageWidth-55,align:'justify'})
 doc.setFontSize(7)
-doc.setFontSize(7)
-
-doc.text(
-'Página '+p+' de '+t,
-290,
-196,
-{
-align:'right'
-}
-)
+doc.text('Página '+p+' de '+t,pageWidth-10,pageHeight-6,{align:'right'})
 }
 })
 let finalY=doc.lastAutoTable.finalY+10
@@ -2662,20 +2655,15 @@ i.responsavel||'-'
 ])
 
 doc.autoTable({
-
 startY:24,
-
 head:[[
 'Subitem',
 'Descrição Completa',
 'Produto',
 'Responsável'
 ]],
-
 body:rows,
-
 theme:'striped',
-
 styles:{
 fontSize:5,
 overflow:'linebreak',
@@ -2683,64 +2671,42 @@ cellPadding:1.2,
 valign:'top',
 textColor:[0,0,0]
 },
-
 headStyles:{
 fillColor:[37,99,235],
 textColor:[255,255,255],
 fontStyle:'bold',
 fontSize:6
 },
-
 alternateRowStyles:{
 fillColor:[245,245,245]
 },
-
 columnStyles:{
 0:{cellWidth:18},
 1:{cellWidth:118},
 2:{cellWidth:78},
 3:{cellWidth:48}
 },
-
 margin:{
 top:20,
 left:8,
 right:8,
-bottom:22
+bottom:38
 },
-
 didDrawPage:function(data){
-
+let pageHeight=doc.internal.pageSize.height
+let pageWidth=doc.internal.pageSize.width
 let p=doc.internal.getCurrentPageInfo().pageNumber
 let t=doc.internal.getNumberOfPages()
-
+doc.setFillColor(255,255,255)
+doc.rect(0,pageHeight-34,pageWidth,34,'F')
 doc.setTextColor(90,90,90)
-
-doc.setFontSize(4)
-
-doc.text(
-NOTA_TECNICA_PDF,
-10,
-188,
-{
-maxWidth:235,
-align:'left'
-}
-)
-
 doc.setFontSize(7)
-
-doc.text(
-'Página '+p+' de '+t,
-288,
-196,
-{
-align:'right'
+doc.text('Tribunal de Contas do Estado de Rondônia - TAG SEDAM 2026',6,pageHeight-26)
+doc.setFontSize(4)
+doc.text(NOTA_TECNICA_PDF,10,pageHeight-18,{maxWidth:pageWidth-55,align:'justify'})
+doc.setFontSize(7)
+doc.text('Página '+p+' de '+t,pageWidth-10,pageHeight-6,{align:'right'})
 }
-)
-
-}
-
 })
 
 let finalY=doc.lastAutoTable.finalY+6
