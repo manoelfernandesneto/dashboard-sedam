@@ -891,7 +891,9 @@ backupBox.appendChild(btnBackup)
 }
 }
 switchTab(localStorage.getItem('activeTab')||'resumo')
+if(typeof sincronizarResponsaveis==='function'){
 await sincronizarResponsaveis()
+}
 await carregarDados()
 }
 
@@ -1642,7 +1644,7 @@ finalY,
 {maxWidth:190}
 )
 
-let totalPages=doc.internal.getNumberOfPages()
+const totalPages=doc.internal.getNumberOfPages()
 
 for(let i=1;i<=totalPages;i++){
 
@@ -1658,7 +1660,7 @@ doc.text(
 )
 
 }
-let totalPages=doc.internal.getNumberOfPages()
+totalPages=doc.internal.getNumberOfPages()
 
 for(let i=1;i<=totalPages;i++){
 
@@ -2105,7 +2107,7 @@ doc.text(NOTA_TECNICA_PDF,10,pageHeight-18,{maxWidth:pageWidth-55,align:'justify
 
 }
 })
-let totalPages=doc.internal.getNumberOfPages()
+totalPages=doc.internal.getNumberOfPages()
 
 for(let i=1;i<=totalPages;i++){
 
@@ -2175,7 +2177,7 @@ doc.text(NOTA_TECNICA_PDF,10,pageHeight-18,{maxWidth:pageWidth-55,align:'justify
 
 }
 })
-let totalPages=doc.internal.getNumberOfPages()
+totalPages=doc.internal.getNumberOfPages()
 
 for(let i=1;i<=totalPages;i++){
 
@@ -2499,7 +2501,7 @@ maxWidth:190
 }
 )
 
-let totalPages=doc.internal.getNumberOfPages()
+totalPages=doc.internal.getNumberOfPages()
 
 for(let i=1;i<=totalPages;i++){
 
@@ -2526,7 +2528,7 @@ align:'right'
 )
 
 }
-let totalPages=doc.internal.getNumberOfPages()
+totalPages=doc.internal.getNumberOfPages()
 
 for(let i=1;i<=totalPages;i++){
 
@@ -2653,7 +2655,7 @@ maxWidth:260
 )
 
 }
-let totalPages=doc.internal.getNumberOfPages()
+totalPages=doc.internal.getNumberOfPages()
 
 for(let i=1;i<=totalPages;i++){
 
