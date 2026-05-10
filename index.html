@@ -24,19 +24,7 @@ margin:0;
 }
 body:not(.login-bg){background:#f5f0e6!important;}
 body.login-bg{background:url('portovelho.png') center center/cover no-repeat fixed!important;}
-#bandeiraFlutuante{
-position:fixed;
-top:70px;
-left:85px;
-width:320px;
-z-index:999;
-pointer-events:none;
-animation:flamularForte 2.2s ease-in-out infinite;
-filter:drop-shadow(0 12px 28px rgba(0,0,0,.38));
-transform-origin:left center;
-opacity:.98;
-display:none;
-}
+#bandeiraFlutuante{position:fixed;top:86px;left:118px;width:300px;z-index:999;pointer-events:none;animation:flamularForte 2.2s ease-in-out infinite;filter:drop-shadow(0 12px 28px rgba(0,0,0,.38));transform-origin:left center;opacity:.98;display:block!important}
 body.login-bg #bandeiraFlutuante{display:block;}
 @keyframes flamularForte{
 0%{transform:perspective(1200px) rotateY(0deg) rotateZ(0deg) skewY(0deg) translateY(0px)}
