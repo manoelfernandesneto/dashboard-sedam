@@ -1257,6 +1257,7 @@ localStorage.setItem('activeTab',t)
 
 document.querySelectorAll('.tab-view').forEach(v=>{
 v.classList.add('hidden')
+v.style.display='none'
 })
 
 document.querySelectorAll('.tab-btn').forEach(b=>{
@@ -1267,6 +1268,9 @@ let view=document.getElementById('view-'+t)
 
 if(view){
 view.classList.remove('hidden')
+view.style.display='block'
+view.style.visibility='visible'
+view.style.opacity='1'
 }
 
 let tab=document.getElementById('tab-'+t)
@@ -1278,7 +1282,26 @@ tab.classList.add('tab-active')
 if(t==='analise'){
 setTimeout(()=>{
 initPainelGrafico()
-},300)
+
+if(window.graficoResumo&&typeof window.graficoResumo.resize==='function'){
+window.graficoResumo.resize()
+}
+
+if(window.graficoMonitoramento&&typeof window.graficoMonitoramento.resize==='function'){
+window.graficoMonitoramento.resize()
+}
+
+if(window.graficoGeral&&typeof window.graficoGeral.resize==='function'){
+window.graficoGeral.resize()
+}
+
+document.querySelectorAll('canvas').forEach(c=>{
+c.style.display='block'
+c.style.visibility='visible'
+c.style.opacity='1'
+})
+
+},350)
 }
 
 if(t==='perfis'){
@@ -1294,8 +1317,40 @@ carregarUsuarios()
 }
 
 if(t==='tcero'){
-setTimeout(()=>{
-carregarTCERO()
+setTimeout(async()=>{
+
+let lista=document.getElementById('listaTCERO')
+
+if(lista){
+
+lista.innerHTML='<div class="p-4 font-bold">Carregando Perfis TCE-RO...</div>'
+
+let {data,error}=await client
+.from('perfistce')
+.select('*')
+.order('nome_completo',{ascending:true})
+
+if(error){
+console.error(error)
+lista.innerHTML='<div class="p-4 text-red-700 font-bold">Erro ao carregar.</div>'
+return
+}
+
+if(!data||!data.length){
+lista.innerHTML='<div class="p-4 font-bold">Nenhum perfil encontrado.</div>'
+return
+}
+
+lista.innerHTML=data.map(p=>`
+<div class="bg-white/80 border border-white/40 rounded-2xl p-3 mb-2 shadow">
+<div class="font-black text-[13px]">${p.nome_completo||'-'}</div>
+<div class="text-[11px] opacity-70">${p.username||'-'}</div>
+<div class="text-[11px] opacity-60">Nível ${p.nivel_acesso||'-'}</div>
+</div>
+`).join('')
+
+}
+
 },200)
 }
 
