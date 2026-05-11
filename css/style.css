@@ -91,3 +91,35 @@ th,td{padding:3px!important;word-break:break-word!important}
 .grid{gap:6px!important}
 canvas{max-width:100%!important;height:auto!important}
 }
+#tab-monitoramento table{width:100%!important;table-layout:fixed!important;border-collapse:collapse!important}
+#tab-monitoramento th,#tab-monitoramento td{padding:2px 3px!important;vertical-align:middle!important;line-height:1.05!important;overflow-wrap:anywhere!important;word-break:break-word!important}
+#tab-monitoramento th{font-size:9px!important;font-weight:900!important;text-align:center!important;background:#dbeafe!important;color:#000!important}
+#tab-monitoramento td{font-size:8px!important;font-weight:700!important;color:#000!important}
+#tab-monitoramento .td-desc{font-size:8px!important;line-height:1.08!important;white-space:normal!important;max-width:none!important}
+#tab-monitoramento .td-data{font-size:7px!important;white-space:nowrap!important}
+#tab-monitoramento .td-mes{font-size:7px!important;font-weight:800!important}
+#tab-monitoramento .td-mes-strong{font-size:8px!important;font-weight:900!important}
+#tab-monitoramento .td-total{font-size:9px!important;font-weight:900!important}
+#tab-monitoramento .input-mes{width:38px!important;height:24px!important;font-size:10px!important;padding:1px!important}
+#tab-monitoramento select{font-size:8px!important;padding:2px 4px!important;min-height:24px!important;line-height:1!important}
+#tab-monitoramento option{font-size:8px!important}
+#tab-monitoramento tr{height:auto!important}
+#tab-monitoramento td:nth-child(1){width:4%!important}
+#tab-monitoramento td:nth-child(2){width:26%!important}
+#tab-monitoramento td:nth-child(3){width:18%!important}
+#tab-monitoramento td:nth-child(4){width:12%!important}
+#tab-monitoramento td:nth-child(5){width:7%!important}
+#tab-monitoramento td:nth-child(6){width:7%!important}
+#tab-monitoramento td:nth-child(7),#tab-monitoramento td:nth-child(8),#tab-monitoramento td:nth-child(9),#tab-monitoramento td:nth-child(10),#tab-monitoramento td:nth-child(11){width:4%!important;text-align:center!important}
+#tab-monitoramento td:nth-child(12){width:6%!important;text-align:right!important}
+#tab-monitoramento .tr-hover:hover{background:rgba(30,58,138,.08)!important}
+@media(max-width:768px){
+#tab-monitoramento{overflow-x:auto!important}
+#tab-monitoramento table{min-width:1180px!important}
+#tab-monitoramento th{font-size:8px!important;padding:2px!important}
+#tab-monitoramento td{font-size:7px!important;padding:2px!important}
+#tab-monitoramento .td-desc{font-size:7px!important;line-height:1.02!important}
+#tab-monitoramento .td-total{font-size:8px!important}
+#tab-monitoramento .input-mes{width:34px!important;height:22px!important;font-size:9px!important}
+#tab-monitoramento select{font-size:7px!important;padding:1px 2px!important}
+}
