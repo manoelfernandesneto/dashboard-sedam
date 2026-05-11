@@ -6,7 +6,7 @@ body{background:#f5f0e6;color:#000;font-family:'Inter',sans-serif;margin:0;overf
 /* =========================================================
 002 LOGIN BACKGROUND
 ========================================================= */
-body.login-bg{background:url('../img/portovelho.png') center center/cover no-repeat fixed!important}
+body.login-bg{background:url('../assets/portovelho.png') center center/cover no-repeat fixed!important}
 
 /* =========================================================
 003 BANDEIRA
