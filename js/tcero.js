@@ -165,6 +165,9 @@ btnSalvar.style.visibility='visible'
 btnSalvar.style.opacity='1'
 btnSalvar.classList.remove('hidden')
 }
+document.querySelectorAll('.btn-excluir-tcero').forEach(b=>{
+b.classList.remove('hidden')
+})
 }
 /*=========================================================
 007 TCERO FUNCTION SALVAREDICAOTCERO
@@ -187,6 +190,9 @@ return
 }
 window.modoEdicaoTCERO=false
 await carregarTCERO()
+document.querySelectorAll('.btn-excluir-tcero').forEach(b=>{
+b.classList.add('hidden')
+})
 alert('Alterações salvas com sucesso')
 }
 /*=========================================================
@@ -289,7 +295,7 @@ ${data.map(p=>`
 
 <td class="px-3 py-2 text-center rounded-r-2xl">
 ${podeEditar?`
-<button onclick="excluirTCERO('${p.id}')" class="bg-red-600 hover:bg-red-700 text-white px-3 py-2 rounded-xl text-[10px] font-black shadow">
+<button onclick="excluirTCERO('${p.id}')" class="btn-excluir-tcero hidden bg-red-600 hover:bg-red-700 text-white px-3 py-2 rounded-xl text-[10px] font-black shadow"> class="bg-red-600 hover:bg-red-700 text-white px-3 py-2 rounded-xl text-[10px] font-black shadow">
 EXCLUIR
 </button>
 `:''}
