@@ -82,7 +82,7 @@ let total=getTotal(i)
 let bg=total<=30?'bg-red-900/20':total>=100?'bg-emerald-900/20':'bg-yellow-900/20'
 let podeEditar=userP&&(Number(userP.nivel_acesso)===1||Number(userP.nivel_acesso)===2||String(i.responsavel_id)===String(userP.id))
 let responsavelTexto=i.responsavel||'-'
-let listaPerfis=[...(window.perfis||[]),...(window.perfisTCERO||[])]
+let listaPerfis=[...(window.perfis||[]),...(window.perfisSedam||[])]
 let perfilResponsavel=listaPerfis.find(p=>String(p.id)===String(i.responsavel_id))
 if(perfilResponsavel){
 responsavelTexto=perfilResponsavel.nome_completo
