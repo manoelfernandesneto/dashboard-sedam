@@ -78,6 +78,7 @@ tabTCERO.classList.add('hidden')
 }
 let usernameAtual=(perfil.username||'').toLowerCase()
 let adminsTCERO=['manoel','vagner','gleidi']
+
 if(perfil.origem==='SEDAM'){
 if(tabPerfis){
 tabPerfis.classList.remove('hidden')
@@ -87,16 +88,19 @@ if(tabTCERO){
 tabTCERO.style.display='none'
 }
 }
+
 if(perfil.origem==='TCERO'&&adminsTCERO.includes(usernameAtual)){
 if(tabPerfis){
 tabPerfis.classList.remove('hidden')
-tabPerfis.innerText='PERFIS SEDAM'
+tabPerfis.innerHTML='<div>👥</div><div>Perfis Sedam</div>'
 }
 if(tabTCERO){
 tabTCERO.classList.remove('hidden')
 tabTCERO.style.display='inline-block'
+tabTCERO.innerHTML='<div>🛡️</div><div>Perfis TCE-RO</div>'
 }
 }
+
 if(perfil.origem==='TCERO'&&!adminsTCERO.includes(usernameAtual)){
 if(tabPerfis){
 tabPerfis.style.display='none'
@@ -105,6 +109,7 @@ if(tabTCERO){
 tabTCERO.style.display='none'
 }
 }
+
 if(perfil.origem==='SEDAM'&&usernameAtual==='hueriqui'){
 if(tabTCERO){
 tabTCERO.style.display='none'
