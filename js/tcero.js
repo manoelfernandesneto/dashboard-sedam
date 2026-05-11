@@ -204,7 +204,12 @@ return
 }
 window.perfisTCERO=data||[]
 let podeEditar=['manoel','vagner','gleidi'].includes(((window.userP&&window.userP.username)||'').toLowerCase())
-document.getElementById('boxCadastroTCERO').style.display=podeEditar?'flex':'none'
+
+let boxCadastro=document.getElementById('boxCadastroTCERO')
+if(boxCadastro){
+boxCadastro.style.display=podeEditar?'flex':'none'
+}
+
 if(!data||!data.length){
 lista.innerHTML='<div class="p-4 font-bold">Nenhum perfil encontrado.</div>'
 return
