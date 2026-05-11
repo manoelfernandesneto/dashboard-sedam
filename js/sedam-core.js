@@ -42,7 +42,7 @@ alert('Informe usuário e senha')
 return
 }
 let perfil=null
-let {data:p1}=await client.from('perfis').select('*').eq('username',usuario).eq('senha',senha).limit(1)
+let {data:p1}=await client.from('perfistce').select('*').eq('username',usuario).eq('senha',senha).limit(1)
 if(p1&&p1.length){
 perfil=p1[0]
 perfil.origem='TCERO'
