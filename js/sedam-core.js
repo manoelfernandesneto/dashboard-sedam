@@ -142,6 +142,7 @@ await carregarDados()
 003 SEDAM CORE FUNCTION SWITCHTAB
 =========================================================*/
 function switchTab(t){
+
 if(t==='dashboard'){
 console.log('ABRINDO DASHBOARD')
 console.log(typeof renderDashboard)
@@ -154,66 +155,80 @@ console.error('renderDashboard NÃO EXISTE')
 }
 },200)
 }
-setTimeout(()=>{
-renderDashboard()
-},200)
-}
+
 localStorage.setItem('activeTab',t)
+
 document.querySelectorAll('.tab-view').forEach(v=>{
 v.classList.add('hidden')
 v.style.display='none'
 })
+
 document.querySelectorAll('.tab-btn').forEach(b=>{
 b.classList.remove('tab-active')
 })
+
 let view=document.getElementById('view-'+t)
+
 if(view){
 view.classList.remove('hidden')
 view.style.display='block'
 view.style.visibility='visible'
 view.style.opacity='1'
 }
+
 let tab=document.getElementById('tab-'+t)
+
 if(tab){
 tab.classList.add('tab-active')
 }
+
 if(t==='analise'){
 setTimeout(()=>{
 initPainelGrafico()
+
 if(window.graficoResumo&&typeof window.graficoResumo.resize==='function'){
 window.graficoResumo.resize()
 }
+
 if(window.graficoMonitoramento&&typeof window.graficoMonitoramento.resize==='function'){
 window.graficoMonitoramento.resize()
 }
+
 if(window.graficoGeral&&typeof window.graficoGeral.resize==='function'){
 window.graficoGeral.resize()
 }
+
 document.querySelectorAll('canvas').forEach(c=>{
 c.style.display='block'
 c.style.visibility='visible'
 c.style.opacity='1'
 })
+
 },350)
 }
+
 if(t==='perfis'){
 setTimeout(()=>{
 carregarPerfis()
 },200)
 }
+
 if(t==='usuarios'){
 setTimeout(()=>{
 carregarUsuarios()
 },200)
 }
+
 if(t==='tcero'){
 setTimeout(()=>{
 carregarTCERO()
 },200)
 }
+
 setTimeout(()=>{
 renderTable()
 },100)
+
 }
 /*=========================================================
 004 SEDAM CORE FUNCTION CARREGARDADOS
