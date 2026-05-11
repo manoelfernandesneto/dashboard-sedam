@@ -322,3 +322,156 @@ window.perfis=data||[]
 let html=`<table class="w-full text-xs"><thead><tr class="text-slate-400 border-b border-white/20"><th class="text-left p-2">Nome</th><th class="text-left p-2">Username</th><th class="text-left p-2">Cargo</th><th class="text-left p-2">Setor</th><th class="text-left p-2">Nível</th><th class="text-right p-2">Ações</th></tr></thead><tbody>${window.perfis.map(p=>{let isOculto=USUARIOS_OCULTOS.includes((p.username||'').toLowerCase());let podeEditar=isAdminSedam;return`<tr class="border-b border-white/10 hover:bg-white/5"><td class="p-2">${p.nome_completo||'-'}</td><td class="p-2">${p.username||'-'}</td><td class="p-2">${p.cargo||'-'}</td><td class="p-2">${p.setor||'-'}</td><td class="p-2">N${p.nivel_acesso||'-'}</td><td class="p-2 text-right">${podeEditar?`<button ${isOculto?'disabled style="opacity:0.3;pointer-events:none"':''} onclick="editarPerfil('${p.id}')" class="bg-blue-600 px-2 py-1 rounded mr-1">Editar</button><button ${isOculto?'disabled style="opacity:0.3;pointer-events:none"':''} onclick="excluirPerfil('${p.id}')" class="bg-red-600 px-2 py-1 rounded">Excluir</button>`:`<span class="text-slate-500 font-black">VISUALIZAÇÃO</span>`}</td></tr>`}).join('')}</tbody></table>`
 document.getElementById('listaPerfis').innerHTML=html
 }
+
+
+
+let dashLinha=null
+let dashPizza=null
+let dashBarras=null
+function renderDashboard(){
+if(!window.allData||!allData.length)return
+
+let lista=[...allData]
+
+let totalSubitens=lista.length
+
+let totalItens=[...new Set(
+lista.map(i=>getItemKey(i))
+)].length
+
+let media=Math.round(
+lista.reduce((acc,c)=>acc+getTotal(c),0)/(lista.length||1)
+)
+
+let concluidos=lista.filter(i=>getTotal(i)>=100).length
+
+let andamento=lista.filter(i=>getTotal(i)>0&&getTotal(i)<100).length
+
+let pendentes=lista.filter(i=>getTotal(i)<=0).length
+
+document.getElementById('dashMedia').innerText=media+'%'
+document.getElementById('dashItens').innerText=totalItens
+document.getElementById('dashSubitens').innerText=totalSubitens
+document.getElementById('dashConcluidos').innerText=concluidos
+document.getElementById('dashAndamento').innerText=andamento
+document.getElementById('dashPendentes').innerText=pendentes
+
+let meses=['JAN','FEV','MAR','ABR','MAI']
+
+let mediasMeses=[
+Math.round(lista.reduce((a,c)=>a+Number(c.jan||0),0)/(lista.length||1)),
+Math.round(lista.reduce((a,c)=>a+Number(c.fev||0),0)/(lista.length||1)),
+Math.round(lista.reduce((a,c)=>a+Number(c.mar||0),0)/(lista.length||1)),
+Math.round(lista.reduce((a,c)=>a+Number(c.abr||0),0)/(lista.length||1)),
+Math.round(lista.reduce((a,c)=>a+Number(c.mai||0),0)/(lista.length||1))
+]
+
+if(dashLinha)dashLinha.destroy()
+
+dashLinha=new Chart(
+document.getElementById('graficoDashboardLinha'),
+{
+type:'line',
+data:{
+labels:meses,
+datasets:[{
+label:'Percentual Médio (%)',
+data:mediasMeses,
+borderWidth:3,
+tension:.35,
+fill:true
+}]
+},
+options:{
+responsive:true,
+plugins:{
+legend:{display:true}
+},
+scales:{
+y:{
+beginAtZero:true,
+max:100
+}
+}
+}
+}
+)
+
+if(dashPizza)dashPizza.destroy()
+
+dashPizza=new Chart(
+document.getElementById('graficoDashboardPizza'),
+{
+type:'doughnut',
+data:{
+labels:[
+'100% Cumpridos',
+'Em Andamento',
+'Não Cumpridos'
+],
+datasets:[{
+data:[
+concluidos,
+andamento,
+pendentes
+]
+}]
+},
+options:{
+responsive:true,
+plugins:{
+legend:{
+position:'bottom'
+}
+}
+}
+}
+)
+
+let mapaItens={}
+
+lista.forEach(i=>{
+let item=getItemKey(i)
+if(!mapaItens[item])mapaItens[item]=[]
+mapaItens[item].push(getTotal(i))
+})
+
+let labels=Object.keys(mapaItens)
+
+let valores=labels.map(l=>{
+let arr=mapaItens[l]
+return Math.round(
+arr.reduce((a,b)=>a+b,0)/(arr.length||1)
+)
+})
+
+if(dashBarras)dashBarras.destroy()
+
+dashBarras=new Chart(
+document.getElementById('graficoDashboardBarras'),
+{
+type:'bar',
+data:{
+labels:labels.map(i=>'Item '+i),
+datasets:[{
+label:'Percentual Médio',
+data:valores,
+borderWidth:1
+}]
+},
+options:{
+responsive:true,
+plugins:{
+legend:{display:false}
+},
+scales:{
+y:{
+beginAtZero:true,
+max:100
+}
+}
+}
+}
+)
+
+}
