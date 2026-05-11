@@ -291,6 +291,25 @@ Descrição das Ações Cumpridas (100%)
 
 <!-- 010 PERFIS -->
 <div id="view-perfis" class="tab-view hidden">
+<div id="boxCadastroPerfis" class="hidden flex-wrap gap-2 mb-4 bg-white/70 rounded-3xl p-4 shadow-[0_4px_18px_rgba(0,0,0,.08)]">
+<input id="pf_nome" placeholder="Nome Completo" class="px-4 py-3 rounded-2xl border border-slate-200 outline-none text-[13px] font-bold min-w-[240px]">
+<input id="pf_user" placeholder="Usuário" class="px-4 py-3 rounded-2xl border border-slate-200 outline-none text-[13px] font-bold min-w-[140px]">
+<input id="pf_senha" placeholder="Senha" class="px-4 py-3 rounded-2xl border border-slate-200 outline-none text-[13px] font-bold min-w-[140px]">
+<input id="pf_cargo" placeholder="Cargo" class="px-4 py-3 rounded-2xl border border-slate-200 outline-none text-[13px] font-bold min-w-[260px]">
+
+<select id="pf_nivel" class="px-4 py-3 rounded-2xl border border-slate-200 outline-none text-[13px] font-black">
+<option value="1">Nível 1</option>
+<option value="2">Nível 2</option>
+<option value="3">Nível 3</option>
+<option value="4" selected>Nível 4</option>
+</select>
+
+<button id="btnInserirPerfil" onclick="salvarNovoPerfil()" class="bg-violet-600 hover:bg-violet-700 text-white px-6 py-3 rounded-2xl text-[11px] font-black shadow">
+INSERIR
+</button>
+
+</div>
+
 <div id="listaPerfis"></div>
 </div>
 
