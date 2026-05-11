@@ -228,7 +228,14 @@ window.perfisTCERO=data||[]
 let podeEditar=['manoel','vagner','gleidi'].includes(((window.userP&&window.userP.username)||'').toLowerCase())
 let boxCadastro=document.getElementById('boxCadastroTCERO')
 if(boxCadastro){
-boxCadastro.style.display=podeEditar?'flex':'none'
+if(boxCadastro){
+boxCadastro.style.display='flex'
+if(!podeEditar){
+boxCadastro.classList.add('opacity-50','pointer-events-none')
+}else{
+boxCadastro.classList.remove('opacity-50','pointer-events-none')
+}
+}
 }
 if(!data||!data.length){
 lista.innerHTML='<div class="p-4 font-bold">Nenhum perfil encontrado.</div>'
@@ -311,7 +318,7 @@ ${data.map(p=>`
 
 <td class="px-3 py-2 text-center rounded-r-2xl">
 ${podeEditar?`
-<button onclick="excluirTCERO('${p.id}')" class="btn-excluir-tcero hidden bg-red-600 hover:bg-red-700 text-white px-3 py-2 rounded-xl text-[10px] font-black shadow"> class="bg-red-600 hover:bg-red-700 text-white px-3 py-2 rounded-xl text-[10px] font-black shadow">
+<button onclick="excluirTCERO('${p.id}')" class="btn-excluir-tcero hidden bg-red-600 hover:bg-red-700 text-white px-3 py-2 rounded-xl text-[10px] font-black shadow">
 EXCLUIR
 </button>
 `:''}
