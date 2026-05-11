@@ -142,6 +142,22 @@ await carregarDados()
 003 SEDAM CORE FUNCTION SWITCHTAB
 =========================================================*/
 function switchTab(t){
+if(t==='dashboard'){
+console.log('ABRINDO DASHBOARD')
+console.log(typeof renderDashboard)
+
+setTimeout(()=>{
+if(typeof renderDashboard==='function'){
+renderDashboard()
+}else{
+console.error('renderDashboard NÃO EXISTE')
+}
+},200)
+}
+setTimeout(()=>{
+renderDashboard()
+},200)
+}
 localStorage.setItem('activeTab',t)
 document.querySelectorAll('.tab-view').forEach(v=>{
 v.classList.add('hidden')
