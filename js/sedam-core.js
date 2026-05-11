@@ -42,7 +42,7 @@ alert('Informe usuário e senha')
 return
 }
 let perfil=null
-let {data:p1}=await client.from('perfistce').select('*').eq('username',usuario).eq('senha',senha).limit(1)
+let {data:p1}=await client.from('perfis').select('*').eq('username',usuario).eq('senha',senha).limit(1)
 if(p1&&p1.length){
 perfil=p1[0]
 perfil.origem='TCERO'
@@ -252,7 +252,7 @@ if(!data){
 allData=[]
 return
 }
-let listaPerfis=[...(window.perfis||[]),...(window.perfisTCERO||[])]
+let listaPerfis=[...(window.perfis||[])]
 allData=(data||[]).filter(d=>d&&d.subitem&&d.descricao).map(i=>{
 let perfil=listaPerfis.find(p=>String(p.id)===String(i.responsavel_id))
 if(perfil){
