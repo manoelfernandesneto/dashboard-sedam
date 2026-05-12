@@ -124,30 +124,88 @@ pdfContainer.innerHTML=`<div class="flex gap-2 items-center flex-wrap">${pdfHTML
 004 MONITORAMENTO FUNCTION RENDERCONCLUIDOS
 =========================================================*/
 function renderConcluidos(){
+
+let dados=[...(window.allData||[])]
+.filter(i=>getTotal(i)>=100)
+.sort(compareSubitem)
+
 let box=document.getElementById('concluidos-container')
-let lista=document.getElementById('concluidos-list')
-if(!box||!lista)return
+let listaEl=document.getElementById('concluidos-list')
+
+if(!box||!listaEl)return
+
 box.innerHTML=''
-lista.innerHTML=''
-let dados=[...(window.allData||[])].filter(i=>getTotal(i)>=100).sort(compareSubitem)
+listaEl.innerHTML=''
+
 let total=document.createElement('div')
+
 total.className='rounded-2xl shadow-2xl flex items-center justify-center p-3'
 total.style.background='linear-gradient(135deg,#bbf7d0,#86efac,#dcfce7)'
 total.style.minHeight='120px'
-total.innerHTML=`<div class="text-center w-full"><div style="font-size:9px;font-weight:900;color:#166534;line-height:1;">TOTAL GERAL</div><div style="font-size:34px;font-weight:900;color:#166534;line-height:1;">${dados.length}</div><div style="font-size:11px;font-weight:900;color:#166534;line-height:1.1;">SUBITENS 100%</div></div>`
+
+total.innerHTML=`
+<div class="text-center w-full">
+<div style="font-size:9px;font-weight:900;color:#166534;line-height:1;">
+TOTAL GERAL
+</div>
+<div style="font-size:34px;font-weight:900;color:#166534;line-height:1;">
+${dados.length}
+</div>
+<div style="font-size:11px;font-weight:900;color:#166534;line-height:1.1;">
+SUBITENS 100%
+</div>
+</div>
+`
+
 box.appendChild(total)
+
 dados.forEach(i=>{
+
 let card=document.createElement('div')
+
 card.className='card-micro shadow-lg'
 card.style.background='linear-gradient(135deg,#1e3a8a,#0f172a)'
 card.style.color='#ffffff'
-card.innerHTML=`<div class="text-center w-full"><div style="font-size:12px;font-weight:900;color:#ffffff;">SUBITEM</div><div style="font-size:28px;font-weight:900;color:#ffffff;">${i.subitem}</div><div style="font-size:13px;font-weight:900;color:#bfdbfe;">ITEM ${i.item||'-'}</div></div>`
+
+card.innerHTML=`
+<div class="text-center w-full">
+<div style="font-size:12px;font-weight:900;color:#ffffff;">
+SUBITEM
+</div>
+<div style="font-size:28px;font-weight:900;color:#ffffff;">
+${i.subitem}
+</div>
+<div style="font-size:13px;font-weight:900;color:#bfdbfe;">
+ITEM ${i.item||'-'}
+</div>
+</div>
+`
+
 box.appendChild(card)
+
 let div=document.createElement('div')
+
 div.className='border-b border-slate-300 pb-1 mb-1'
-div.innerHTML=`<div style="font-size:15px;font-weight:900;color:#000000;line-height:1;">${i.subitem}</div><div style="font-size:11px;line-height:1.05;color:#000000;font-weight:700;margin-top:1px;">${i.descricao||'-'}</div><div style="font-size:10px;line-height:1;color:#0f172a;font-weight:900;margin-top:1px;">PRODUTO: ${i.produto||'-'}</div><div style="font-size:10px;line-height:1;color:#1e3a8a;font-weight:900;margin-top:1px;">RESPONSÁVEL: ${i.responsavel||'-'}</div>`
-lista.appendChild(div)
+
+div.innerHTML=`
+<div style="font-size:15px;font-weight:900;color:#000000;line-height:1;">
+${i.subitem}
+</div>
+<div style="font-size:11px;line-height:1.05;color:#000000;font-weight:700;margin-top:1px;">
+${i.descricao||'-'}
+</div>
+<div style="font-size:10px;line-height:1;color:#0f172a;font-weight:900;margin-top:1px;">
+PRODUTO: ${i.produto||'-'}
+</div>
+<div style="font-size:10px;line-height:1;color:#1e3a8a;font-weight:900;margin-top:1px;">
+RESPONSÁVEL: ${i.responsavel||'-'}
+</div>
+`
+
+listaEl.appendChild(div)
+
 })
+
 }
 /*=========================================================
 005 MONITORAMENTO FUNCTION SALVAR
