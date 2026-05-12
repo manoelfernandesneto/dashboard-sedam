@@ -43,8 +43,8 @@ let cor=media<=30?'bg-status-red':media>=100?'bg-status-green':'bg-status-yellow
 let itemBase=lista[0]||{}
 let descricao=lista.find(x=>x.descricaoitem&&x.descricaoitem.trim())?.descricaoitem||lista.find(x=>x.descricao&&x.descricao.trim())?.descricao||''
 let responsavel=itemBase.responsavel||'Não informado'
-let itemClick=(modoResumo==='item'?k:k.split('.')[0])
-html+=`<div class="flex flex-col"><div class="card-micro ${cor}" onclick="abrirItem('${itemClick}')"><span class="percent-big">${media}%</span><span style="font-size:10px;font-weight:900;color:#000000;">${k}</span></div><div style="font-size:10px;font-weight:700;color:#000000;margin-top:2px;padding:2px;text-align:center;line-height:1.1;">${descricao}</div><div style="font-size:9px;font-weight:900;color:#0f172a;text-align:center;line-height:1.1;margin-top:1px;">${responsavel}</div></div>`
+let itemClick=(modoResumo==='item'?k:k)
+html+=`<div class="flex flex-col"><div class="card-micro ${cor}" onclick="abrirDetalhesResumo('${itemClick}')"><span class="percent-big">${media}%</span><span style="font-size:10px;font-weight:900;color:#000000;">${k}</span></div><div style="font-size:10px;font-weight:700;color:#000000;margin-top:2px;padding:2px;text-align:center;line-height:1.1;">${descricao}</div><div style="font-size:9px;font-weight:900;color:#0f172a;text-align:center;line-height:1.1;margin-top:1px;">${responsavel}</div></div>`
 })
 let el=document.getElementById('cards-container')
 if(el)el.innerHTML=html
