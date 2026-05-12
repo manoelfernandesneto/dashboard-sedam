@@ -35,113 +35,156 @@ switchTab(lastTab)
 002 SEDAM CORE FUNCTION LOGIN
 =========================================================*/
 async function login(){
+
 let usuario=document.getElementById('u').value.trim().toLowerCase()
 let senha=document.getElementById('p').value.trim()
+
 if(!usuario||!senha){
 alert('Informe usuário e senha')
 return
 }
+
 let perfil=null
-let {data:p1}=await client.from('perfistce').select('*').eq('username',usuario).eq('senha',senha).limit(1)
+
+let {data:p1}=await client
+.from('perfistce')
+.select('*')
+.eq('username',usuario)
+.eq('senha',senha)
+.limit(1)
+
 if(p1&&p1.length){
 perfil=p1[0]
 perfil.origem='TCERO'
 }else{
-let {data:p2}=await client.from('perfis').select('*').eq('username',usuario).limit(1)
+
+let {data:p2}=await client
+.from('perfis')
+.select('*')
+.eq('username',usuario)
+.limit(1)
+
 if(p2&&p2.length){
 perfil=p2[0]
 perfil.origem='SEDAM'
-if(perfil.senha&&String(perfil.senha)!==String(senha)){
+
+if(
+perfil.senha&&
+String(perfil.senha)!==String(senha)
+){
 alert('Senha inválida')
 return
 }
 }
+
 }
+
 if(!perfil){
 alert('Usuário não encontrado')
 return
 }
+
 window.userP=perfil
 userP=perfil
-localStorage.setItem('user',JSON.stringify(perfil))
+
+localStorage.setItem(
+'user',
+JSON.stringify(perfil)
+)
+
 document.body.classList.remove('login-bg')
-document.getElementById('login-screen').classList.add('hidden')
-document.getElementById('dashboard').classList.remove('hidden')
-document.getElementById('user-info').innerHTML=(perfil.nome_completo||'-')+' • '+(perfil.cargo||'-')+' • '+(perfil.origem||'-')
+
+document.getElementById('login-screen')
+.classList.add('hidden')
+
+document.getElementById('dashboard')
+.classList.remove('hidden')
+
+document.getElementById('user-info').innerHTML=
+(perfil.nome_completo||'-')+
+' • '+
+(perfil.cargo||'-')+
+' • '+
+(perfil.origem||'-')
+
 let tabPerfis=document.getElementById('tab-perfis')
 let tabTCERO=document.getElementById('tab-tcero')
+
 if(tabPerfis){
 tabPerfis.classList.add('hidden')
 }
+
 if(tabTCERO){
 tabTCERO.classList.add('hidden')
 }
+
 let usernameAtual=(perfil.username||'').toLowerCase()
-let adminsTCERO=['manoel','vagner','gleidi']
+
+let adminsTCERO=[
+'manoel',
+'vagner',
+'gleidi'
+]
 
 if(perfil.origem==='SEDAM'){
+
 if(tabPerfis){
 tabPerfis.classList.remove('hidden')
 tabPerfis.innerHTML='<div>👥</div><div>Perfis Sedam</div>'
 }
+
 if(tabTCERO){
 tabTCERO.style.display='none'
 }
+
 }
 
-if(perfil.origem==='TCERO'&&adminsTCERO.includes(usernameAtual)){
+if(
+perfil.origem==='TCERO'&&
+adminsTCERO.includes(usernameAtual)
+){
+
 if(tabPerfis){
 tabPerfis.classList.remove('hidden')
 tabPerfis.innerHTML='<div>👥</div><div>Perfis Sedam</div>'
 }
+
 if(tabTCERO){
 tabTCERO.classList.remove('hidden')
-tabTCERO.style.display='inline-block'
-tabTCERO.innerHTML='<div>🛡️</div><div>Perfis TCE-RO</div>'
-}
+tabTCERO.style.display='inline-flex'
 }
 
-if(perfil.origem==='TCERO'&&!adminsTCERO.includes(usernameAtual)){
+}
+
+if(
+perfil.origem==='TCERO'&&
+!adminsTCERO.includes(usernameAtual)
+){
+
 if(tabPerfis){
 tabPerfis.style.display='none'
 }
+
 if(tabTCERO){
 tabTCERO.style.display='none'
-}
 }
 
-if(perfil.origem==='SEDAM'&&usernameAtual==='hueriqui'){
-if(tabTCERO){
-tabTCERO.style.display='none'
 }
-}
-let backupBox=document.getElementById('backup-container')
-if(backupBox){
-backupBox.innerHTML=''
-let adminsBackup=['manoel','vagner','gleidi']
-let podeBackup=Number(perfil.nivel_acesso)===1&&adminsBackup.includes(usernameAtual)
-if(podeBackup){
-let btnBackup=document.createElement('button')
-btnBackup.id='btnBackup'
-btnBackup.innerText='BACKUP'
-btnBackup.className='bg-purple-700 hover:bg-purple-800 text-white font-black px-4 py-2 rounded-xl shadow-lg'
-btnBackup.onclick=function(){
-if(typeof backupCompleto==='function'){
-backupCompleto()
-}else if(typeof gerarJSON==='function'){
-gerarJSON(allData||[])
-}else{
-alert('Função de backup não encontrada.')
-}
-}
-backupBox.appendChild(btnBackup)
-}
-}
-switchTab(localStorage.getItem('activeTab')||'resumo')
-if(typeof sincronizarResponsaveis==='function'){
-await sincronizarResponsaveis()
-}
+
+await carregarPerfis()
+await carregarTCERO()
 await carregarDados()
+
+setTimeout(()=>{
+
+if(typeof renderDashboard==='function'){
+renderDashboard()
+}
+
+switchTab('dashboard')
+
+},300)
+
 }
 /*=========================================================
 003 SEDAM CORE FUNCTION SWITCHTAB
