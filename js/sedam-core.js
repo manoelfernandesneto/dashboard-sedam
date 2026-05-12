@@ -747,18 +747,34 @@ let dashPizza=null
 let dashBarras=null
 
 function getTotal(i){
-let total=Number(i.total_cumprimento||i.percentual||i.percentual_execucao||0)
-if(total>0){
-return total
-}
-let meses=[
-Number(i.jan||0),
-Number(i.fev||0),
-Number(i.mar||0),
-Number(i.abr||0),
-Number(i.mai||0)
+
+let ordem=[
+'dez',
+'nov',
+'out',
+'set',
+'ago',
+'jul',
+'jun',
+'mai',
+'abr',
+'mar',
+'fev',
+'jan'
 ]
-return Math.max(...meses,0)
+
+for(let k of ordem){
+
+let v=Number(i[k]||0)
+
+if(v>0){
+return v
+}
+
+}
+
+return 0
+
 }
 
 
