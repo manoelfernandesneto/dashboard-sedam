@@ -187,7 +187,8 @@ setTimeout(()=>{
 carregarDados()
 },400)
 
-}
+},300)
+
 }
 /*=========================================================
 003 SEDAM CORE FUNCTION SWITCHTAB
