@@ -217,7 +217,20 @@ if(v<0||v>100){
 alert("Informe 0 a 100")
 return
 }
-let podeEditar=(userP&&Number(userP.nivel_acesso)==1||userP&&Number(userP.nivel_acesso)==2||userP&&Number(userP.nivel_acesso)==3)
+let podeEditar=(userP&&(
+Number(userP.nivel_acesso)===1||
+(
+[2,3,4].includes(Number(userP.nivel_acesso))&&
+podeEditarMes(campo)
+)
+))
+if(
+Number(userP.nivel_acesso)!==1&&
+!podeEditarMes(campo)
+){
+alert('Somente o mês atual pode ser alterado')
+return
+}
 if(!podeEditar){
 alert("Sem permissão")
 return
