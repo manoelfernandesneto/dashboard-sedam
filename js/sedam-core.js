@@ -261,12 +261,12 @@ let {data,error}=await query
 
 if(error){
 console.log(error)
-allData=[]
+window.allData=[]
 return
 }
 
-if(!data){
-allData=[]
+if(!data||!data.length){
+window.allData=[]
 return
 }
 
@@ -275,7 +275,7 @@ let listaPerfis=[
 ...(window.perfisTCERO||[])
 ]
 
-allData=(data||[]).map(i=>{
+window.allData=(data||[]).map(i=>{
 
 let perfil=listaPerfis.find(
 p=>String(p.id)===String(i.responsavel_id)
@@ -295,9 +295,34 @@ return i
 
 })
 
-window.allData=allData
+let totalItens=[...new Set(
+window.allData.map(i=>getItemKey(i))
+)].length
 
-console.log('TOTAL REGISTROS:',allData.length)
+let totalSubitens=window.allData.length
+
+let media=Math.round(
+window.allData.reduce((acc,c)=>acc+Number(getTotal(c)||0),0)/(window.allData.length||1)
+)
+
+let topItens=document.getElementById('topTotalItens')
+if(topItens){
+topItens.innerText=totalItens+' ITENS'
+}
+
+let topSubitens=document.getElementById('topTotalSubitens')
+if(topSubitens){
+topSubitens.innerText=totalSubitens+' SUBITENS'
+}
+
+let topMedia=document.getElementById('topMediaGeral')
+if(topMedia){
+topMedia.innerText=media+'%'
+}
+
+console.log('Dashboard carregado:',window.allData.length)
+
+setTimeout(()=>{
 
 if(typeof renderDashboard==='function'){
 renderDashboard()
@@ -318,6 +343,8 @@ renderMonitoramento()
 if(typeof renderConcluidos==='function'){
 renderConcluidos()
 }
+
+},100)
 
 }
 /*=========================================================
