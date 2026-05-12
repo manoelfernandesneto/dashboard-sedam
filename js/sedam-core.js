@@ -331,7 +331,21 @@ tabUsuarios.remove()
 }
 
 localStorage.setItem('activeTab',t)
+let boxModoResumo=document.getElementById('boxModoResumo')
 
+if(boxModoResumo){
+
+if(t==='resumo'){
+
+boxModoResumo.style.display='flex'
+
+}else{
+
+boxModoResumo.style.display='none'
+
+}
+
+}
 document.querySelectorAll('.tab-view').forEach(v=>{
 v.classList.add('hidden')
 v.style.display='none'
