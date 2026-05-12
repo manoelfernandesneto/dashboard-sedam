@@ -292,10 +292,18 @@ let query=client
 .from('deliberacoes')
 .select('*')
 
+let isAdminTCERO=[
+'manoel',
+'vagner',
+'gleidi'
+].includes(
+(userP.username||'').toLowerCase()
+)
+
 if(
-userP&&
 Number(userP.nivel_acesso)!==1&&
-!['manoel','vagner','gleidi'].includes((userP.username||'').toLowerCase())
+Number(userP.nivel_acesso)!==4&&
+!isAdminTCERO
 ){
 query=query.eq('responsavel_id',userP.id)
 }
@@ -305,11 +313,13 @@ let {data,error}=await query
 if(error){
 console.log(error)
 window.allData=[]
+renderDashboard()
 return
 }
 
 if(!data||!data.length){
 window.allData=[]
+renderDashboard()
 return
 }
 
@@ -318,76 +328,50 @@ let listaPerfis=[
 ...(window.perfisTCERO||[])
 ]
 
-window.allData=(data||[]).map(i=>{
+window.allData=(data||[])
+.filter(i=>
+i&&
+(
+i.subitem||
+i.item
+)
+)
+.map(i=>{
 
 let perfil=listaPerfis.find(
 p=>String(p.id)===String(i.responsavel_id)
 )
 
 if(perfil){
-i.responsavel=perfil.nome_completo
+i.responsavel=perfil.nome_completo||''
 }
 
-i.jan=Number(i.jan||0)
-i.fev=Number(i.fev||0)
-i.mar=Number(i.mar||0)
-i.abr=Number(i.abr||0)
-i.mai=Number(i.mai||0)
+return{
+...i,
 
-return i
+jan:Number(i.jan||0),
+fev:Number(i.fev||0),
+mar:Number(i.mar||0),
+abr:Number(i.abr||0),
+mai:Number(i.mai||0),
+
+total_cumprimento:Number(
+i.total_cumprimento||
+i.percentual||
+i.percentual_execucao||
+0
+)
+
+}
 
 })
 
-let totalItens=[...new Set(
-window.allData.map(i=>getItemKey(i))
-)].length
-
-let totalSubitens=window.allData.length
-
-let media=Math.round(
-window.allData.reduce((acc,c)=>acc+Number(getTotal(c)||0),0)/(window.allData.length||1)
+console.log(
+'DADOS DASHBOARD:',
+window.allData.length
 )
 
-let topItens=document.getElementById('topTotalItens')
-if(topItens){
-topItens.innerText=totalItens+' ITENS'
-}
-
-let topSubitens=document.getElementById('topTotalSubitens')
-if(topSubitens){
-topSubitens.innerText=totalSubitens+' SUBITENS'
-}
-
-let topMedia=document.getElementById('topMediaGeral')
-if(topMedia){
-topMedia.innerText=media+'%'
-}
-
-console.log('Dashboard carregado:',window.allData.length)
-
-setTimeout(()=>{
-
-if(typeof renderDashboard==='function'){
 renderDashboard()
-}
-
-if(typeof renderResumo==='function'){
-renderResumo()
-}
-
-if(typeof renderGraficos==='function'){
-renderGraficos()
-}
-
-if(typeof renderMonitoramento==='function'){
-renderMonitoramento()
-}
-
-if(typeof renderConcluidos==='function'){
-renderConcluidos()
-}
-
-},100)
 
 }
 /*=========================================================
