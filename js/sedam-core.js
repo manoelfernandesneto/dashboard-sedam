@@ -292,11 +292,13 @@ let query=client
 .from('deliberacoes')
 .select('*')
 
-let isAdminTCERO=[
+let adminsTCERO=[
 'manoel',
 'vagner',
 'gleidi'
-].includes(
+]
+
+let isAdminTCERO=adminsTCERO.includes(
 (userP.username||'').toLowerCase()
 )
 
@@ -317,61 +319,306 @@ renderDashboard()
 return
 }
 
-if(!data||!data.length){
-window.allData=[]
-renderDashboard()
-return
-}
+window.allData=(data||[]).map(i=>{
 
-let listaPerfis=[
-...(window.perfis||[]),
-...(window.perfisTCERO||[])
-]
-
-window.allData=(data||[])
-.filter(i=>
-i&&
-(
-i.subitem||
-i.item
-)
-)
-.map(i=>{
-
-let perfil=listaPerfis.find(
-p=>String(p.id)===String(i.responsavel_id)
-)
-
-if(perfil){
-i.responsavel=perfil.nome_completo||''
-}
-
-return{
-...i,
-
-jan:Number(i.jan||0),
-fev:Number(i.fev||0),
-mar:Number(i.mar||0),
-abr:Number(i.abr||0),
-mai:Number(i.mai||0),
-
-total_cumprimento:Number(
+let total=Number(
 i.total_cumprimento||
 i.percentual||
 i.percentual_execucao||
 0
 )
 
+if(total<=0){
+
+let meses=[
+Number(i.jan||0),
+Number(i.fev||0),
+Number(i.mar||0),
+Number(i.abr||0),
+Number(i.mai||0)
+]
+
+total=Math.max(...meses,0)
+
+}
+
+return{
+...i,
+item:i.item||String(i.subitem||'').split('.')[0]||'0',
+subitem:i.subitem||'0.0',
+jan:Number(i.jan||0),
+fev:Number(i.fev||0),
+mar:Number(i.mar||0),
+abr:Number(i.abr||0),
+mai:Number(i.mai||0),
+total_cumprimento:total
 }
 
 })
 
-console.log(
-'DADOS DASHBOARD:',
-window.allData.length
-)
+console.log('TOTAL DELIBERAÇÕES:',window.allData.length)
 
 renderDashboard()
+
+if(typeof renderResumo==='function'){
+renderResumo()
+}
+
+if(typeof renderMonitoramento==='function'){
+renderMonitoramento()
+}
+
+if(typeof renderAnalise==='function'){
+renderAnalise()
+}
+
+if(typeof renderConcluidos==='function'){
+renderConcluidos()
+}
+
+}
+
+/*=========================================================
+007 DASHBOARD
+=========================================================*/
+let dashLinha=null
+let dashPizza=null
+let dashBarras=null
+
+function getTotal(i){
+
+let total=Number(
+i.total_cumprimento||
+0
+)
+
+if(total>0){
+return total
+}
+
+return Math.max(
+Number(i.jan||0),
+Number(i.fev||0),
+Number(i.mar||0),
+Number(i.abr||0),
+Number(i.mai||0)
+)
+
+}
+
+function renderDashboard(){
+
+let lista=(window.allData||[])
+
+console.log('DASHBOARD LISTA:',lista)
+
+let totalSubitens=lista.length
+
+let totalItens=[
+...new Set(
+lista.map(i=>String(i.item||'0'))
+)
+].length
+
+let media=Math.round(
+lista.reduce((acc,c)=>{
+return acc+Number(getTotal(c)||0)
+},0)/(lista.length||1)
+)
+
+let concluidos=lista.filter(i=>getTotal(i)>=100).length
+
+let andamento=lista.filter(i=>{
+let t=getTotal(i)
+return t>0&&t<100
+}).length
+
+let pendentes=lista.filter(i=>getTotal(i)<=0).length
+
+let elMedia=document.getElementById('dashMedia')
+let elItens=document.getElementById('dashItens')
+let elSub=document.getElementById('dashSubitens')
+let elConc=document.getElementById('dashConcluidos')
+let elAnda=document.getElementById('dashAndamento')
+let elPend=document.getElementById('dashPendentes')
+
+if(elMedia)elMedia.innerText=media+'%'
+if(elItens)elItens.innerText=totalItens
+if(elSub)elSub.innerText=totalSubitens
+if(elConc)elConc.innerText=concluidos
+if(elAnda)elAnda.innerText=andamento
+if(elPend)elPend.innerText=pendentes
+
+let mediaTopo=document.getElementById('media-geral-topo')
+
+if(mediaTopo){
+mediaTopo.innerText=media+'%'
+}
+
+let meses=['JAN','FEV','MAR','ABR','MAI']
+
+let mediasMeses=[
+Math.round(lista.reduce((a,c)=>a+Number(c.jan||0),0)/(lista.length||1)),
+Math.round(lista.reduce((a,c)=>a+Number(c.fev||0),0)/(lista.length||1)),
+Math.round(lista.reduce((a,c)=>a+Number(c.mar||0),0)/(lista.length||1)),
+Math.round(lista.reduce((a,c)=>a+Number(c.abr||0),0)/(lista.length||1)),
+Math.round(lista.reduce((a,c)=>a+Number(c.mai||0),0)/(lista.length||1))
+]
+
+let linhaCanvas=document.getElementById('graficoDashboardLinha')
+
+if(linhaCanvas){
+
+if(dashLinha){
+dashLinha.destroy()
+}
+
+dashLinha=new Chart(
+linhaCanvas,
+{
+type:'line',
+data:{
+labels:meses,
+datasets:[{
+label:'Percentual Médio (%)',
+data:mediasMeses,
+borderWidth:3,
+tension:.35,
+fill:true
+}]
+},
+options:{
+responsive:true,
+maintainAspectRatio:false,
+plugins:{
+legend:{display:true}
+},
+scales:{
+y:{
+beginAtZero:true,
+max:100
+}
+}
+}
+}
+)
+
+}
+
+let pizzaCanvas=document.getElementById('graficoDashboardPizza')
+
+if(pizzaCanvas){
+
+if(dashPizza){
+dashPizza.destroy()
+}
+
+dashPizza=new Chart(
+pizzaCanvas,
+{
+type:'doughnut',
+data:{
+labels:[
+'100% Cumpridos',
+'Em Andamento',
+'Não Cumpridos'
+],
+datasets:[{
+data:[
+concluidos,
+andamento,
+pendentes
+]
+}]
+},
+options:{
+responsive:true,
+maintainAspectRatio:false,
+plugins:{
+legend:{
+position:'bottom'
+}
+}
+}
+}
+)
+
+}
+
+let mapaItens={}
+
+lista.forEach(i=>{
+
+let item=String(i.item||'0')
+
+if(!mapaItens[item]){
+mapaItens[item]=[]
+}
+
+mapaItens[item].push(
+Number(getTotal(i)||0)
+)
+
+})
+
+let labels=Object.keys(mapaItens)
+
+let valores=labels.map(l=>{
+
+let arr=mapaItens[l]
+
+return Math.round(
+arr.reduce((a,b)=>a+b,0)/(arr.length||1)
+)
+
+})
+
+let barrasCanvas=document.getElementById('graficoDashboardBarras')
+
+if(barrasCanvas){
+
+if(dashBarras){
+dashBarras.destroy()
+}
+
+dashBarras=new Chart(
+barrasCanvas,
+{
+type:'bar',
+data:{
+labels:labels.map(i=>'Item '+i),
+datasets:[{
+label:'Percentual Médio',
+data:valores,
+borderWidth:1
+}]
+},
+options:{
+responsive:true,
+maintainAspectRatio:false,
+plugins:{
+legend:{display:false}
+},
+scales:{
+y:{
+beginAtZero:true,
+max:100
+}
+}
+}
+}
+)
+
+}
+
+console.log({
+media,
+totalItens,
+totalSubitens,
+concluidos,
+andamento,
+pendentes
+})
 
 }
 /*=========================================================
