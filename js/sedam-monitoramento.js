@@ -2,8 +2,14 @@
 001 MONITORAMENTO FUNCTION RENDERRESUMO
 =========================================================*/
 function renderResumo(){
+let dados=window.allData||[]
+if(!dados||!dados.length){
+let el=document.getElementById('cards-container')
+if(el)el.innerHTML=''
+return
+}
 let mapa={}
-let base=[...allData]
+let base=[...dados]
 if(filtroDataInicio||filtroDataFim){
 base=base.filter(i=>{
 let d=parseDataLocal(i.data_inicio)||parseDataLocal(i.prazo_texto)
@@ -56,7 +62,7 @@ document.getElementById('btn-voltar').style.display='block'
 003 MONITORAMENTO FUNCTION RENDERTABLE
 =========================================================*/
 function renderTable(){
-let lista=[...allData].sort(compareSubitem)
+let lista=[...(window.allData||[])].sort(compareSubitem)
 lista=lista.filter(i=>{
 if(filtroItemAtivo){
 if(getItemKey(i)!==filtroItemAtivo)return false
@@ -71,7 +77,9 @@ if(ocultarConcluidos&&getTotal(i)>=100)return false
 return true
 })
 let totalRegistros=lista.length
-document.getElementById('table-body').innerHTML=lista.map(i=>{
+let tbody=document.getElementById('table-body')
+if(!tbody)return
+tbody.innerHTML=lista.map(i=>{
 let dataFormatada=i.data_inicio?formatarDataBR(i.data_inicio):(i.prazo_texto||'-')
 let jan=Number(i.jan||0)
 let fev=Number(i.fev||0)
@@ -91,63 +99,26 @@ responsavelTexto=i.responsavel||i.responsavel_manual||'Não informado'
 }
 return `<tr class="border-b border-white/5 tr-hover ${bg}"><td class="p-2 font-black text-blue-400">${i.subitem}</td><td class="p-2 td-desc">${i.descricao||'-'}</td><td class="p-2 td-desc text-[10px] text-slate-700">${i.produto||'-'}</td><td class="text-xs p-1">${userP&&Number(userP.nivel_acesso)===1?`<select onchange="salvarResponsavel('${i.id}',this.value)" class="bg-slate-100 text-slate-900 font-semibold text-xs p-1 rounded w-full"><option value="">${responsavelTexto||'-'}</option>${listaPerfis.map(p=>`<option title="${p.nome_completo}" value="${p.id}" ${String(p.id)===String(i.responsavel_id)?'selected':''}>${p.nome_completo}</option>`).join('')}</select>`:`<span class="text-slate-800 font-semibold">${responsavelTexto}</span>`}</td><td class="text-xs">${i.setor||'-'}</td><td class="td-data">${dataFormatada}</td><td class="td-mes opacity-40">${jan}%</td><td class="td-mes opacity-40">${fev}%</td><td class="td-mes opacity-40">${mar}%</td><td class="td-mes-strong text-blue-400">${abr}%</td><td>${podeEditar?`<input type="number" min="0" max="100" step="1" class="input-mes" value="${mai}" onchange="salvar(this.value,'${i.id}','mai')">`:`<span class="td-mes-strong text-yellow-400">${mai}%</span>`}</td><td class="td-total text-emerald-400">${total.toFixed(2)}%</td></tr>`
 }).join('')
-
-let itensTotal=new Set(allData.map(x=>getItemKey(x))).size
-
+let itensTotal=new Set((window.allData||[]).map(x=>getItemKey(x))).size
 let pdfHTML=''
-
 if(userP&&(Number(userP.nivel_acesso)<=2||userP.permissao_pdf===true)){
-
 if(document.getElementById('view-resumo')&&!document.getElementById('view-resumo').classList.contains('hidden')){
 pdfHTML=`<button onclick="gerarPDFResumo()" class="btn-pdf">PDF RESUMO</button>`
 }
-
 if(document.getElementById('view-mensal')&&!document.getElementById('view-mensal').classList.contains('hidden')){
 pdfHTML=`<button onclick="gerarPDFMonitoramento()" class="btn-pdf">PDF MONITORAMENTO</button>`
 }
-
 if(document.getElementById('view-analise')&&!document.getElementById('view-analise').classList.contains('hidden')){
 pdfHTML=`<button onclick="gerarPDFGraficos()" class="btn-pdf">PDF GRÁFICOS</button>`
 }
-
 if(document.getElementById('view-concluidos')&&!document.getElementById('view-concluidos').classList.contains('hidden')){
 pdfHTML=`<button onclick="gerarPDFCumpridos()" class="btn-pdf">PDF 100%</button>`
 }
-
 }
-
 let pdfContainer=document.getElementById('pdf-container')
-
 if(pdfContainer){
-
-pdfContainer.innerHTML=`
-<div class="flex gap-2 items-center flex-wrap">
-
-${pdfHTML}
-
-<div class="flex items-center gap-1 bg-white/90 px-3 py-1 rounded-xl border border-slate-300 shadow-sm">
-<span class="text-sm font-black text-blue-900">
-${itensTotal}
-</span>
-<span class="text-[10px] font-black text-slate-700 uppercase">
-Itens
-</span>
-</div>
-
-<div class="flex items-center gap-1 bg-white/90 px-3 py-1 rounded-xl border border-slate-300 shadow-sm">
-<span class="text-sm font-black text-emerald-700">
-${totalRegistros}
-</span>
-<span class="text-[10px] font-black text-slate-700 uppercase">
-Subitens
-</span>
-</div>
-
-</div>
-`
-
+pdfContainer.innerHTML=`<div class="flex gap-2 items-center flex-wrap">${pdfHTML}<div class="flex items-center gap-1 bg-white/90 px-3 py-1 rounded-xl border border-slate-300 shadow-sm"><span class="text-sm font-black text-blue-900">${itensTotal}</span><span class="text-[10px] font-black text-slate-700 uppercase">Itens</span></div><div class="flex items-center gap-1 bg-white/90 px-3 py-1 rounded-xl border border-slate-300 shadow-sm"><span class="text-sm font-black text-emerald-700">${totalRegistros}</span><span class="text-[10px] font-black text-slate-700 uppercase">Subitens</span></div></div>`
 }
-
 }
 /*=========================================================
 004 MONITORAMENTO FUNCTION RENDERCONCLUIDOS
@@ -158,7 +129,7 @@ let lista=document.getElementById('concluidos-list')
 if(!box||!lista)return
 box.innerHTML=''
 lista.innerHTML=''
-let dados=[...allData].filter(i=>getTotal(i)>=100).sort(compareSubitem)
+let dados=[...(window.allData||[])].filter(i=>getTotal(i)>=100).sort(compareSubitem)
 let total=document.createElement('div')
 total.className='rounded-2xl shadow-2xl flex items-center justify-center p-3'
 total.style.background='linear-gradient(135deg,#bbf7d0,#86efac,#dcfce7)'
