@@ -412,6 +412,38 @@ renderDashboard()
 console.log('ERRO GERAL:',e)
 window.allData=[]
 }
+window.dados=window.allData
+window.dadosFiltrados=window.allData
+window.listaDados=window.allData
+window.resumoData=window.allData
+
+let topoItens=document.getElementById('topTotalItens')
+let topoSubitens=document.getElementById('topTotalSubitens')
+
+if(topoItens){
+topoItens.innerText=[...new Set(window.allData.map(i=>String(i.item||'0')))].length
+}
+
+if(topoSubitens){
+topoSubitens.innerText=window.allData.length
+}
+
+let totalGeral=document.getElementById('total-geral')
+
+if(totalGeral){
+
+let media=Math.round(
+window.allData.reduce((acc,c)=>{
+return acc+Number(c.total_cumprimento||0)
+},0)/(window.allData.length||1)
+)
+
+totalGeral.innerText=media+'%'
+
+}
+
+console.log('SINCRONIZAÇÃO FINAL OK')
+  
 }
 /*=========================================================
 005 SEDAM CORE FUNCTION CARREGARUSUARIOS
