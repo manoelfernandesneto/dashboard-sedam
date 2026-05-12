@@ -17,7 +17,7 @@ document.body.classList.remove('login-bg')
 document.getElementById('login-screen').classList.add('hidden')
 document.getElementById('dashboard').classList.remove('hidden')
 document.getElementById('user-info').innerHTML=(perfil.nome_completo||'-')+' • '+(perfil.cargo||'-')+' • '+(perfil.origem||'-')
-switchTab(localStorage.getItem('activeTab')||'resumo')
+switchTab('dashboard')
 carregarDados()
 return
 }
@@ -183,7 +183,9 @@ renderDashboard()
 
 switchTab('dashboard')
 
-},300)
+setTimeout(()=>{
+carregarDados()
+},400)
 
 }
 /*=========================================================
@@ -289,11 +291,11 @@ return
 try{
 let {data,error}=await client.from('deliberacoes').select('*').order('subitem',{ascending:true})
 if(error){
-console.log('ERRO AO CARREGAR:',error)
+console.log('ERRO DELIBERAÇÕES:',error)
 window.allData=[]
 return
 }
-console.log('DADOS DELIBERAÇÕES:',data)
+console.log('TOTAL BRUTO:',data?.length||0)
 window.allData=(data||[]).map(i=>{
 let jan=Number(i.jan||0)
 let fev=Number(i.fev||0)
@@ -307,7 +309,7 @@ total=Math.max(jan,fev,mar,abr,mai,0)
 return{
 ...i,
 item:String(i.item||String(i.subitem||'0').split('.')[0]),
-subitem:i.subitem||'0.0',
+subitem:String(i.subitem||'0.0'),
 jan:jan,
 fev:fev,
 mar:mar,
@@ -316,11 +318,8 @@ mai:mai,
 total_cumprimento:total
 }
 })
-console.log('TOTAL FINAL:',window.allData.length)
-if(!window.allData.length){
-alert('Nenhum dado encontrado na tabela deliberacoes')
-return
-}
+console.log('TOTAL FINAL ALLDATA:',window.allData.length)
+console.log(window.allData)
 if(typeof renderResumo==='function'){
 renderResumo()
 }
@@ -352,7 +351,7 @@ renderConcluidos()
 if(typeof renderDashboard==='function'){
 renderDashboard()
 }
-},500)
+},600)
 }catch(e){
 console.log('ERRO GERAL:',e)
 window.allData=[]
@@ -637,18 +636,10 @@ let dashPizza=null
 let dashBarras=null
 
 function getTotal(i){
-
-let total=Number(
-i.total_cumprimento||
-i.percentual||
-i.percentual_execucao||
-0
-)
-
+let total=Number(i.total_cumprimento||i.percentual||i.percentual_execucao||0)
 if(total>0){
-return Math.round(total)
+return total
 }
-
 let meses=[
 Number(i.jan||0),
 Number(i.fev||0),
@@ -656,55 +647,31 @@ Number(i.mar||0),
 Number(i.abr||0),
 Number(i.mai||0)
 ]
-
 return Math.max(...meses,0)
-
 }
 
+
 function renderDashboard(){
-console.log(
-'DADOS DASHBOARD:',
-window.allData
-)
-let lista=(window.allData||[])
-
-console.log('RENDER DASHBOARD',lista)
-
+console.log('RENDER DASHBOARD')
+let lista=window.allData||[]
+console.log('LISTA DASHBOARD:',lista)
 if(!lista.length){
 
-console.log('Dashboard sem dados')
-
-let el1=document.getElementById('dashMedia')
-let el2=document.getElementById('dashItens')
-let el3=document.getElementById('dashSubitens')
-let el4=document.getElementById('dashConcluidos')
-let el5=document.getElementById('dashAndamento')
-let el6=document.getElementById('dashPendentes')
-
-if(el1)el1.innerText='0%'
-if(el2)el2.innerText='0'
-if(el3)el3.innerText='0'
-if(el4)el4.innerText='0'
-if(el5)el5.innerText='0'
-if(el6)el6.innerText='0'
+document.getElementById('dashMedia').innerText='0%'
+document.getElementById('dashItens').innerText='0'
+document.getElementById('dashSubitens').innerText='0'
+document.getElementById('dashConcluidos').innerText='0'
+document.getElementById('dashAndamento').innerText='0'
+document.getElementById('dashPendentes').innerText='0'
 
 return
-
 }
 
 let totalSubitens=lista.length
 
-let totalItens=[
-...new Set(
-lista.map(i=>
-String(
-i.item||
-getItemKey(i)||
-'0'
-)
-)
-)
-].length
+let totalItens=[...new Set(
+lista.map(i=>String(i.item||'0'))
+)].length
 
 let media=Math.round(
 lista.reduce((acc,c)=>{
@@ -712,14 +679,17 @@ return acc+Number(getTotal(c)||0)
 },0)/(lista.length||1)
 )
 
-let concluidos=lista.filter(i=>getTotal(i)>=100).length
+let concluidos=lista.filter(i=>Number(getTotal(i))>=100).length
 
 let andamento=lista.filter(i=>{
-let t=getTotal(i)
+let t=Number(getTotal(i))
 return t>0&&t<100
 }).length
 
-let pendentes=lista.filter(i=>getTotal(i)<=0).length
+let pendentes=lista.filter(i=>{
+let t=Number(getTotal(i))
+return t<=0
+}).length
 
 document.getElementById('dashMedia').innerText=media+'%'
 document.getElementById('dashItens').innerText=totalItens
