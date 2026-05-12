@@ -239,52 +239,89 @@ renderTable()
 004 SEDAM CORE FUNCTION CARREGARDADOS
 =========================================================*/
 async function carregarDados(){
+
 if(!window.userP){
 console.log('userP não carregado')
 return
 }
-let query=client.from('deliberacoes').select('*')
-if(userP&&Number(userP.nivel_acesso)!==1&&Number(userP.nivel_acesso)!==4&&!['manoel','vagner','gleidi'].includes((userP.username||'').toLowerCase())){
+
+let query=client
+.from('deliberacoes')
+.select('*')
+
+if(
+userP&&
+Number(userP.nivel_acesso)!==1&&
+Number(userP.nivel_acesso)!==4&&
+!['manoel','vagner','gleidi'].includes((userP.username||'').toLowerCase())
+){
 query=query.eq('responsavel_id',userP.id)
 }
+
 let {data,error}=await query
+
 if(error){
 console.log(error)
-allData=[]
+window.allData=[]
+renderDashboard()
 return
 }
-if(!data){
-allData=[]
+
+if(!data||!data.length){
+window.allData=[]
+renderDashboard()
 return
 }
-let listaPerfis=[...(window.perfis||[])]
-allData=(data||[]).filter(d=>d&&d.subitem&&d.descricao).map(i=>{
-let perfil=listaPerfis.find(p=>String(p.id)===String(i.responsavel_id))
+
+let listaPerfis=[
+...(window.perfis||[]),
+...(window.perfisTCERO||[])
+]
+
+window.allData=(data||[])
+.filter(d=>d&&d.subitem&&d.descricao)
+.map(i=>{
+
+let perfil=listaPerfis.find(
+p=>String(p.id)===String(i.responsavel_id)
+)
+
 if(perfil){
 i.responsavel=perfil.nome_completo
 }
-if(!i.responsavel||String(i.responsavel).trim()===''){
-i.responsavel='Não informado'
-}
+
+i.jan=Number(i.jan||0)
+i.fev=Number(i.fev||0)
+i.mar=Number(i.mar||0)
+i.abr=Number(i.abr||0)
+i.mai=Number(i.mai||0)
+
 return i
-}).sort(compareSubitem)
-let media=allData.length?Math.round(allData.reduce((acc,c)=>{
-return acc+getTotal(c)
-},0)/(allData.length||1)):0
-let box=document.getElementById('total-geral')
-if(box){
-box.innerText=media+'%'
+
+})
+
+console.log('TOTAL DASHBOARD:',window.allData.length)
+
+if(typeof renderDashboard==='function'){
+renderDashboard()
 }
+
+if(typeof renderResumo==='function'){
 renderResumo()
-renderTable()
-renderConcluidos()
-let ultimaTab=localStorage.getItem('activeTab')||'resumo'
-setTimeout(()=>{
-switchTab(ultimaTab)
-},100)
-if(typeof atualizarLista3==='function'){
-atualizarLista3()
 }
+
+if(typeof renderGraficos==='function'){
+renderGraficos()
+}
+
+if(typeof renderMonitoramento==='function'){
+renderMonitoramento()
+}
+
+if(typeof renderConcluidos==='function'){
+renderConcluidos()
+}
+
 }
 /*=========================================================
 005 SEDAM CORE FUNCTION CARREGARUSUARIOS
