@@ -41,20 +41,33 @@ if(!lista.length)return
 let media=Math.round(lista.reduce((acc,c)=>acc+getTotal(c),0)/(lista.length||1))
 let cor=media<=30?'bg-status-red':media>=100?'bg-status-green':'bg-status-yellow'
 let itemBase=lista[0]||{}
+
 let descricao=''
-
 if(modoResumo==='item'){
-
-descricao=descItens[String(itemBase.item||'')]||'SEM DESCRIÇÃO'
-
+let itemPai=String(itemBase.item||'').split('.')[0]
+let registrosItem=(window.allData||[])
+.filter(x=>String(x.item||'').split('.')[0]===itemPai)
+let mapaDesc={}
+registrosItem.forEach(r=>{
+let chave=String(r.subitem||r.item||'')
+if(
+r.descricaoitem&&
+r.descricaoitem.trim()&&
+!mapaDesc[chave]
+){
+mapaDesc[chave]=r.descricaoitem.trim()
+}
+})
+descricao=Object.entries(mapaDesc)
+.map(([k,v])=>`<div style="margin-top:3px;"><b>${k}</b> - ${v}</div>`)
+.join('')
 }else{
-
 descricao=
 lista.find(x=>x.descricao&&x.descricao.trim())?.descricao||
 lista.find(x=>x.descricaoitem&&x.descricaoitem.trim())?.descricaoitem||
-'SEM DESCRIÇÃO'
-
+''
 }
+  
 let itemClick=(modoResumo==='item'?k:k)
 let itemNumero=getItemKey(itemBase)
 let subitemNumero=itemBase.subitem||'-'
@@ -72,8 +85,8 @@ SUBITEM ${subitemNumero}
 ${media}%
 </div>
 </div>
-<div style="font-size:11px;font-weight:800;color:#000000;margin-top:6px;padding:4px;text-align:center;line-height:1.25;max-width:100%;">
-${descricao||'SEM DESCRIÇÃO'}
+<div style="font-size:10px;font-weight:700;color:#000000;margin-top:6px;padding:4px;text-align:left;line-height:1.25;max-width:100%;">
+${descricao||''}
 </div>
 
 </div>
