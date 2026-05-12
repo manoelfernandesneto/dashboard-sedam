@@ -328,19 +328,19 @@ let html=`
 <div class="flex justify-end items-center gap-3 mb-4">
 
 ${isAdminSedam?`
-<button id="btnNovoPerfilSedam" onclick="novoPerfilSedam()" class="bg-violet-600 hover:bg-violet-700 text-white px-6 py-3 rounded-2xl text-[12px] font-black shadow-xl min-w-[130px]">
+<button id="btnNovoPerfilSedam" onclick="novoPerfilSedam()" class="bg-violet-600 hover:bg-violet-700 text-white px-6 py-3 rounded-xl text-[9px] font-black shadow-xl min-w-[130px]">
 INSERIR
 </button>
 `:''}
 
 ${isAdminSedam?`
-<button id="btnEditarPerfilSedam" onclick="ativarEdicaoPerfisSedam()" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-2xl text-[12px] font-black shadow-xl min-w-[130px]">
+<button id="btnEditarPerfilSedam" onclick="ativarEdicaoPerfisSedam()" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-xl text-[9px] font-black shadow-xl min-w-[130px]">
 EDITAR
 </button>
 `:''}
 
 ${isAdminSedam?`
-<button id="btnSalvarPerfilSedam" onclick="salvarEdicaoPerfisSedam()" class="bg-emerald-700 hover:bg-emerald-800 text-white px-6 py-3 rounded-2xl text-[12px] font-black shadow-xl min-w-[130px]" hidden>
+<button id="btnSalvarPerfilSedam" onclick="salvarEdicaoPerfisSedam()" class="bg-emerald-700 hover:bg-emerald-800 text-white px-6 py-3 rounded-xl text-[9px] font-black shadow-xl min-w-[130px]" hidden>
 SALVAR
 </button>
 `:''}
@@ -351,22 +351,22 @@ SALVAR
 
 <div class="grid grid-cols-1 md:grid-cols-6 gap-3">
 
-<input id="novo_nome_sedam" placeholder="Nome Completo" class="bg-white rounded-2xl px-4 py-3 font-black outline-none border border-slate-200">
+<input id="novo_nome_sedam" placeholder="Nome Completo" class="bg-white rounded-xl px-4 py-3 font-black outline-none border border-slate-200">
 
-<input id="novo_user_sedam" placeholder="Usuário" class="bg-white rounded-2xl px-4 py-3 font-black outline-none border border-slate-200">
+<input id="novo_user_sedam" placeholder="Usuário" class="bg-white rounded-xl px-4 py-3 font-black outline-none border border-slate-200">
 
-<input id="novo_senha_sedam" placeholder="Senha" class="bg-white rounded-2xl px-4 py-3 font-black outline-none border border-slate-200">
+<input id="novo_senha_sedam" placeholder="Senha" class="bg-white rounded-xl px-4 py-3 font-black outline-none border border-slate-200">
 
-<input id="novo_cargo_sedam" placeholder="Cargo" class="bg-white rounded-2xl px-4 py-3 font-black outline-none border border-slate-200">
+<input id="novo_cargo_sedam" placeholder="Cargo" class="bg-white rounded-xl px-4 py-3 font-black outline-none border border-slate-200">
 
-<select id="novo_nivel_sedam" class="bg-white rounded-2xl px-4 py-3 font-black outline-none border border-slate-200">
+<select id="novo_nivel_sedam" class="bg-white rounded-xl px-4 py-3 font-black outline-none border border-slate-200">
 <option value="1">Nível 1</option>
 <option value="2">Nível 2</option>
 <option value="3">Nível 3</option>
 <option value="4" selected>Nível 4</option>
 </select>
 
-<button onclick="salvarNovoPerfilSedam()" class="bg-violet-600 hover:bg-violet-700 text-white rounded-2xl px-5 py-3 font-black shadow-xl">
+<button onclick="salvarNovoPerfilSedam()" class="bg-violet-600 hover:bg-violet-700 text-white rounded-xl px-5 py-3 font-black shadow-xl">
 INSERIR
 </button>
 
@@ -374,13 +374,13 @@ INSERIR
 
 </div>
 
-<div class="overflow-x-auto rounded-3xl bg-white/60 backdrop-blur-sm shadow-[0_8px_30px_rgba(0,0,0,.06)]">
+<div class="overflow-x-auto w-full rounded-2xl bg-white/60 backdrop-blur-sm shadow-[0_8px_30px_rgba(0,0,0,.06)]">
 
-<table class="w-full min-w-[1100px] border-separate border-spacing-y-2">
+<table class="w-full min-w-[920px] border-separate border-spacing-y-1">
 
 <thead>
 
-<tr class="text-[11px] uppercase font-black text-slate-700">
+<tr class="text-[9px] uppercase font-black text-slate-700">
 
 <th class="text-left px-4 py-3">Nome</th>
 <th class="text-left px-4 py-3">Usuário</th>
@@ -400,28 +400,28 @@ ${window.perfis.map(p=>`
 
 <tr class="linha-perfil-sedam bg-white/92 hover:bg-amber-50 transition shadow-[0_4px_18px_rgba(0,0,0,0.05)]" data-id="${p.id}">
 
-<td class="px-3 py-2 rounded-l-2xl">
-<input id="nome_sedam_${p.id}" value="${p.nome_completo||''}" disabled class="campo-editavel-sedam opacity-70 w-full bg-transparent text-[13px] font-black outline-none border-none">
+<td class="px-2 py-1 rounded-l-2xl">
+<input id="nome_sedam_${p.id}" value="${p.nome_completo||''}" disabled class="campo-editavel-sedam opacity-70 w-full bg-transparent text-[10px] font-black outline-none border-none">
 </td>
 
-<td class="px-3 py-2">
-<input id="user_sedam_${p.id}" value="${p.username||''}" disabled class="campo-editavel-sedam opacity-70 w-full bg-transparent text-[12px] font-black outline-none border-none">
+<td class="px-2 py-1">
+<input id="user_sedam_${p.id}" value="${p.username||''}" disabled class="campo-editavel-sedam opacity-70 w-full bg-transparent text-[9px] font-black outline-none border-none">
 </td>
 
-<td class="px-3 py-2">
-<input id="senha_sedam_${p.id}" value="${p.senha||''}" disabled class="campo-editavel-sedam opacity-70 w-full bg-transparent text-[12px] font-black outline-none border-none text-red-700">
+<td class="px-2 py-1">
+<input id="senha_sedam_${p.id}" value="${p.senha||''}" disabled class="campo-editavel-sedam opacity-70 w-full bg-transparent text-[9px] font-black outline-none border-none text-red-700">
 </td>
 
-<td class="px-3 py-2">
-<input id="cargo_sedam_${p.id}" value="${p.cargo||''}" disabled class="campo-editavel-sedam opacity-70 w-full bg-transparent text-[12px] font-black outline-none border-none">
+<td class="px-2 py-1">
+<input id="cargo_sedam_${p.id}" value="${p.cargo||''}" disabled class="campo-editavel-sedam opacity-70 w-full bg-transparent text-[9px] font-black outline-none border-none">
 </td>
 
-<td class="px-3 py-2">
-<input id="setor_sedam_${p.id}" value="${p.setor||''}" disabled class="campo-editavel-sedam opacity-70 w-full bg-transparent text-[12px] font-black outline-none border-none">
+<td class="px-2 py-1">
+<input id="setor_sedam_${p.id}" value="${p.setor||''}" disabled class="campo-editavel-sedam opacity-70 w-full bg-transparent text-[9px] font-black outline-none border-none">
 </td>
 
-<td class="px-3 py-2 text-center">
-<select id="nivel_sedam_${p.id}" disabled class="campo-editavel-sedam opacity-70 bg-blue-100 text-blue-700 px-3 py-2 rounded-xl text-[11px] font-black border-none outline-none">
+<td class="px-2 py-1 text-center">
+<select id="nivel_sedam_${p.id}" disabled class="campo-editavel-sedam opacity-70 bg-blue-100 text-blue-700 px-3 py-2 rounded-xl text-[9px] font-black border-none outline-none">
 <option value="1" ${Number(p.nivel_acesso)===1?'selected':''}>Nível 1</option>
 <option value="2" ${Number(p.nivel_acesso)===2?'selected':''}>Nível 2</option>
 <option value="3" ${Number(p.nivel_acesso)===3?'selected':''}>Nível 3</option>
@@ -429,7 +429,7 @@ ${window.perfis.map(p=>`
 </select>
 </td>
 
-<td class="px-3 py-2 text-center rounded-r-2xl">
+<td class="px-2 py-1 text-center rounded-r-2xl">
 ${isAdminSedam?`
 <button onclick="excluirPerfil('${p.id}')" class="btn-excluir-sedam hidden bg-red-600 hover:bg-red-700 text-white px-3 py-2 rounded-xl text-[10px] font-black shadow">
 EXCLUIR
