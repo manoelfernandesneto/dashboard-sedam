@@ -110,30 +110,53 @@ alert('Registro salvo com sucesso')
 005 TCERO FUNCTION EXCLUIRTCERO
 =========================================================*/
 async function excluirTCERO(id){
+
 if(!['manoel','vagner','gleidi'].includes((userP.username||'').toLowerCase())){
 alert('Sem permissão')
 return
 }
-let p=(window.perfisTCERO||[]).find(x=>String(x.id)===String(id))
+
+let p=(window.perfisTCERO||[]).find(
+x=>String(x.id)===String(id)
+)
+
 if(!p){
 alert('Perfil não encontrado')
 return
 }
-if(['manoel','vagner','gleidi'].includes((p.username||'').toLowerCase())){
+
+let protegidos=[
+'manoel',
+'vagner',
+'gleidi'
+]
+
+let usernamePerfil=(p.username||'').toLowerCase()
+
+if(protegidos.includes(usernamePerfil)){
 alert('Este perfil não pode ser excluído')
 return
 }
+
 if(!confirm('Excluir perfil '+(p.nome_completo||'')+' ?')){
 return
 }
-let {error}=await client.from('perfistce').delete().eq('id',id)
+
+let {error}=await client
+.from('perfistce')
+.delete()
+.eq('id',id)
+
 if(error){
 console.error(error)
 alert('Erro ao excluir')
 return
 }
+
 await carregarTCERO()
+
 alert('Perfil excluído com sucesso')
+
 }
 /*=========================================================
 006 TCERO FUNCTION ATIVAREDICAOTCERO
