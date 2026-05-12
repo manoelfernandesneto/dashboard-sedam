@@ -145,6 +145,7 @@ OCULTAR 100%
 
 <!-- DASHBOARD -->
 <div id="view-dashboard" class="tab-content">
+
 <div class="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-3 mb-4">
 
 <div class="bg-white/80 rounded-3xl p-5 shadow">
@@ -188,21 +189,30 @@ OCULTAR 100%
 <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
 
 <div class="bg-white/80 rounded-3xl p-5 shadow">
-<h3 class="text-[13px] font-black uppercase mb-3">Desempenho por Item</h3>
+<div class="flex items-center justify-between mb-3">
+<h3 class="text-[13px] font-black uppercase">Desempenho por Item</h3>
+<div class="text-[10px] font-black text-slate-500">ATUALIZADO</div>
+</div>
 <div class="chart-container">
 <canvas id="graficoDashboardItens"></canvas>
 </div>
 </div>
 
 <div class="bg-white/80 rounded-3xl p-5 shadow">
-<h3 class="text-[13px] font-black uppercase mb-3">Evolução Mensal</h3>
+<div class="flex items-center justify-between mb-3">
+<h3 class="text-[13px] font-black uppercase">Evolução Mensal</h3>
+<div class="text-[10px] font-black text-slate-500">MÉDIA GERAL</div>
+</div>
 <div class="chart-container">
 <canvas id="graficoDashboardLinha"></canvas>
 </div>
 </div>
 
 <div class="bg-white/80 rounded-3xl p-5 shadow">
-<h3 class="text-[13px] font-black uppercase mb-3">Distribuição</h3>
+<div class="flex items-center justify-between mb-3">
+<h3 class="text-[13px] font-black uppercase">Distribuição</h3>
+<div class="text-[10px] font-black text-slate-500">SUBITENS</div>
+</div>
 <div class="chart-container">
 <canvas id="graficoDashboardPizza"></canvas>
 </div>
