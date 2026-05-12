@@ -293,6 +293,43 @@ initPainelGrafico()
 =========================================================*/
 function switchTab(t){
 
+let adminsTCERO=[
+'manoel',
+'vagner',
+'gleidi'
+]
+
+let usuarioAtual=(window.userP?.username||'').toLowerCase()
+
+let isTCERONivel4=
+window.userP&&
+window.userP.origem==='TCERO'&&
+Number(window.userP.nivel_acesso)===4&&
+!adminsTCERO.includes(usuarioAtual)
+
+if(isTCERONivel4){
+
+let tabPerfis=document.getElementById('tab-perfis')
+let tabTCERO=document.getElementById('tab-tcero')
+let tabUsuarios=document.getElementById('tab-usuarios')
+
+if(tabPerfis){
+tabPerfis.style.display='none'
+tabPerfis.classList.add('hidden')
+}
+
+if(tabTCERO){
+tabTCERO.style.display='none'
+tabTCERO.classList.add('hidden')
+}
+
+if(tabUsuarios){
+tabUsuarios.style.display='none'
+tabUsuarios.classList.add('hidden')
+}
+
+}
+
 localStorage.setItem('activeTab',t)
 
 document.querySelectorAll('.tab-view').forEach(v=>{
