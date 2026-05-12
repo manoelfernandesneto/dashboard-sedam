@@ -286,45 +286,45 @@ if(!window.userP){
 console.log('userP não carregado')
 return
 }
-let query=client.from('deliberacoes').select('*')
-let adminsTCERO=['manoel','vagner','gleidi']
-let isAdminTCERO=adminsTCERO.includes((userP.username||'').toLowerCase())
-console.log('USUÁRIO LOGADO:',userP.username,'NÍVEL:',userP.nivel_acesso,'ADMIN TCERO:',isAdminTCERO)
-let {data,error}=await query
+try{
+let {data,error}=await client.from('deliberacoes').select('*')
 if(error){
-console.log(error)
+console.log('ERRO DELIBERAÇÕES:',error)
 window.allData=[]
 renderDashboard()
 return
 }
+console.log('DELIBERAÇÕES BRUTAS:',data)
 window.allData=(data||[]).map(i=>{
+let jan=Number(i.jan||0)
+let fev=Number(i.fev||0)
+let mar=Number(i.mar||0)
+let abr=Number(i.abr||0)
+let mai=Number(i.mai||0)
 let total=Number(i.total_cumprimento||i.percentual||i.percentual_execucao||0)
 if(total<=0){
-let meses=[
-Number(i.jan||0),
-Number(i.fev||0),
-Number(i.mar||0),
-Number(i.abr||0),
-Number(i.mai||0)
-]
-total=Math.max(...meses,0)
+total=Math.max(jan,fev,mar,abr,mai,0)
 }
 return{
 ...i,
-item:i.item||String(i.subitem||'').split('.')[0]||'0',
+item:String(i.item||String(i.subitem||'').split('.')[0]||'0'),
 subitem:i.subitem||'0.0',
-jan:Number(i.jan||0),
-fev:Number(i.fev||0),
-mar:Number(i.mar||0),
-abr:Number(i.abr||0),
-mai:Number(i.mai||0),
+jan:jan,
+fev:fev,
+mar:mar,
+abr:abr,
+mai:mai,
 total_cumprimento:total
 }
 })
 console.log('TOTAL DELIBERAÇÕES:',window.allData.length)
-console.log('TOTAL CARREGADO:',window.allData.length)
-console.log('DADOS DASHBOARD:',window.allData)
+console.log('ALLDATA FINAL:',window.allData)
+if(window.allData.length===0){
+alert('Tabela deliberacoes está vazia.')
+}
+if(typeof renderDashboard==='function'){
 renderDashboard()
+}
 if(typeof renderResumo==='function'){
 renderResumo()
 }
@@ -336,6 +336,16 @@ renderAnalise()
 }
 if(typeof renderConcluidos==='function'){
 renderConcluidos()
+}
+setTimeout(()=>{
+if(typeof renderDashboard==='function'){
+renderDashboard()
+}
+},300)
+}catch(e){
+console.log('ERRO GERAL:',e)
+window.allData=[]
+renderDashboard()
 }
 }
 
