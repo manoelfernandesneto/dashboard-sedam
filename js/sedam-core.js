@@ -490,32 +490,42 @@ let senha=document.getElementById('senha_sedam_'+id)?.value||''
 let cargo=document.getElementById('cargo_sedam_'+id)?.value||''
 let setor=document.getElementById('setor_sedam_'+id)?.value||''
 let nivel=document.getElementById('nivel_sedam_'+id)?.value||4
-let {error}=await client.from('perfis').update({
+
+let payload={
 nome_completo:nome,
 username:username,
-senha:senha,
 cargo:cargo,
 setor:setor,
 nivel_acesso:Number(nivel)
-}).eq('id',id)
+}
+
+if(String(senha||'').trim()!==''){
+payload.senha=senha
+}
+
+let {error}=await client.from('perfis').update(payload).eq('id',id)
+
 if(error){
 console.error(error)
 alert('Erro ao salvar')
 return
 }
 }
-document.querySelectorAll('.campo-editavel-sedam').forEach(c=>{
-c.disabled=true
-c.classList.add('opacity-70')
-})
+
 document.querySelectorAll('.btn-excluir-sedam').forEach(b=>{
 b.classList.add('hidden')
 })
-let btnSalvar=document.getElementById('btnSalvarPerfilSedam')
-if(btnSalvar){
-btnSalvar.hidden=true
-}
+
+window.modoEdicaoPerfisSedam=false
+
+let btnEditar=document.getElementById('btnEditarPerfisSedam')
+let btnSalvar=document.getElementById('btnSalvarPerfisSedam')
+
+if(btnEditar)btnEditar.hidden=false
+if(btnSalvar)btnSalvar.hidden=true
+
 alert('Perfis SEDAM salvos com sucesso')
+
 await carregarPerfis()
 }
 /*=========================================================
