@@ -23,7 +23,7 @@ if(ocultarConcluidos){
 base=base.filter(i=>getTotal(i)<100)
 }
 base.forEach(i=>{
-let key=(modoResumo==='item')?getItemKey(i):(i.subitem||'')
+let key=(modoResumo==='item')?String(i.item||''):String(i.subitem||'')
 if(!key)return
 if(!mapa[key])mapa[key]=[]
 mapa[key].push(i)
@@ -31,72 +31,64 @@ mapa[key].push(i)
 let keys=Object.keys(mapa)
 .filter(k=>k)
 .sort((a,b)=>{
-
 function ordem(v){
-
 let p=String(v).split('.')
-
 return{
 n1:parseInt(p[0]||0),
 n2:parseInt(p[1]||0)
 }
-
 }
-
 let pa=ordem(a)
 let pb=ordem(b)
-
 if(pa.n1!==pb.n1)return pa.n1-pb.n1
-
 return pa.n2-pb.n2
-
 })
 let html=''
+let container=document.getElementById('cards-container')
+if(container)container.innerHTML=''
 keys.forEach(k=>{
 let lista=mapa[k]||[]
 if(!lista.length)return
 let media=Math.round(lista.reduce((acc,c)=>acc+getTotal(c),0)/(lista.length||1))
 let cor=media<=30?'bg-status-red':media>=100?'bg-status-green':'bg-status-yellow'
 let itemBase=lista[0]||{}
-
 let descricao=''
-
 if(modoResumo==='item'){
-
-descricao=
-lista.find(x=>
+let registroDescricao=(window.allData||[])
+.find(x=>
+String(x.item||'')===String(k)&&
 x.descricaoitem&&
 x.descricaoitem.trim()
-)?.descricaoitem||''
-
+)
+descricao=registroDescricao?.descricaoitem||''
 }else{
 descricao=
 lista.find(x=>x.descricao&&x.descricao.trim())?.descricao||
-lista.find(x=>x.descricaoitem&&x.descricaoitem.trim())?.descricaoitem||
 ''
 }
-  
-let itemClick=(modoResumo==='item'?k:k)
-let itemNumero=getItemKey(itemBase)
-let subitemNumero=itemBase.subitem||'-'
-
+let itemClick=k
+let itemNumero=String(itemBase.item||'-')
+let subitemNumero=String(itemBase.subitem||'-')
 html+=`
 <div class="flex flex-col">
-<div class="card-micro ${cor}" onclick="abrirDetalhesResumo('${itemClick}')" style="padding:10px;min-height:82px;display:flex;flex-direction:column;align-items:center;justify-content:center;">
-<div style="font-size:13px;font-weight:900;color:#000000;line-height:1;">
-ITEM ${String(itemNumero)}
+<div class="card-micro ${cor}" onclick="abrirDetalhesResumo('${itemClick}')" style="padding:12px;min-height:120px;display:flex;flex-direction:column;align-items:center;justify-content:center;">
+<div style="font-size:18px;font-weight:900;color:#000000;line-height:1;">
+ITEM ${itemNumero}
 </div>
-<div style="font-size:11px;font-weight:900;color:#0f172a;line-height:1;margin-top:2px;">
+${modoResumo==='subitem'?`
+<div style="font-size:11px;font-weight:900;color:#0f172a;line-height:1;margin-top:4px;">
 SUBITEM ${subitemNumero}
 </div>
-<div class="percent-big" style="margin-top:4px;">
+`:''}
+${descricao?`
+<div style="font-size:11px;font-weight:700;color:#000000;margin-top:8px;text-align:center;line-height:1.3;max-width:100%;">
+${descricao}
+</div>
+`:''}
+<div class="percent-big" style="margin-top:10px;">
 ${media}%
 </div>
 </div>
-<div style="font-size:10px;font-weight:700;color:#000000;margin-top:6px;padding:4px;text-align:left;line-height:1.25;max-width:100%;">
-${descricao||''}
-</div>
-
 </div>
 `
 })
