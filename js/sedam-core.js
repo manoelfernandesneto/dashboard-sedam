@@ -1070,3 +1070,128 @@ pendentes
 })
 
 }
+/*=========================================================
+999 SEDAM CORE FUNCTION ABRIRDETALHESRESUMO
+=========================================================*/
+function abrirDetalhesResumo(chave){
+
+let modal=document.getElementById('modalResumo')
+let conteudo=document.getElementById('conteudoResumo')
+
+if(!modal||!conteudo){
+console.log('Modal resumo não encontrado')
+return
+}
+
+let lista=(window.allData||[]).filter(i=>{
+
+let sub=String(i.subitem||'').trim()
+let item=String(i.item||'').trim()
+let ident=String(i.identificador||'').trim()
+
+return(
+sub===String(chave).trim()||
+item===String(chave).trim()||
+ident===String(chave).trim()
+)
+
+})
+
+if(!lista.length){
+
+alert('Nenhum dado encontrado')
+
+return
+
+}
+
+conteudo.innerHTML=''
+
+lista.sort(compareSubitem)
+
+lista.forEach(i=>{
+
+let total=getTotal(i)
+
+let cor=total<=30
+?'#dc2626'
+:total>=100
+?'#16a34a'
+:'#eab308'
+
+conteudo.innerHTML+=`
+<div class="bg-white rounded-2xl p-4 mb-3 border border-slate-300 shadow">
+<div class="flex justify-between items-start gap-3 mb-2">
+<div>
+<div class="text-xs font-black text-blue-900">
+SUBITEM ${i.subitem||'-'}
+</div>
+<div class="text-sm font-black text-black">
+${i.descricao||'-'}
+</div>
+</div>
+<div style="background:${cor};" class="px-3 py-2 rounded-xl text-white font-black text-sm">
+${total}%
+</div>
+</div>
+
+<div class="grid grid-cols-5 gap-2 mt-3">
+
+<div class="bg-slate-100 rounded-xl p-2 text-center">
+<div class="text-[9px] font-black">JAN</div>
+<div class="font-black">${Number(i.jan||0)}%</div>
+</div>
+
+<div class="bg-slate-100 rounded-xl p-2 text-center">
+<div class="text-[9px] font-black">FEV</div>
+<div class="font-black">${Number(i.fev||0)}%</div>
+</div>
+
+<div class="bg-slate-100 rounded-xl p-2 text-center">
+<div class="text-[9px] font-black">MAR</div>
+<div class="font-black">${Number(i.mar||0)}%</div>
+</div>
+
+<div class="bg-slate-100 rounded-xl p-2 text-center">
+<div class="text-[9px] font-black">ABR</div>
+<div class="font-black">${Number(i.abr||0)}%</div>
+</div>
+
+<div class="bg-slate-100 rounded-xl p-2 text-center">
+<div class="text-[9px] font-black">MAI</div>
+<div class="font-black">${Number(i.mai||0)}%</div>
+</div>
+
+</div>
+
+<div class="mt-3 text-[11px] font-bold text-slate-700">
+RESPONSÁVEL: ${i.responsavel||'-'}
+</div>
+
+<div class="text-[11px] font-bold text-slate-700 mt-1">
+PRODUTO: ${i.produto||'-'}
+</div>
+
+</div>
+`
+
+})
+
+modal.classList.remove('hidden')
+modal.style.display='flex'
+
+}
+
+/*=========================================================
+998 SEDAM CORE FUNCTION FECHARMODALRESUMO
+=========================================================*/
+function fecharModalResumo(){
+
+let modal=document.getElementById('modalResumo')
+
+if(modal){
+modal.classList.add('hidden')
+modal.style.display='none'
+}
+
+}
