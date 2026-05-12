@@ -287,14 +287,13 @@ console.log('userP não carregado')
 return
 }
 try{
-let {data,error}=await client.from('deliberacoes').select('*')
+let {data,error}=await client.from('deliberacoes').select('*').order('subitem',{ascending:true})
 if(error){
-console.log('ERRO DELIBERAÇÕES:',error)
+console.log('ERRO AO CARREGAR:',error)
 window.allData=[]
-renderDashboard()
 return
 }
-console.log('DELIBERAÇÕES BRUTAS:',data)
+console.log('DADOS DELIBERAÇÕES:',data)
 window.allData=(data||[]).map(i=>{
 let jan=Number(i.jan||0)
 let fev=Number(i.fev||0)
@@ -307,7 +306,7 @@ total=Math.max(jan,fev,mar,abr,mai,0)
 }
 return{
 ...i,
-item:String(i.item||String(i.subitem||'').split('.')[0]||'0'),
+item:String(i.item||String(i.subitem||'0').split('.')[0]),
 subitem:i.subitem||'0.0',
 jan:jan,
 fev:fev,
@@ -317,13 +316,10 @@ mai:mai,
 total_cumprimento:total
 }
 })
-console.log('TOTAL DELIBERAÇÕES:',window.allData.length)
-console.log('ALLDATA FINAL:',window.allData)
-if(window.allData.length===0){
-alert('Tabela deliberacoes está vazia.')
-}
-if(typeof renderDashboard==='function'){
-renderDashboard()
+console.log('TOTAL FINAL:',window.allData.length)
+if(!window.allData.length){
+alert('Nenhum dado encontrado na tabela deliberacoes')
+return
 }
 if(typeof renderResumo==='function'){
 renderResumo()
@@ -337,18 +333,31 @@ renderAnalise()
 if(typeof renderConcluidos==='function'){
 renderConcluidos()
 }
-setTimeout(()=>{
 if(typeof renderDashboard==='function'){
 renderDashboard()
 }
-},300)
+setTimeout(()=>{
+if(typeof renderResumo==='function'){
+renderResumo()
+}
+if(typeof renderMonitoramento==='function'){
+renderMonitoramento()
+}
+if(typeof renderAnalise==='function'){
+renderAnalise()
+}
+if(typeof renderConcluidos==='function'){
+renderConcluidos()
+}
+if(typeof renderDashboard==='function'){
+renderDashboard()
+}
+},500)
 }catch(e){
 console.log('ERRO GERAL:',e)
 window.allData=[]
-renderDashboard()
 }
 }
-
 /*=========================================================
 005 SEDAM CORE FUNCTION CARREGARUSUARIOS
 =========================================================*/
