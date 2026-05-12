@@ -331,24 +331,25 @@ tabUsuarios.remove()
 }
 
 localStorage.setItem('activeTab',t)
+
 let boxModoResumo=document.getElementById('boxModoResumo')
 
 if(boxModoResumo){
 
 if(t==='resumo'){
-
 boxModoResumo.style.display='flex'
-
 }else{
-
 boxModoResumo.style.display='none'
-
 }
 
 }
-document.querySelectorAll('.tab-view').forEach(v=>{
+
+document.querySelectorAll('.tab-content,.tab-view').forEach(v=>{
+v.classList.remove('active')
 v.classList.add('hidden')
 v.style.display='none'
+v.style.visibility='hidden'
+v.style.opacity='0'
 })
 
 document.querySelectorAll('.tab-btn').forEach(b=>{
@@ -359,6 +360,7 @@ let view=document.getElementById('view-'+t)
 
 if(view){
 view.classList.remove('hidden')
+view.classList.add('active')
 view.style.display='block'
 view.style.visibility='visible'
 view.style.opacity='1'
@@ -378,7 +380,29 @@ if(typeof renderDashboard==='function'){
 renderDashboard()
 }
 
-},300)
+if(window.dashLinha&&typeof window.dashLinha.resize==='function'){
+window.dashLinha.resize()
+}
+
+if(window.dashPizza&&typeof window.dashPizza.resize==='function'){
+window.dashPizza.resize()
+}
+
+if(window.dashBarras&&typeof window.dashBarras.resize==='function'){
+window.dashBarras.resize()
+}
+
+document.querySelectorAll('#view-dashboard canvas').forEach(c=>{
+c.style.display='block'
+c.style.visibility='visible'
+c.style.opacity='1'
+c.style.width='100%'
+c.style.maxWidth='100%'
+c.style.height='220px'
+c.style.maxHeight='220px'
+})
+
+},350)
 
 }
 
@@ -400,10 +424,14 @@ if(window.graficoGeral&&typeof window.graficoGeral.resize==='function'){
 window.graficoGeral.resize()
 }
 
-document.querySelectorAll('canvas').forEach(c=>{
+document.querySelectorAll('#view-analise canvas,#view-graficos canvas').forEach(c=>{
 c.style.display='block'
 c.style.visibility='visible'
 c.style.opacity='1'
+c.style.width='100%'
+c.style.maxWidth='100%'
+c.style.height='320px'
+c.style.maxHeight='320px'
 })
 
 },350)
@@ -946,14 +974,22 @@ function renderDashboard(){
 console.log('RENDER DASHBOARD')
 let lista=window.allData||[]
 console.log('LISTA DASHBOARD:',lista)
+
 if(!lista.length){
 
-document.getElementById('dashMedia').innerText='0%'
-document.getElementById('dashItens').innerText='0'
-document.getElementById('dashSubitens').innerText='0'
-document.getElementById('dashConcluidos').innerText='0'
-document.getElementById('dashAndamento').innerText='0'
-document.getElementById('dashPendentes').innerText='0'
+let a=document.getElementById('dashboardMediaGeral')
+let b=document.getElementById('dashboardTotalItens')
+let c=document.getElementById('dashboardTotalSubitens')
+let d=document.getElementById('dashboardCumpridos')
+let e=document.getElementById('dashboardCriticos')
+let f=document.getElementById('dashboardAndamento')
+
+if(a)a.innerText='0%'
+if(b)b.innerText='0'
+if(c)c.innerText='0'
+if(d)d.innerText='0'
+if(e)e.innerText='0'
+if(f)f.innerText='0'
 
 return
 }
@@ -977,21 +1013,24 @@ let t=Number(getTotal(i))
 return t>0&&t<100
 }).length
 
-let pendentes=lista.filter(i=>{
+let criticos=lista.filter(i=>{
 let t=Number(getTotal(i))
-return t<=0
+return t<30
 }).length
 
-document.getElementById('dashMedia').innerText=media+'%'
-document.getElementById('dashItens').innerText=totalItens
-document.getElementById('dashSubitens').innerText=totalSubitens
-document.getElementById('dashConcluidos').innerText=concluidos
-document.getElementById('dashAndamento').innerText=andamento
-document.getElementById('dashPendentes').innerText=pendentes
+document.getElementById('dashboardMediaGeral').innerText=media+'%'
+document.getElementById('dashboardTotalItens').innerText=totalItens
+document.getElementById('dashboardTotalSubitens').innerText=totalSubitens
+document.getElementById('dashboardCumpridos').innerText=concluidos
+document.getElementById('dashboardCriticos').innerText=criticos
+document.getElementById('dashboardAndamento').innerText=andamento
+
 let topo=document.getElementById('total-geral')
+
 if(topo){
 topo.innerText=media+'%'
 }
+
 let meses=['JAN','FEV','MAR','ABR','MAI']
 
 let mediasMeses=[
@@ -1015,6 +1054,11 @@ labels:meses,
 datasets:[{
 label:'Percentual Médio (%)',
 data:mediasMeses,
+borderColor:'#22c55e',
+backgroundColor:'rgba(34,197,94,.12)',
+pointBackgroundColor:'#22c55e',
+pointRadius:5,
+pointHoverRadius:7,
 borderWidth:3,
 tension:.35,
 fill:true
@@ -1024,15 +1068,36 @@ options:{
 responsive:true,
 maintainAspectRatio:false,
 plugins:{
-legend:{display:true}
+legend:{
+display:false
+},
+tooltip:{
+callbacks:{
+label:(ctx)=>ctx.raw+'%'
+}
+},
+datalabels:{
+color:'#111827',
+align:'top',
+anchor:'end',
+font:{
+weight:'900',
+size:11
+},
+formatter:(v)=>v+'%'
+}
 },
 scales:{
 y:{
 beginAtZero:true,
-max:100
+max:100,
+ticks:{
+callback:(v)=>v+'%'
 }
 }
 }
+},
+plugins:[ChartDataLabels]
 }
 )
 
@@ -1048,25 +1113,51 @@ data:{
 labels:[
 '100% Cumpridos',
 'Em Andamento',
-'Não Cumpridos'
+'Abaixo 30%'
 ],
 datasets:[{
 data:[
 concluidos,
 andamento,
-pendentes
-]
+criticos
+],
+backgroundColor:[
+'#22c55e',
+'#eab308',
+'#ef4444'
+],
+borderWidth:2,
+borderColor:'#ffffff'
 }]
 },
 options:{
 responsive:true,
 maintainAspectRatio:false,
+cutout:'58%',
 plugins:{
 legend:{
 position:'bottom'
+},
+tooltip:{
+callbacks:{
+label:(ctx)=>ctx.raw
+}
+},
+datalabels:{
+color:'#ffffff',
+font:{
+weight:'900',
+size:14
+},
+formatter:(v,ctx)=>{
+let total=ctx.chart.data.datasets[0].data.reduce((a,b)=>a+b,0)
+let perc=Math.round((v*100)/total)
+return v+'\n'+perc+'%'
 }
 }
 }
+},
+plugins:[ChartDataLabels]
 }
 )
 
@@ -1090,7 +1181,12 @@ Number(getTotal(i)||0)
 
 })
 
-let labels=Object.keys(mapaItens)
+let labels=Object.keys(mapaItens).sort((a,b)=>{
+let pa=a.split('.').map(Number)
+let pb=b.split('.').map(Number)
+if(pa[0]!==pb[0])return pa[0]-pb[0]
+return (pa[1]||0)-(pb[1]||0)
+})
 
 let valores=labels.map(l=>{
 
@@ -1102,12 +1198,18 @@ arr.reduce((a,b)=>a+b,0)/(arr.length||1)
 
 })
 
+let cores=valores.map(v=>{
+if(v>=70)return '#22c55e'
+if(v>=31)return '#eab308'
+return '#ef4444'
+})
+
 if(dashBarras){
 dashBarras.destroy()
 }
 
 dashBarras=new Chart(
-document.getElementById('graficoDashboardBarras'),
+document.getElementById('graficoDashboardItens'),
 {
 type:'bar',
 data:{
@@ -1115,22 +1217,46 @@ labels:labels.map(i=>'Item '+i),
 datasets:[{
 label:'Percentual Médio',
 data:valores,
-borderWidth:1
+backgroundColor:cores,
+borderRadius:8,
+borderSkipped:false,
+maxBarThickness:28
 }]
 },
 options:{
 responsive:true,
 maintainAspectRatio:false,
 plugins:{
-legend:{display:false}
+legend:{
+display:false
+},
+tooltip:{
+callbacks:{
+label:(ctx)=>ctx.raw+'%'
+}
+},
+datalabels:{
+color:'#111827',
+anchor:'end',
+align:'top',
+font:{
+weight:'900',
+size:10
+},
+formatter:(v)=>v+'%'
+}
 },
 scales:{
 y:{
 beginAtZero:true,
-max:100
+max:100,
+ticks:{
+callback:(v)=>v+'%'
 }
 }
 }
+},
+plugins:[ChartDataLabels]
 }
 )
 
@@ -1140,7 +1266,7 @@ totalItens,
 totalSubitens,
 concluidos,
 andamento,
-pendentes
+criticos
 })
 
 }
