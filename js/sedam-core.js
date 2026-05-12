@@ -651,67 +651,85 @@ await carregarPerfis()
 let dashLinha=null
 let dashPizza=null
 let dashBarras=null
-let dashArea=null
+
+function getTotal(i){
+
+let total=Number(
+i.total_cumprimento||
+i.percentual||
+i.percentual_execucao||
+0
+)
+
+if(total>0){
+return Math.round(total)
+}
+
+let meses=[
+Number(i.jan||0),
+Number(i.fev||0),
+Number(i.mar||0),
+Number(i.abr||0),
+Number(i.mai||0)
+]
+
+return Math.max(...meses,0)
+
+}
 
 function renderDashboard(){
 
-if(!window.allData||!allData.length){
-console.log('Sem dados dashboard')
+let lista=(window.allData||[])
+
+console.log('RENDER DASHBOARD',lista)
+
+if(!lista.length){
+
+document.getElementById('dashMedia').innerText='0%'
+document.getElementById('dashItens').innerText='0'
+document.getElementById('dashSubitens').innerText='0'
+document.getElementById('dashConcluidos').innerText='0'
+document.getElementById('dashAndamento').innerText='0'
+document.getElementById('dashPendentes').innerText='0'
+
 return
-}
-
-let lista=[...allData]
-
-let filtroItem=document.getElementById('filtroItemDashboard')
-let filtroSubitem=document.getElementById('filtroSubitemDashboard')
-
-if(filtroItem&&filtroItem.value){
-lista=lista.filter(i=>String(getItemKey(i))===String(filtroItem.value))
-}
-
-if(filtroSubitem&&filtroSubitem.value){
-lista=lista.filter(i=>String(i.subitem)===String(filtroSubitem.value))
 }
 
 let totalSubitens=lista.length
 
-let totalItens=[...new Set(
-lista.map(i=>getItemKey(i))
-)].length
+let totalItens=[
+...new Set(
+lista.map(i=>
+String(
+i.item||
+getItemKey(i)||
+'0'
+)
+)
+)
+].length
 
 let media=Math.round(
-lista.reduce((acc,c)=>acc+Number(getTotal(c)||0),0)/(lista.length||1)
+lista.reduce((acc,c)=>{
+return acc+Number(getTotal(c)||0)
+},0)/(lista.length||1)
 )
 
-let concluidos=lista.filter(i=>Number(getTotal(i))>=100).length
+let concluidos=lista.filter(i=>getTotal(i)>=100).length
 
-let andamento=lista.filter(i=>Number(getTotal(i))>0&&Number(getTotal(i))<100).length
+let andamento=lista.filter(i=>{
+let t=getTotal(i)
+return t>0&&t<100
+}).length
 
-let pendentes=lista.filter(i=>Number(getTotal(i))<=0).length
+let pendentes=lista.filter(i=>getTotal(i)<=0).length
 
-if(document.getElementById('dashMedia')){
 document.getElementById('dashMedia').innerText=media+'%'
-}
-
-if(document.getElementById('dashItens')){
 document.getElementById('dashItens').innerText=totalItens
-}
-
-if(document.getElementById('dashSubitens')){
 document.getElementById('dashSubitens').innerText=totalSubitens
-}
-
-if(document.getElementById('dashConcluidos')){
 document.getElementById('dashConcluidos').innerText=concluidos
-}
-
-if(document.getElementById('dashAndamento')){
 document.getElementById('dashAndamento').innerText=andamento
-}
-
-if(document.getElementById('dashPendentes')){
 document.getElementById('dashPendentes').innerText=pendentes
-}
 
 let meses=['JAN','FEV','MAR','ABR','MAI']
 
@@ -727,11 +745,9 @@ if(dashLinha){
 dashLinha.destroy()
 }
 
-let ctxLinha=document.getElementById('graficoDashboardLinha')
-
-if(ctxLinha){
-
-dashLinha=new Chart(ctxLinha,{
+dashLinha=new Chart(
+document.getElementById('graficoDashboardLinha'),
+{
 type:'line',
 data:{
 labels:meses,
@@ -747,9 +763,7 @@ options:{
 responsive:true,
 maintainAspectRatio:false,
 plugins:{
-legend:{
-display:true
-}
+legend:{display:true}
 },
 scales:{
 y:{
@@ -758,19 +772,16 @@ max:100
 }
 }
 }
-})
-
 }
+)
 
 if(dashPizza){
 dashPizza.destroy()
 }
 
-let ctxPizza=document.getElementById('graficoDashboardPizza')
-
-if(ctxPizza){
-
-dashPizza=new Chart(ctxPizza,{
+dashPizza=new Chart(
+document.getElementById('graficoDashboardPizza'),
+{
 type:'doughnut',
 data:{
 labels:[
@@ -783,28 +794,30 @@ data:[
 concluidos,
 andamento,
 pendentes
-],
-borderWidth:0
+]
 }]
 },
 options:{
 responsive:true,
 maintainAspectRatio:false,
-cutout:'62%',
 plugins:{
 legend:{
-position:'right'
+position:'bottom'
 }
 }
 }
-})
-
 }
+)
 
 let mapaItens={}
 
 lista.forEach(i=>{
-let item=getItemKey(i)
+
+let item=String(
+i.item||
+getItemKey(i)||
+'0'
+)
 
 if(!mapaItens[item]){
 mapaItens[item]=[]
@@ -813,44 +826,42 @@ mapaItens[item]=[]
 mapaItens[item].push(
 Number(getTotal(i)||0)
 )
+
 })
 
 let labels=Object.keys(mapaItens)
 
 let valores=labels.map(l=>{
+
 let arr=mapaItens[l]
 
 return Math.round(
 arr.reduce((a,b)=>a+b,0)/(arr.length||1)
 )
+
 })
 
 if(dashBarras){
 dashBarras.destroy()
 }
 
-let ctxBarra=document.getElementById('graficoDashboardBarras')
-
-if(ctxBarra){
-
-dashBarras=new Chart(ctxBarra,{
+dashBarras=new Chart(
+document.getElementById('graficoDashboardBarras'),
+{
 type:'bar',
 data:{
 labels:labels.map(i=>'Item '+i),
 datasets:[{
 label:'Percentual Médio',
 data:valores,
-borderWidth:1,
-borderRadius:8
+borderWidth:1
 }]
 },
 options:{
 responsive:true,
 maintainAspectRatio:false,
 plugins:{
-legend:{
-display:false
-}
+legend:{display:false}
 },
 scales:{
 y:{
@@ -859,50 +870,16 @@ max:100
 }
 }
 }
-})
-
 }
+)
 
-if(dashArea){
-dashArea.destroy()
-}
-
-let ctxArea=document.getElementById('graficoDashboardArea')
-
-if(ctxArea){
-
-dashArea=new Chart(ctxArea,{
-type:'bar',
-data:{
-labels:['100%','Andamento','Pendentes'],
-datasets:[{
-data:[
+console.log({
+media,
+totalItens,
+totalSubitens,
 concluidos,
 andamento,
 pendentes
-],
-borderWidth:1,
-borderRadius:10
-}]
-},
-options:{
-responsive:true,
-maintainAspectRatio:false,
-plugins:{
-legend:{
-display:false
-}
-},
-scales:{
-y:{
-beginAtZero:true
-}
-}
-}
 })
-
-}
-
-console.log('Dashboard renderizado com sucesso')
 
 }
