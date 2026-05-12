@@ -41,10 +41,46 @@ if(!lista.length)return
 let media=Math.round(lista.reduce((acc,c)=>acc+getTotal(c),0)/(lista.length||1))
 let cor=media<=30?'bg-status-red':media>=100?'bg-status-green':'bg-status-yellow'
 let itemBase=lista[0]||{}
-let descricao=lista.find(x=>x.descricaoitem&&x.descricaoitem.trim())?.descricaoitem||lista.find(x=>x.descricao&&x.descricao.trim())?.descricao||''
+let descricao=''
+
+if(modoResumo==='item'){
+
+descricao=descItens[String(itemBase.item||'')]||'SEM DESCRIÇÃO'
+
+}else{
+
+descricao=
+lista.find(x=>x.descricao&&x.descricao.trim())?.descricao||
+lista.find(x=>x.descricaoitem&&x.descricaoitem.trim())?.descricaoitem||
+'SEM DESCRIÇÃO'
+
+}
 let responsavel=itemBase.responsavel||'Não informado'
 let itemClick=(modoResumo==='item'?k:k)
-html+=`<div class="flex flex-col"><div class="card-micro ${cor}" onclick="abrirDetalhesResumo('${itemClick}')"><span class="percent-big">${media}%</span><span style="font-size:10px;font-weight:900;color:#000000;">${k}</span></div><div style="font-size:10px;font-weight:700;color:#000000;margin-top:2px;padding:2px;text-align:center;line-height:1.1;">${descricao}</div><div style="font-size:9px;font-weight:900;color:#0f172a;text-align:center;line-height:1.1;margin-top:1px;">${responsavel}</div></div>`
+let itemNumero=getItemKey(itemBase)
+let subitemNumero=itemBase.subitem||'-'
+
+html+=`
+<div class="flex flex-col">
+<div class="card-micro ${cor}" onclick="abrirDetalhesResumo('${itemClick}')" style="padding:10px;min-height:82px;display:flex;flex-direction:column;align-items:center;justify-content:center;">
+<div style="font-size:13px;font-weight:900;color:#000000;line-height:1;">
+ITEM ${itemNumero}
+</div>
+<div style="font-size:11px;font-weight:900;color:#0f172a;line-height:1;margin-top:2px;">
+SUBITEM ${subitemNumero}
+</div>
+<div class="percent-big" style="margin-top:4px;">
+${media}%
+</div>
+</div>
+<div style="font-size:10px;font-weight:800;color:#000000;margin-top:3px;padding:2px;text-align:center;line-height:1.15;">
+${descricao||'SEM DESCRIÇÃO'}
+</div>
+<div style="font-size:9px;font-weight:900;color:#0f172a;text-align:center;line-height:1.1;margin-top:2px;">
+${responsavel}
+</div>
+</div>
+`
 })
 let el=document.getElementById('cards-container')
 if(el)el.innerHTML=html
