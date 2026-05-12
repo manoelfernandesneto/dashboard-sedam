@@ -73,6 +73,30 @@ return
 }
 let img=canvas.toDataURL('image/png',1.0)
 doc.addImage(img,'PNG',10,30,190,90)
+let info=window.graficoAtualInfo||{}
+
+doc.setFontSize(11)
+
+let texto=''
+
+if(info.tipo==='subitem'){
+
+texto=
+'SUBITEM: '+(info.subitem||'-')+
+' | ITEM: '+(info.item||'-')+
+' | JAN: '+(info.jan||0)+'%'+
+' | FEV: '+(info.fev||0)+'%'+
+' | MAR: '+(info.mar||0)+'%'+
+' | ABR: '+(info.abr||0)+'%'+
+' | MAI: '+(info.mai||0)+'%'
+
+}else{
+
+texto=
+'ANÁLISE CONSOLIDADA GERAL DO TAG SEDAM 2026'
+}
+
+doc.text(texto,10,128,{maxWidth:185})
 doc.setFontSize(8)
 doc.text(NOTA_TECNICA_PDF,10,140,{maxWidth:190})
 let totalPages=doc.internal.getNumberOfPages()
