@@ -443,21 +443,29 @@ if(typeof renderDashboard==='function'){
 renderDashboard()
 }
 
+setTimeout(()=>{
+
 if(typeof renderResumo==='function'){
 renderResumo()
 }
 
-if(typeof renderMonitoramento==='function'){
-renderMonitoramento()
+if(typeof renderTable==='function'){
+renderTable()
 }
 
-if(typeof renderAnalise==='function'){
-renderAnalise()
+if(typeof initPainelGrafico==='function'){
+initPainelGrafico()
 }
 
 if(typeof renderConcluidos==='function'){
 renderConcluidos()
 }
+
+if(typeof renderDashboard==='function'){
+renderDashboard()
+}
+
+},200)
 
 }
 /*=========================================================
