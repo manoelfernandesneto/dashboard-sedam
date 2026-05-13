@@ -360,7 +360,84 @@ initPainelGrafico()
 },700)
 
 }
+/*=========================================================
+002A SEDAM CORE FUNCTION APLICARPERMISSOESABAS
+=========================================================*/
+function aplicarPermissoesAbas(){
 
+if(!window.userP)return
+
+let perfil=window.userP
+
+let origem=String(perfil.origem||'').toUpperCase()
+let nivel=Number(perfil.nivel_acesso||0)
+
+let tabPerfis=document.getElementById('tab-perfis')
+let tabTCERO=document.getElementById('tab-tcero')
+let tabUsuarios=document.getElementById('tab-usuarios')
+
+/*=========================================================
+OCULTA TUDO PRIMEIRO
+=========================================================*/
+;[
+tabPerfis,
+tabTCERO,
+tabUsuarios
+].forEach(t=>{
+
+if(t){
+t.classList.add('hidden')
+t.style.display='none'
+}
+
+})
+
+/*=========================================================
+SEDAM NIVEL 1 E 2
+=========================================================*/
+if(
+origem==='SEDAM'&&
+nivel<=2
+){
+
+if(tabPerfis){
+tabPerfis.classList.remove('hidden')
+tabPerfis.style.display='inline-flex'
+}
+
+if(tabUsuarios){
+tabUsuarios.classList.remove('hidden')
+tabUsuarios.style.display='inline-flex'
+}
+
+}
+
+/*=========================================================
+TCERO NIVEL 1
+=========================================================*/
+if(
+origem==='TCERO'&&
+nivel===1
+){
+
+if(tabPerfis){
+tabPerfis.classList.remove('hidden')
+tabPerfis.style.display='inline-flex'
+}
+
+if(tabUsuarios){
+tabUsuarios.classList.remove('hidden')
+tabUsuarios.style.display='inline-flex'
+}
+
+if(tabTCERO){
+tabTCERO.classList.remove('hidden')
+tabTCERO.style.display='inline-flex'
+}
+
+}
+
+}
 /*=========================================================
 003 SEDAM CORE FUNCTION SWITCHTAB
 =========================================================*/
