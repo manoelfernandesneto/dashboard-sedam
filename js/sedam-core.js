@@ -513,7 +513,35 @@ let {data,error}=await query
 
 if(error){
 console.log(error)
-window.allData=[]
+let dadosFiltrados=data||[]
+
+let origemUsuario=String(userP?.origem||'').toUpperCase()
+
+let nivelUsuario=Number(userP?.nivel_acesso||0)
+
+let adminsGerais=[
+'manoel',
+'vagner',
+'gleidi'
+]
+
+let usernameAtual=String(userP?.username||'').toLowerCase()
+
+let isAdminGeral=adminsGerais.includes(usernameAtual)
+
+if(
+origemUsuario==='SEDAM'&&
+nivelUsuario>1&&
+!isAdminGeral
+){
+
+dadosFiltrados=dadosFiltrados.filter(i=>
+String(i.responsavel_id||'')===String(userP.id||'')
+)
+
+}
+
+window.allData=dadosFiltrados
 window.dados=[]
 window.dadosFiltrados=[]
 window.lista=[]
