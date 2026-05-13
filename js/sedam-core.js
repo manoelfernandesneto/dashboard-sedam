@@ -263,11 +263,11 @@ tabTCERO.style.display='none'
 }
 
 /*=========================================================
-TCERO ADMIN
+TCERO NIVEL 1
 =========================================================*/
 if(
 perfil.origem==='TCERO'&&
-adminsTCERO.includes(usernameAtual)
+Number(perfil.nivel_acesso)===1
 ){
 
 if(tabPerfis){
@@ -289,11 +289,11 @@ tabUsuarios.style.display='inline-flex'
 }
 
 /*=========================================================
-TCERO NIVEL 4
+TCERO NIVEL 2 3 E 4
 =========================================================*/
 if(
 perfil.origem==='TCERO'&&
-Number(perfil.nivel_acesso)===4
+Number(perfil.nivel_acesso)!==1
 ){
 
 if(tabPerfis){
@@ -320,7 +320,7 @@ Number(perfil.nivel_acesso)>=3
 )&&
 !(
 perfil.origem==='TCERO'&&
-Number(perfil.nivel_acesso)===4
+Number(perfil.nivel_acesso)!==1
 )
 ){
 
