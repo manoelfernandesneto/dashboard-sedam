@@ -513,43 +513,19 @@ let {data,error}=await query
 
 if(error){
 console.log(error)
-let dadosFiltrados=data||[]
-
-let origemUsuario=String(userP?.origem||'').toUpperCase()
-
-let nivelUsuario=Number(userP?.nivel_acesso||0)
-
-let adminsGerais=[
-'manoel',
-'vagner',
-'gleidi'
-]
-
-let usernameAtual=String(userP?.username||'').toLowerCase()
-
-let isAdminGeral=adminsGerais.includes(usernameAtual)
-
-if(
-origemUsuario==='SEDAM'&&
-nivelUsuario>1&&
-!isAdminGeral
-){
-
-dadosFiltrados=dadosFiltrados.filter(i=>
-String(i.responsavel_id||'')===String(userP.id||'')
-)
-
-}
-
-window.allData=dadosFiltrados
+window.allData=[]
 window.dados=[]
 window.dadosFiltrados=[]
 window.lista=[]
+window.listaDados=[]
+window.resumoData=[]
+if(typeof renderDashboard==='function'){
 renderDashboard()
+}
 return
 }
 
-window.allData=(data||[]).map(i=>{
+let dadosTratados=(data||[]).map(i=>{
 
 let total=Number(
 i.total_cumprimento||
@@ -565,7 +541,14 @@ Number(i.jan||0),
 Number(i.fev||0),
 Number(i.mar||0),
 Number(i.abr||0),
-Number(i.mai||0)
+Number(i.mai||0),
+Number(i.jun||0),
+Number(i.jul||0),
+Number(i.ago||0),
+Number(i.set||0),
+Number(i.out||0),
+Number(i.nov||0),
+Number(i.dez||0)
 ]
 
 total=Math.max(...meses,0)
@@ -581,16 +564,54 @@ fev:Number(i.fev||0),
 mar:Number(i.mar||0),
 abr:Number(i.abr||0),
 mai:Number(i.mai||0),
+jun:Number(i.jun||0),
+jul:Number(i.jul||0),
+ago:Number(i.ago||0),
+set:Number(i.set||0),
+out:Number(i.out||0),
+nov:Number(i.nov||0),
+dez:Number(i.dez||0),
 total_cumprimento:total
 }
 
 })
 
-window.dados=[...window.allData]
-window.dadosFiltrados=[...window.allData]
-window.lista=[...window.allData]
-window.listaDados=[...window.allData]
-window.resumoData=[...window.allData]
+let origemUsuario=String(userP?.origem||'').toUpperCase()
+let nivelUsuario=Number(userP?.nivel_acesso||0)
+
+let adminsGerais=[
+'manoel',
+'vagner',
+'gleidi'
+]
+
+let usernameAtual=String(userP?.username||'').toLowerCase()
+
+let isAdminGeral=
+nivelUsuario===1||
+origemUsuario==='TCERO'||
+adminsGerais.includes(usernameAtual)
+
+let dadosFiltrados=[...dadosTratados]
+
+if(
+origemUsuario==='SEDAM'&&
+nivelUsuario>1&&
+!isAdminGeral
+){
+
+dadosFiltrados=dadosFiltrados.filter(i=>
+String(i.responsavel_id||'')===String(userP.id||'')
+)
+
+}
+
+window.allData=[...dadosFiltrados]
+window.dados=[...dadosFiltrados]
+window.dadosFiltrados=[...dadosFiltrados]
+window.lista=[...dadosFiltrados]
+window.listaDados=[...dadosFiltrados]
+window.resumoData=[...dadosFiltrados]
 
 console.log('TOTAL FINAL ALLDATA:',window.allData.length)
 
@@ -655,6 +676,9 @@ renderDashboard()
 },200)
 
 }
+
+
+
 
 function renderResumoItens(){
 
