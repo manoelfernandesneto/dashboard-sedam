@@ -184,11 +184,11 @@ let adminsTCERO=[
 ]
 
 /*=========================================================
-SEDAM
+SEDAM NIVEL 1 E 2
 =========================================================*/
 if(
 perfil.origem==='SEDAM'&&
-Number(perfil.nivel_acesso)===1
+Number(perfil.nivel_acesso)<=2
 ){
 
 if(tabPerfis){
@@ -200,6 +200,36 @@ tabPerfis.innerHTML='<div>👥</div><div>Perfis Sedam</div>'
 if(tabUsuarios){
 tabUsuarios.classList.remove('hidden')
 tabUsuarios.style.display='inline-flex'
+}
+
+if(tabTCERO){
+tabTCERO.classList.add('hidden')
+tabTCERO.style.display='none'
+}
+
+}
+
+/*=========================================================
+SEDAM NIVEL 3 E 4
+=========================================================*/
+if(
+perfil.origem==='SEDAM'&&
+Number(perfil.nivel_acesso)>=3
+){
+
+if(tabPerfis){
+tabPerfis.classList.add('hidden')
+tabPerfis.style.display='none'
+}
+
+if(tabUsuarios){
+tabUsuarios.classList.add('hidden')
+tabUsuarios.style.display='none'
+}
+
+if(tabTCERO){
+tabTCERO.classList.add('hidden')
+tabTCERO.style.display='none'
 }
 
 }
