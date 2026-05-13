@@ -304,6 +304,10 @@ let adminsTCERO=[
 
 let usuarioAtual=(window.userP?.username||'').toLowerCase()
 
+let isUsuarioSEDAM=
+window.userP&&
+String(window.userP.origem||'').toUpperCase()==='SEDAM'
+
 let isTCERONivel4=
 window.userP&&
 window.userP.origem==='TCERO'&&
@@ -326,6 +330,26 @@ tabTCERO.remove()
 
 if(tabUsuarios){
 tabUsuarios.remove()
+}
+
+}
+
+if(isUsuarioSEDAM){
+
+if(tabTCERO){
+tabTCERO.remove()
+}
+
+let viewTCERO=document.getElementById('view-tcero')
+
+if(viewTCERO){
+viewTCERO.remove()
+}
+
+let acessoTCERO=document.getElementById('acesso-tcero')
+
+if(acessoTCERO){
+acessoTCERO.remove()
 }
 
 }
