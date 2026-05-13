@@ -367,7 +367,7 @@ nivelUsuario>=3
 )||
 (
 origemUsuario==='TCERO'&&
-nivelUsuario===4
+nivelUsuario!==1
 )
 
 let tabPerfis=document.getElementById('tab-perfis')
@@ -493,8 +493,8 @@ return
 
 if(
 origemUsuario==='TCERO'&&
-nivelUsuario===4&&
-(
+nivelUsuario!==1
+)
 t==='perfis'||
 t==='usuarios'||
 t==='tcero'
@@ -593,7 +593,7 @@ nivelUsuario>=3
 )||
 (
 origemUsuario==='TCERO'&&
-nivelUsuario===4
+nivelUsuario!==1
 )
 ){
 return
@@ -614,7 +614,7 @@ nivelUsuario>=3
 )||
 (
 origemUsuario==='TCERO'&&
-nivelUsuario===4
+nivelUsuario!==1
 )
 ){
 return
@@ -632,7 +632,7 @@ if(
 origemUsuario==='SEDAM'||
 (
 origemUsuario==='TCERO'&&
-nivelUsuario===4
+nivelUsuario!==1
 )
 ){
 return
