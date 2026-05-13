@@ -277,20 +277,133 @@ doc.save('pdf_graficos_tag_sedam.pdf')
 async function gerarPDFCumpridos(){
 const {jsPDF}=window.jspdf
 let doc=new jsPDF('l','mm','a4')
-let lista=allData.filter(i=>getTotal(i)>=100).sort(compareSubitem)
+let lista=(window.allData||[]).filter(i=>{
+let total=Math.max(
+Number(i.jan||0),
+Number(i.fev||0),
+Number(i.mar||0),
+Number(i.abr||0),
+Number(i.mai||0),
+Number(i.jun||0),
+Number(i.jul||0),
+Number(i.ago||0),
+Number(i.set||0),
+Number(i.out||0),
+Number(i.nov||0),
+Number(i.dez||0)
+)
+return total>=100
+}).sort(compareSubitem)
 doc.setFontSize(16)
+doc.setTextColor(0,0,0)
 doc.text('SUBITENS 100% CUMPRIDOS - TAG SEDAM 2026',10,12)
 doc.setFontSize(10)
+doc.setTextColor(70,70,70)
 doc.text('TOTAL DE SUBITENS COM 100% DE EXECUÇÃO: '+lista.length,10,19)
-let rows=lista.map(i=>[i.subitem||'-',i.descricao||'-',String(i.produto||'-'),String(i.responsavel||'-')])
-doc.autoTable({startY:24,head:[['Subitem','Descrição Completa','Produto','Responsável']],body:rows,theme:'striped',styles:{fontSize:5,overflow:'linebreak',cellPadding:1.2,valign:'top',textColor:[0,0,0]},headStyles:{fillColor:[37,99,235],textColor:[255,255,255],fontStyle:'bold',fontSize:6},alternateRowStyles:{fillColor:[245,245,245]},columnStyles:{0:{cellWidth:18},1:{cellWidth:118},2:{cellWidth:78},3:{cellWidth:48}},margin:{top:20,left:8,right:8,bottom:38},didDrawPage:function(data){let pageHeight=doc.internal.pageSize.height;let pageWidth=doc.internal.pageSize.width;doc.setFillColor(255,255,255);doc.rect(0,pageHeight-34,pageWidth,34,'F');doc.setTextColor(90,90,90);doc.setFontSize(7);doc.text('Tribunal de Contas do Estado de Rondônia - TAG SEDAM 2026',6,pageHeight-26);doc.setFontSize(4);doc.text(NOTA_TECNICA_PDF,10,pageHeight-18,{maxWidth:pageWidth-55,align:'justify'})}})
+let rows=lista.map(i=>{
+let total=Math.max(
+Number(i.jan||0),
+Number(i.fev||0),
+Number(i.mar||0),
+Number(i.abr||0),
+Number(i.mai||0),
+Number(i.jun||0),
+Number(i.jul||0),
+Number(i.ago||0),
+Number(i.set||0),
+Number(i.out||0),
+Number(i.nov||0),
+Number(i.dez||0)
+)
+return[
+i.item||'-',
+i.subitem||'-',
+i.descricao||'-',
+String(i.produto||'-'),
+String(i.responsavel||'-'),
+total+'%'
+]
+})
+doc.autoTable({
+startY:24,
+head:[[
+'ITEM',
+'SUBITEM',
+'DESCRIÇÃO COMPLETA',
+'PRODUTO',
+'RESPONSÁVEL',
+'%'
+]],
+body:rows,
+theme:'striped',
+styles:{
+fontSize:5,
+overflow:'linebreak',
+cellPadding:1.2,
+valign:'top',
+textColor:[0,0,0]
+},
+headStyles:{
+fillColor:[34,197,94],
+textColor:[255,255,255],
+fontStyle:'bold',
+fontSize:6
+},
+alternateRowStyles:{
+fillColor:[245,245,245]
+},
+columnStyles:{
+0:{cellWidth:14},
+1:{cellWidth:18},
+2:{cellWidth:108},
+3:{cellWidth:72},
+4:{cellWidth:42},
+5:{cellWidth:12,halign:'center'}
+},
+margin:{
+top:20,
+left:8,
+right:8,
+bottom:38
+},
+didDrawPage:function(data){
+let pageHeight=doc.internal.pageSize.height
+let pageWidth=doc.internal.pageSize.width
+doc.setFillColor(255,255,255)
+doc.rect(0,pageHeight-34,pageWidth,34,'F')
+doc.setTextColor(90,90,90)
+doc.setFontSize(7)
+doc.text(
+'Tribunal de Contas do Estado de Rondônia - TAG SEDAM 2026',
+6,
+pageHeight-26
+)
+doc.setFontSize(4)
+doc.text(
+NOTA_TECNICA_PDF,
+10,
+pageHeight-18,
+{
+maxWidth:pageWidth-55,
+align:'justify'
+}
+)
+}
+})
 let totalPages=doc.internal.getNumberOfPages()
 for(let i=1;i<=totalPages;i++){
 doc.setPage(i)
 let pageHeight=doc.internal.pageSize.height
 let pageWidth=doc.internal.pageSize.width
 doc.setFontSize(7)
-doc.text('Página '+i+' de '+totalPages,pageWidth-10,pageHeight-6,{align:'right'})
+doc.text(
+'Página '+i+' de '+totalPages,
+pageWidth-10,
+pageHeight-6,
+{
+align:'right'
+}
+)
 }
 doc.save('pdf_100_cumpridos_tag_sedam.pdf')
 }
