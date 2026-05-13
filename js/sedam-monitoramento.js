@@ -200,6 +200,14 @@ podeEditar=true
   
 let responsavelTexto=i.responsavel||'-'
 let listaPerfis=[...(window.perfis||[]),...(window.perfisSedam||[])]
+
+if(Number(userP?.nivel_acesso||0)!==1){
+
+listaPerfis=listaPerfis.filter(p=>
+String(p.id||'')===String(userP?.id||'')
+)
+
+}
 let perfilResponsavel=listaPerfis.find(p=>String(p.id)===String(i.responsavel_id))
 if(perfilResponsavel){
 responsavelTexto=perfilResponsavel.nome_completo
@@ -258,7 +266,14 @@ editar
 }).join('')
 let itensTotal=new Set((window.allData||[]).map(x=>getItemKey(x))).size
 let pdfHTML=''
-if(userP&&(Number(userP.nivel_acesso)<=2||userP.permissao_pdf===true)){
+if(
+userP&&
+(
+Number(userP.nivel_acesso)===1||
+String(userP.origem||'').toUpperCase()==='TCERO'||
+userP.permissao_pdf===true
+)
+){
 if(document.getElementById('view-resumo')&&!document.getElementById('view-resumo').classList.contains('hidden')){
 pdfHTML=`<button onclick="gerarPDFResumo()" class="btn-pdf">PDF RESUMO</button>`
 }
