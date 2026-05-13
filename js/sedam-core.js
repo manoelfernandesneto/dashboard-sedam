@@ -847,21 +847,18 @@ total_cumprimento:total
 let origemUsuario=String(userP?.origem||'').toUpperCase()
 let nivelUsuario=Number(userP?.nivel_acesso||0)
 
-let adminsGerais=[
-'manoel',
-'vagner',
-'gleidi'
-]
-
 let usernameAtual=String(userP?.username||'').toLowerCase()
 
+let isNivel1SEDAM=
+origemUsuario==='SEDAM'&&
+nivelUsuario===1
+
+let isUsuarioTCERO=
+origemUsuario==='TCERO'
+
 let isAdminGeral=
-(
-nivelUsuario===1&&
-usernameAtual!=='hueriqui'
-)||
-origemUsuario==='TCERO'||
-adminsGerais.includes(usernameAtual)
+isNivel1SEDAM||
+isUsuarioTCERO
 
 let dadosFiltrados=[...dadosTratados]
 
