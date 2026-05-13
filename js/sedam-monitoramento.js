@@ -253,7 +253,7 @@ return `
 ${
 editar
 ?
-`<input type="number" min="0" max="100" step="1" class="input-mes" value="${valor}" onchange="salvar(this.value,'${i.id}','${m}')">`
+`<input type="number" min="0" max="100" step="1" class="input-mes" value="${valor}" onchange="if(this.disabled)return;salvar(this.value,'${i.id}','${m}')">`
 :
 `<span>${valor}%</span>`
 }
