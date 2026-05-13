@@ -1037,7 +1037,20 @@ let pendentes=0
 
 lista.forEach(i=>{
 
-let t=Number(getTotal(i)||0)
+let t=Math.max(
+Number(i.jan||0),
+Number(i.fev||0),
+Number(i.mar||0),
+Number(i.abr||0),
+Number(i.mai||0),
+Number(i.jun||0),
+Number(i.jul||0),
+Number(i.ago||0),
+Number(i.set||0),
+Number(i.out||0),
+Number(i.nov||0),
+Number(i.dez||0)
+)
 
 if(t>=100){
 
@@ -1051,9 +1064,7 @@ criticos++
 
 andamento++
 
-}
-
-if(t<=0){
+}else{
 
 pendentes++
 
