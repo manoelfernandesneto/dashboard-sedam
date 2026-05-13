@@ -1007,6 +1007,7 @@ let c=document.getElementById('dashboardTotalSubitens')
 let d=document.getElementById('dashboardCumpridos')
 let e=document.getElementById('dashboardCriticos')
 let f=document.getElementById('dashboardAndamento')
+let g=document.getElementById('dashPendentes')
 
 if(a)a.innerText='0%'
 if(b)b.innerText='0'
@@ -1014,6 +1015,7 @@ if(c)c.innerText='0'
 if(d)d.innerText='0'
 if(e)e.innerText='0'
 if(f)f.innerText='0'
+if(g)g.innerText='0'
 
 return
 }
@@ -1078,7 +1080,8 @@ document.getElementById('dashboardTotalSubitens').innerText=totalSubitens
 document.getElementById('dashboardCumpridos').innerText=concluidos
 document.getElementById('dashboardCriticos').innerText=criticos
 document.getElementById('dashboardAndamento').innerText=andamento
-
+document.getElementById('dashPendentes').innerText=pendentes
+  
 let topo=document.getElementById('total-geral')
 
 if(topo){
