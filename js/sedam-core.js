@@ -334,15 +334,29 @@ let adminsTCERO=[
 
 let usuarioAtual=(window.userP?.username||'').toLowerCase()
 
+let origemUsuario=String(window.userP?.origem||'').toUpperCase()
+
+let nivelUsuario=Number(window.userP?.nivel_acesso||0)
+
 let isUsuarioSEDAM=
 window.userP&&
-String(window.userP.origem||'').toUpperCase()==='SEDAM'
+origemUsuario==='SEDAM'
 
 let isTCERONivel4=
 window.userP&&
-window.userP.origem==='TCERO'&&
-Number(window.userP.nivel_acesso)===4&&
+origemUsuario==='TCERO'&&
+nivelUsuario===4&&
 !adminsTCERO.includes(usuarioAtual)
+
+let ocultarPerfis=
+(
+origemUsuario==='SEDAM'&&
+nivelUsuario>=3
+)||
+(
+origemUsuario==='TCERO'&&
+nivelUsuario===4
+)
 
 let tabPerfis=document.getElementById('tab-perfis')
 let tabTCERO=document.getElementById('tab-tcero')
@@ -364,22 +378,63 @@ tabUsuarios.style.display='none'
 
 }
 
-if(isUsuarioSEDAM){
+if(ocultarPerfis){
+
+if(tabPerfis){
+tabPerfis.classList.add('hidden')
+tabPerfis.style.display='none'
+}
+
+if(tabUsuarios){
+tabUsuarios.classList.add('hidden')
+tabUsuarios.style.display='none'
+}
 
 if(tabTCERO){
-tabTCERO.remove()
+tabTCERO.classList.add('hidden')
+tabTCERO.style.display='none'
+}
+
+let viewPerfis=document.getElementById('view-perfis')
+
+if(viewPerfis){
+viewPerfis.style.display='none'
+viewPerfis.classList.add('hidden')
+}
+
+let viewUsuarios=document.getElementById('view-usuarios')
+
+if(viewUsuarios){
+viewUsuarios.style.display='none'
+viewUsuarios.classList.add('hidden')
 }
 
 let viewTCERO=document.getElementById('view-tcero')
 
 if(viewTCERO){
-viewTCERO.remove()
+viewTCERO.style.display='none'
+viewTCERO.classList.add('hidden')
+}
+
+}
+
+if(isUsuarioSEDAM){
+
+if(tabTCERO){
+tabTCERO.style.display='none'
+}
+
+let viewTCERO=document.getElementById('view-tcero')
+
+if(viewTCERO){
+viewTCERO.style.display='none'
+viewTCERO.classList.add('hidden')
 }
 
 let acessoTCERO=document.getElementById('acesso-tcero')
 
 if(acessoTCERO){
-acessoTCERO.remove()
+acessoTCERO.style.display='none'
 }
 
 }
@@ -495,8 +550,14 @@ c.style.maxHeight='320px'
 if(t==='perfis'){
 
 if(
-String(userP?.origem||'').toUpperCase()==='SEDAM'&&
-Number(userP?.nivel_acesso||0)>1
+(
+origemUsuario==='SEDAM'&&
+nivelUsuario>=3
+)||
+(
+origemUsuario==='TCERO'&&
+nivelUsuario===4
+)
 ){
 return
 }
@@ -510,8 +571,14 @@ carregarPerfis()
 if(t==='usuarios'){
 
 if(
-String(userP?.origem||'').toUpperCase()==='SEDAM'&&
-Number(userP?.nivel_acesso||0)>1
+(
+origemUsuario==='SEDAM'&&
+nivelUsuario>=3
+)||
+(
+origemUsuario==='TCERO'&&
+nivelUsuario===4
+)
 ){
 return
 }
@@ -525,8 +592,11 @@ carregarUsuarios()
 if(t==='tcero'){
 
 if(
-String(userP?.origem||'').toUpperCase()==='SEDAM'&&
-Number(userP?.nivel_acesso||0)>1
+origemUsuario==='SEDAM'||
+(
+origemUsuario==='TCERO'&&
+nivelUsuario===4
+)
 ){
 return
 }
