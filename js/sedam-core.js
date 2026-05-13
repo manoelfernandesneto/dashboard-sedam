@@ -377,14 +377,17 @@ let tabUsuarios=document.getElementById('tab-usuarios')
 if(isTCERONivel4){
 
 if(tabPerfis){
+tabPerfis.classList.add('hidden')
 tabPerfis.style.display='none'
 }
 
 if(tabTCERO){
+tabTCERO.classList.add('hidden')
 tabTCERO.style.display='none'
 }
 
 if(tabUsuarios){
+tabUsuarios.classList.add('hidden')
 tabUsuarios.style.display='none'
 }
 
@@ -477,6 +480,7 @@ v.style.opacity='0'
 document.querySelectorAll('.tab-btn').forEach(b=>{
 b.classList.remove('tab-active')
 })
+
 if(
 (
 origemUsuario==='SEDAM'&&
@@ -493,8 +497,8 @@ return
 
 if(
 origemUsuario==='TCERO'&&
-nivelUsuario!==1
-)
+nivelUsuario!==1&&
+(
 t==='perfis'||
 t==='usuarios'||
 t==='tcero'
@@ -502,6 +506,7 @@ t==='tcero'
 ){
 return
 }
+
 let view=document.getElementById('view-'+t)
 
 if(view){
