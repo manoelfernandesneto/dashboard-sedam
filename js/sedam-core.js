@@ -64,8 +64,20 @@ localStorage.removeItem('user')
 
 }
 
-switchTab('dashboard')
-
+let geral=document.getElementById('painel-geral-acesso')
+let login=document.getElementById('login-screen')
+let dash=document.getElementById('dashboard')
+if(geral){
+geral.style.display='flex'
+geral.classList.remove('hidden')
+}
+if(login){
+login.classList.add('hidden')
+login.style.display='none'
+}
+if(dash){
+dash.classList.add('hidden')
+}
 })
 
 /*=========================================================
@@ -1750,4 +1762,39 @@ modal.classList.add('hidden')
 modal.style.display='none'
 }
 
+}
+
+/*=========================================================
+000 SEDAM CORE FUNCTION PAINEL GERAL
+=========================================================*/
+function abrirPainelSedam(){
+let geral=document.getElementById('painel-geral-acesso')
+let login=document.getElementById('login-screen')
+let dash=document.getElementById('dashboard')
+if(geral){
+geral.style.display='none'
+geral.classList.add('hidden')
+}
+if(window.userP&&window.userP.username){
+if(login)login.classList.add('hidden')
+if(dash)dash.classList.remove('hidden')
+switchTab('dashboard')
+if(typeof carregarDados==='function'){
+carregarDados()
+}
+}else{
+if(login){
+login.classList.remove('hidden')
+login.style.display='flex'
+}
+if(dash){
+dash.classList.add('hidden')
+}
+}
+}
+function abrirPainelSepat(){
+window.location.href='sepatindex.html'
+}
+function abrirPainelQueimadas(){
+alert('Painel de Combate às Queimadas em desenvolvimento.')
 }
