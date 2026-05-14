@@ -665,16 +665,7 @@ c.style.maxHeight='320px'
 
 if(t==='perfis'){
 
-if(
-(
-origemUsuario==='SEDAM'&&
-nivelUsuario>=3
-)||
-(
-origemUsuario==='TCERO'&&
-nivelUsuario!==1
-)
-){
+if(nivelUsuario!==1){
 return
 }
 
@@ -686,16 +677,7 @@ carregarPerfis()
 
 if(t==='usuarios'){
 
-if(
-(
-origemUsuario==='SEDAM'&&
-nivelUsuario>=3
-)||
-(
-origemUsuario==='TCERO'&&
-nivelUsuario!==1
-)
-){
+if(nivelUsuario!==1){
 return
 }
 
@@ -1541,10 +1523,15 @@ Number(getTotal(i)||0)
 009 DASHBOARD LABELS E VALORES
 =========================================================*/
 let labels=Object.keys(mapaItens).sort((a,b)=>{
-let pa=a.split('.').map(Number)
-let pb=b.split('.').map(Number)
-if(pa[0]!==pb[0])return pa[0]-pb[0]
-return (pa[1]||0)-(pb[1]||0)
+let pa=String(a).split('.').map(n=>parseInt(n)||0)
+let pb=String(b).split('.').map(n=>parseInt(n)||0)
+let max=Math.max(pa.length,pb.length)
+for(let i=0;i<max;i++){
+let va=pa[i]||0
+let vb=pb[i]||0
+if(va!==vb)return va-vb
+}
+return 0
 })
 let valores=labels.map(l=>{
 let arr=mapaItens[l]
