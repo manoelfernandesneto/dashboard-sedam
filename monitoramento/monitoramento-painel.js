@@ -1,5 +1,7 @@
 let graficoStatus=null
 let graficoEvolucao=null
+let graficoCriticidade=null
+let graficoBeneficios=null
 
 async function carregarDashboard(){
 
@@ -29,7 +31,8 @@ andamento||0
 )
 
 await carregarGraficoEvolucao()
-
+await carregarGraficoCriticidade()
+await carregarGraficoBeneficios()
 }catch(e){
 
 console.log(e)
@@ -658,4 +661,185 @@ await carregarRanking()
 
 })
 
-ok
+async function carregarGraficoCriticidade(){
+
+let{data,error}=await client
+.from('monitoramento_itens')
+.select('criticidade')
+
+if(error){
+console.log(error)
+return
+}
+
+let alta=
+(data||[])
+.filter(i=>i.criticidade==='ALTA')
+.length
+
+let media=
+(data||[])
+.filter(i=>i.criticidade==='MÉDIA')
+.length
+
+let baixa=
+(data||[])
+.filter(i=>i.criticidade==='BAIXA')
+.length
+
+let ctx=document.getElementById('graficoCriticidade')
+
+if(!ctx)return
+
+if(graficoCriticidade){
+graficoCriticidade.destroy()
+}
+
+graficoCriticidade=new Chart(ctx,{
+type:'bar',
+data:{
+labels:[
+'Alta',
+'Média',
+'Baixa'
+],
+datasets:[{
+label:'Criticidade',
+data:[
+alta,
+media,
+baixa
+],
+backgroundColor:[
+'#ef4444',
+'#f59e0b',
+'#10b981'
+],
+borderRadius:8
+}]
+},
+options:{
+responsive:true,
+plugins:{
+legend:{
+labels:{
+color:'#fff'
+}
+},
+datalabels:{
+color:'#fff',
+anchor:'end',
+align:'top'
+}
+},
+scales:{
+x:{
+ticks:{
+color:'#fff'
+},
+grid:{
+color:'rgba(255,255,255,.05)'
+}
+},
+y:{
+ticks:{
+color:'#fff'
+},
+grid:{
+color:'rgba(255,255,255,.05)'
+}
+}
+}
+},
+plugins:[ChartDataLabels]
+})
+
+}
+
+async function carregarGraficoBeneficios(){
+
+let{data,error}=await client
+.from('monitoramento_itens')
+.select('beneficio_esperado')
+
+if(error){
+console.log(error)
+return
+}
+
+let financeiro=0
+let operacional=0
+let social=0
+let governanca=0
+
+;(data||[]).forEach(i=>{
+
+let b=(i.beneficio_esperado||'').toUpperCase()
+
+if(b.includes('FINANCE')){
+financeiro++
+}
+
+if(b.includes('OPERACION')){
+operacional++
+}
+
+if(b.includes('SOCIAL')){
+social++
+}
+
+if(b.includes('GOVERN')){
+governanca++
+}
+
+})
+
+let ctx=document.getElementById('graficoBeneficios')
+
+if(!ctx)return
+
+if(graficoBeneficios){
+graficoBeneficios.destroy()
+}
+
+graficoBeneficios=new Chart(ctx,{
+type:'polarArea',
+data:{
+labels:[
+'Financeiro',
+'Operacional',
+'Social',
+'Governança'
+],
+datasets:[{
+data:[
+financeiro,
+operacional,
+social,
+governanca
+],
+backgroundColor:[
+'#10b981',
+'#3b82f6',
+'#f59e0b',
+'#8b5cf6'
+]
+}]
+},
+options:{
+responsive:true,
+plugins:{
+legend:{
+labels:{
+color:'#fff'
+}
+},
+datalabels:{
+color:'#fff'
+}
+}
+},
+plugins:[ChartDataLabels]
+})
+
+}
