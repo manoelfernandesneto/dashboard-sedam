@@ -265,8 +265,22 @@ let selItem=document.getElementById('sel-item')
 let selSub=document.getElementById('sel-sub')
 if(!selItem||!selSub)return
 let dados=window.allData||[]
-let itens=[...new Set(dados.map(i=>(i.subitem||'').split('.')[0]).filter(x=>x))]
-selItem.innerHTML='<option value="total">TOTAL</option>'+itens.map(i=>`<option value="${i}">ITEM ${i}</option>`).join('')
+let itens=[...new Set(
+dados.map(i=>(i.subitem||'').split('.')[0]).filter(x=>x)
+)]
+itens=itens.sort((a,b)=>{
+let pa=String(a).split('.').map(n=>parseInt(n)||0)
+let pb=String(b).split('.').map(n=>parseInt(n)||0)
+let max=Math.max(pa.length,pb.length)
+for(let i=0;i<max;i++){
+let va=pa[i]||0
+let vb=pb[i]||0
+if(va!==vb)return va-vb
+}
+return 0
+})
+selItem.innerHTML='<option value="total">TOTAL</option>'+
+itens.map(i=>`<option value="${i}">ITEM ${i}</option>`).join('')
 selItem.onchange=()=>updateSubSelect()
 updateSubSelect()
 }
@@ -279,9 +293,19 @@ let selSub=document.getElementById('sel-sub')
 if(!selItem||!selSub)return
 let dados=window.allData||[]
 let v=selItem.value
-let lista=v==='total'?dados:dados.filter(i=>(i.subitem||'').startsWith(v+'.'))
-selSub.innerHTML=lista.map(i=>`<option value="${i.subitem}">${i.subitem}</option>`).join('')
-if(typeof renderChart==="function")renderChart()
+let lista=v==='total'
+?dados
+:dados.filter(i=>(i.subitem||'').startsWith(v+'.'))
+
+lista=lista.sort(compareSubitem)
+
+selSub.innerHTML=lista.map(i=>
+`<option value="${i.subitem}">${i.subitem}</option>`
+).join('')
+
+if(typeof renderChart==="function"){
+renderChart()
+}
 }
 /*=========================================================
 007 GRAFICOS FUNCTION SINCRONIZARRESPONSAVEIS
