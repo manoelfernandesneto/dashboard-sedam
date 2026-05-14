@@ -19,97 +19,75 @@ doc.text('Página '+i+' de '+totalPages,pageWidth-10,pageHeight-6,{align:'right'
 doc.save("backup_deliberacoes.pdf")
 }
 /*=========================================================
-002 PDF FUNCTION GERARPDFRESUMO
+002 PDF FUNCTION COMPARESUBITEM
+=========================================================*/
+function compareSubitemPDF(a,b){
+let sa=String(a.subitem||a.item||'0.0').replace(/[^\d\.]/g,'')
+let sb=String(b.subitem||b.item||'0.0').replace(/[^\d\.]/g,'')
+let pa=sa.split('.').map(n=>parseInt(n)||0)
+let pb=sb.split('.').map(n=>parseInt(n)||0)
+let max=Math.max(pa.length,pb.length)
+for(let i=0;i<max;i++){
+let va=pa[i]||0
+let vb=pb[i]||0
+if(va!==vb)return va-vb
+}
+return 0
+}
+/*=========================================================
+003 PDF FUNCTION GERARPDFRESUMO
 =========================================================*/
 async function gerarPDFResumo(){
 const {jsPDF}=window.jspdf
 let doc=new jsPDF('p','mm','a4')
 let lista=[...(window.allData||[])]
-
-lista=lista.sort((a,b)=>{
-
-function ordem(v){
-
-let p=String(v||'').split('.')
-
-return{
-n1:parseInt(p[0]||0),
-n2:parseInt(p[1]||0)
-}
-
-}
-
-let pa=ordem(a.subitem)
-let pb=ordem(b.subitem)
-
-if(pa.n1!==pb.n1)return pa.n1-pb.n1
-
-return pa.n2-pb.n2
-
-})
-
+lista=lista.sort(compareSubitemPDF)
 doc.setFontSize(14)
 doc.text('RESUMO EXECUTIVO - TAG SEDAM 2026',10,12)
-
 let grupos={}
-
 lista.forEach(i=>{
-
 let itemPai=String(i.item||'').trim()
-
 if(!grupos[itemPai]){
 grupos[itemPai]=[]
 }
-
 grupos[itemPai].push(i)
-
 })
-
 let rows=[]
-
-Object.keys(grupos)
-.sort((a,b)=>{
-
-let pa=parseFloat(a)||0
-let pb=parseFloat(b)||0
-
-return pa-pb
-
-})
-.forEach(item=>{
-
-let regs=grupos[item]||[]
-
+Object.keys(grupos).sort((a,b)=>{
+let pa=String(a).split('.').map(n=>parseInt(n)||0)
+let pb=String(b).split('.').map(n=>parseInt(n)||0)
+let max=Math.max(pa.length,pb.length)
+for(let i=0;i<max;i++){
+let va=pa[i]||0
+let vb=pb[i]||0
+if(va!==vb)return va-vb
+}
+return 0
+}).forEach(item=>{
+let regs=(grupos[item]||[]).sort(compareSubitemPDF)
 let media=Math.round(
 regs.reduce((acc,c)=>acc+getTotal(c),0)/(regs.length||1)
 )
-
 let descricaoItem=
 regs.find(x=>
 x.descricaoitem&&
 x.descricaoitem.trim()
 )?.descricaoitem||'-'
-
 rows.push([
 'ITEM '+item,
 descricaoItem,
 '',
 media+'%'
 ])
-
 regs.forEach(i=>{
-
 rows.push([
-'   SUBITEM '+(i.subitem||'-'),
+'SUBITEM '+(i.subitem||'-'),
 String(i.descricao||'-'),
 String(i.produto||'-'),
 getTotal(i)+'%'
 ])
-
 })
-
 })
-
 doc.autoTable({
 startY:24,
 head:[['ITEM / SUBITEM','DESCRIÇÃO COMPLETA','PRODUTO ESTRATÉGICO','%']],
@@ -137,31 +115,21 @@ left:5,
 right:5
 },
 didParseCell:function(data){
-
 let txt=String(data.cell.raw||'')
-
 if(txt.startsWith('ITEM ')){
-
 data.cell.styles.fillColor=[30,58,138]
 data.cell.styles.textColor=[255,255,255]
 data.cell.styles.fontStyle='bold'
-
 }
-
 },
 didDrawPage:function(data){
-
 let pageHeight=doc.internal.pageSize.height
 let pageWidth=doc.internal.pageSize.width
-
 doc.setFillColor(255,255,255)
 doc.rect(0,pageHeight-34,pageWidth,34,'F')
-
 doc.setTextColor(90,90,90)
-
 doc.setFontSize(7)
 doc.text('Tribunal de Contas do Estado de Rondônia - TAG SEDAM 2026',6,pageHeight-26)
-
 doc.setFontSize(4)
 doc.text(
 NOTA_TECNICA_PDF,
@@ -172,21 +140,14 @@ maxWidth:pageWidth-55,
 align:'justify'
 }
 )
-
 }
 })
-
 let totalPages=doc.internal.getNumberOfPages()
-
 for(let i=1;i<=totalPages;i++){
-
 doc.setPage(i)
-
 let pageHeight=doc.internal.pageSize.height
 let pageWidth=doc.internal.pageSize.width
-
 doc.setFontSize(7)
-
 doc.text(
 'Página '+i+' de '+totalPages,
 pageWidth-10,
@@ -195,28 +156,115 @@ pageHeight-6,
 align:'right'
 }
 )
-
 }
-
 doc.save('pdf_resumo_tag_sedam.pdf')
-
 }
 /*=========================================================
-003 PDF FUNCTION GERARPDFMONITORAMENTO
+003 PDF FUNCTION COMPARESUBITEMPDF
+=========================================================*/
+function compareSubitemPDF(a,b){
+let sa=String(a.subitem||a.item||'0.0').replace(/[^\d\.]/g,'')
+let sb=String(b.subitem||b.item||'0.0').replace(/[^\d\.]/g,'')
+let pa=sa.split('.').map(n=>parseInt(n)||0)
+let pb=sb.split('.').map(n=>parseInt(n)||0)
+let max=Math.max(pa.length,pb.length)
+for(let i=0;i<max;i++){
+let va=pa[i]||0
+let vb=pb[i]||0
+if(va!==vb)return va-vb
+}
+return 0
+}
+/*=========================================================
+004 PDF FUNCTION GERARPDFMONITORAMENTO
 =========================================================*/
 async function gerarPDFMonitoramento(){
 const {jsPDF}=window.jspdf
 let doc=new jsPDF('l','mm','a4')
-let lista=[...(window.allData||[])].sort(compareSubitem)
+let lista=[...(window.allData||[])].sort(compareSubitemPDF)
 doc.setFontSize(14)
 doc.text('MONITORAMENTO COMPLETO - TAG SEDAM 2026',10,12)
-let rows=lista.map(i=>{let total=getTotal(i);return[i.subitem||'-',i.descricao||'-',String(i.produto||'-'),String(i.responsavel||'-'),(i.jan||0)+'%',(i.fev||0)+'%',(i.mar||0)+'%',(i.abr||0)+'%',(i.mai||0)+'%',total+'%']})
-doc.autoTable({startY:24,head:[['Sub','Descrição Completa','Produtos','Responsável','JAN','FEV','MAR','ABR','MAI','TOTAL']],body:rows,theme:'grid',styles:{fontSize:6,overflow:'linebreak',cellPadding:2,valign:'middle'},headStyles:{fillColor:[180,150,110],textColor:[0,0,0],fontStyle:'bold'},columnStyles:{0:{cellWidth:14},1:{cellWidth:82},2:{cellWidth:72},3:{cellWidth:40},4:{cellWidth:10},5:{cellWidth:10},6:{cellWidth:10},7:{cellWidth:10},8:{cellWidth:10},9:{cellWidth:16}},margin:{top:20,bottom:38,left:5,right:5},didDrawPage:function(data){let pageHeight=doc.internal.pageSize.height;let pageWidth=doc.internal.pageSize.width;doc.setFillColor(255,255,255);doc.rect(0,pageHeight-34,pageWidth,34,'F');doc.setTextColor(90,90,90);doc.setFontSize(7);doc.text('Tribunal de Contas do Estado de Rondônia - TAG SEDAM 2026',6,pageHeight-26);doc.setFontSize(4);doc.text(NOTA_TECNICA_PDF,10,pageHeight-18,{maxWidth:pageWidth-55,align:'justify'})}})
+let rows=lista.map(i=>{
+let total=getTotal(i)
+return[
+i.subitem||'-',
+i.descricao||'-',
+String(i.produto||'-'),
+String(i.responsavel||'-'),
+(i.jan||0)+'%',
+(i.fev||0)+'%',
+(i.mar||0)+'%',
+(i.abr||0)+'%',
+(i.mai||0)+'%',
+total+'%'
+]
+})
+doc.autoTable({
+startY:24,
+head:[['Sub','Descrição Completa','Produtos','Responsável','JAN','FEV','MAR','ABR','MAI','TOTAL']],
+body:rows,
+theme:'grid',
+styles:{
+fontSize:6,
+overflow:'linebreak',
+cellPadding:2,
+valign:'middle'
+},
+headStyles:{
+fillColor:[180,150,110],
+textColor:[0,0,0],
+fontStyle:'bold'
+},
+columnStyles:{
+0:{cellWidth:14},
+1:{cellWidth:82},
+2:{cellWidth:72},
+3:{cellWidth:40},
+4:{cellWidth:10},
+5:{cellWidth:10},
+6:{cellWidth:10},
+7:{cellWidth:10},
+8:{cellWidth:10},
+9:{cellWidth:16}
+},
+margin:{
+top:20,
+bottom:38,
+left:5,
+right:5
+},
+didDrawPage:function(data){
+let pageHeight=doc.internal.pageSize.height
+let pageWidth=doc.internal.pageSize.width
+doc.setFillColor(255,255,255)
+doc.rect(0,pageHeight-34,pageWidth,34,'F')
+doc.setTextColor(90,90,90)
+doc.setFontSize(7)
+doc.text('Tribunal de Contas do Estado de Rondônia - TAG SEDAM 2026',6,pageHeight-26)
+doc.setFontSize(4)
+doc.text(
+NOTA_TECNICA_PDF,
+10,
+pageHeight-18,
+{
+maxWidth:pageWidth-55,
+align:'justify'
+}
+)
+}
+})
 let finalY=doc.lastAutoTable.finalY+10
 doc.setFontSize(10)
 let total100=lista.filter(i=>getTotal(i)>=100).length
 let media=Math.round(lista.reduce((acc,c)=>acc+getTotal(c),0)/(lista.length||1))
-doc.text('O monitoramento consolidado demonstra '+lista.length+' subitens estratégicos acompanhados, sendo '+total100+' integralmente cumpridos (100%). A média geral consolidada do painel corresponde a '+media+'% de execução.',10,finalY,{maxWidth:260})
+doc.text(
+'O monitoramento consolidado demonstra '+lista.length+' subitens estratégicos acompanhados, sendo '+total100+' integralmente cumpridos (100%). A média geral consolidada do painel corresponde a '+media+'% de execução.',
+10,
+finalY,
+{
+maxWidth:260
+}
+)
 doc.save('pdf_monitoramento_tag_sedam.pdf')
 }
 /*=========================================================
