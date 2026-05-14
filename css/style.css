@@ -128,3 +128,23 @@ border-color:#93c5fd!important;
 color:#1d4ed8!important;
 box-shadow:0 8px 20px rgba(59,130,246,.16)!important;
 }
+/*=========================================================
+GRAFICOS SELECTS AJUSTE VISUAL
+=========================================================*/
+#filtroItem,#filtroSubitem{
+width:100%!important;
+max-width:100%!important;
+min-width:0!important;
+font-size:11px!important;
+line-height:1.2!important;
+white-space:nowrap!important;
+overflow:hidden!important;
+text-overflow:ellipsis!important;
+}
+#filtroItem option,#filtroSubitem option{
+font-size:11px!important;
+max-width:100%!important;
+white-space:nowrap!important;
+overflow:hidden!important;
+text-overflow:ellipsis!important;
+}
