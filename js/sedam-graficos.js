@@ -42,24 +42,59 @@ let lista=Object.values(mapa).sort((a,b)=>a.num.localeCompare(b.num,undefined,{n
 sel.innerHTML=`<option value="todos">TODOS OS ITENS</option>`+lista.map(i=>`<option value="${i.num}">ITEM ${i.num} - ${i.descricao}</option>`).join('')
 }
 /*=========================================================
+002A GRAFICOS FUNCTION COMPARESUBITEMGRAFICO
+=========================================================*/
+function compareSubitemGrafico(a,b){
+let sa=String(a.subitem||a.item||'0.0').replace(/[^\d\.]/g,'')
+let sb=String(b.subitem||b.item||'0.0').replace(/[^\d\.]/g,'')
+let pa=sa.split('.').map(n=>parseInt(n)||0)
+let pb=sb.split('.').map(n=>parseInt(n)||0)
+let max=Math.max(pa.length,pb.length)
+for(let i=0;i<max;i++){
+let va=pa[i]||0
+let vb=pb[i]||0
+if(va!==vb)return va-vb
+}
+return 0
+}
+/*=========================================================
 003 GRAFICOS FUNCTION ATUALIZARLISTA3
 =========================================================*/
 function atualizarLista3(){
 let sel=document.getElementById('filtroSubitem')
-if(!sel)return
-let dados=window.allData||[]
-let itemSelecionado=document.getElementById('filtroItem').value
-let lista=itemSelecionado==='todos'?dados:dados.filter(i=>String(i.item||i.numitem||'')===String(itemSelecionado))
-lista=lista.sort(compareSubitem)
+let filtroItem=document.getElementById('filtroItem')
+if(!sel||!filtroItem)return
+let dados=[...(window.allData||[])]
+let itemSelecionado=String(filtroItem.value||'todos')
+let lista=[]
+if(itemSelecionado==='todos'){
+lista=[...dados]
+}else{
+lista=dados.filter(i=>String(i.item||i.numitem||'')===String(itemSelecionado))
+}
+lista=lista.filter(i=>String(i.subitem||'').trim()!=='')
+lista=lista.sort(compareSubitemGrafico)
+let vistos={}
+lista=lista.filter(i=>{
+let chave=String(i.id||i.subitem||'').trim()
+if(!chave)return false
+if(vistos[chave])return false
+vistos[chave]=true
+return true
+})
 let html=''
 if(itemSelecionado==='todos'){
-html+=`<option value="TOTAL">TODOS OS SUBITENS</option>`
+html+=`<option value="TOTAL">TODOS OS SUBITENS (${lista.length})</option>`
+}else{
+html+=`<option value="TOTAL">TODOS DO ITEM ${itemSelecionado} (${lista.length})</option>`
 }
 html+=lista.map(i=>{
 let total=getTotal(i)
-return `<option value="${i.id}">${i.subitem} • ${total}% • ${truncarTexto(i.descricao,90)}</option>`
+let idValor=i.id?i.id:i.subitem
+return `<option value="${idValor}">${i.subitem} • ${total}% • ${truncarTexto(String(i.descricao||'-'),120)}</option>`
 }).join('')
 sel.innerHTML=html
+console.log('SUBITENS CARREGADOS NO GRÁFICO:',lista.length,lista.map(i=>i.subitem))
 }
 /*=========================================================
 004 GRAFICOS FUNCTION RENDERGRAFICOMASTER
@@ -127,7 +162,7 @@ maxBarThickness:42
 }]
 document.getElementById('descSubitem').innerHTML=`<div style="font-size:24px;font-weight:900;color:#000000;margin-bottom:12px;">TOTAL GERAL CONSOLIDADO DO TAG SEDAM 2026</div><div style="font-size:18px;line-height:1.8;color:#000000;font-weight:700;">O gráfico demonstra a evolução média consolidada de todos os itens e subitens monitorados no Plano de Ação do TAG SEDAM 2026.<br><br>JAN: <b>${valores[0]}%</b> | FEV: <b>${valores[1]}%</b> | MAR: <b>${valores[2]}%</b> | ABR: <b>${valores[3]}%</b> | MAI: <b>${valores[4]}%</b></div>`
 }else{
-let i=dados.find(x=>String(x.id)===String(selSub))
+let i=dados.find(x=>String(x.id)===String(selSub)||String(x.subitem)===String(selSub))
 if(!i)return
 let valores=[Number(i.jan||0),Number(i.fev||0),Number(i.mar||0),Number(i.abr||0),Number(i.mai||0),Number(i.jun||0),Number(i.jul||0),Number(i.ago||0),Number(i.set||0),Number(i.out||0),Number(i.nov||0),Number(i.dez||0)]
 window.graficoAtualInfo={tipo:'subitem',item:i.item||'',subitem:i.subitem||'',jan:valores[0]||0,fev:valores[1]||0,mar:valores[2]||0,abr:valores[3]||0,mai:valores[4]||0}
