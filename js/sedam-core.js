@@ -22,7 +22,7 @@ if(perfil&&perfil.username){
 
 window.userP=perfil
 userP=perfil
-
+aplicarPermissoesAbas()
 document.body.classList.remove('login-bg')
 
 document.getElementById('login-screen')
@@ -163,7 +163,7 @@ tabUsuarios.style.display='none'
 
 }
 userP=perfil
-
+aplicarPermissoesAbas()
 localStorage.setItem(
 'user',
 JSON.stringify(perfil)
