@@ -31,3 +31,21 @@ document.addEventListener('DOMContentLoaded',async()=>{
 await carregarDashboard()
 
 })
+
+window.addEventListener('error',e=>{
+
+console.log(
+'ERRO GLOBAL:',
+e.error
+)
+
+})
+
+window.addEventListener('unhandledrejection',e=>{
+
+console.log(
+'PROMISE ERROR:',
+e.reason
+)
+
+})
