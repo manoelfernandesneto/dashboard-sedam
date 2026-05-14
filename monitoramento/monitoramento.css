@@ -550,3 +550,159 @@ margin-bottom:16px;
 font-size:16px;
 font-weight:800;
 }
+
+::-webkit-scrollbar{
+width:10px;
+height:10px;
+}
+::-webkit-scrollbar-track{
+background:#0f172a;
+}
+::-webkit-scrollbar-thumb{
+background:#334155;
+border-radius:999px;
+}
+::-webkit-scrollbar-thumb:hover{
+background:#475569;
+}
+body{
+background:
+linear-gradient(rgba(15,23,42,.96),rgba(15,23,42,.98)),
+url('../assets/bg-monitoramento.jpg') center center/cover fixed;
+}
+.card-kpi{
+position:relative;
+overflow:hidden;
+transition:.25s;
+}
+.card-kpi:hover{
+transform:translateY(-3px);
+box-shadow:0 12px 30px rgba(0,0,0,.25);
+}
+.card-kpi::after{
+content:'';
+position:absolute;
+right:-20px;
+bottom:-20px;
+width:90px;
+height:90px;
+background:rgba(255,255,255,.03);
+border-radius:999px;
+}
+.grafico-box{
+transition:.25s;
+}
+.grafico-box:hover{
+transform:translateY(-2px);
+box-shadow:0 10px 25px rgba(0,0,0,.25);
+}
+.card-monitoramento{
+transition:.25s;
+}
+.card-monitoramento:hover{
+transform:translateY(-2px);
+box-shadow:0 12px 30px rgba(0,0,0,.25);
+}
+.card-evidencia{
+transition:.25s;
+}
+.card-evidencia:hover{
+transform:translateY(-2px);
+box-shadow:0 12px 30px rgba(0,0,0,.25);
+}
+.card-analise{
+transition:.25s;
+}
+.card-analise:hover{
+transform:translateY(-2px);
+box-shadow:0 12px 30px rgba(0,0,0,.25);
+}
+.btn-padrao{
+transition:.2s;
+}
+.btn-padrao:hover{
+transform:scale(1.03);
+opacity:.95;
+}
+.nav-btn{
+transition:.2s;
+}
+.nav-btn:hover{
+background:#334155;
+}
+.nav-active{
+background:#2563eb!important;
+}
+.topbar{
+backdrop-filter:blur(12px);
+background:rgba(17,24,39,.88);
+}
+.nav-monitoramento{
+backdrop-filter:blur(10px);
+background:rgba(11,18,32,.86);
+position:sticky;
+top:0;
+z-index:30;
+}
+.tabela-monitoramento tr{
+transition:.15s;
+}
+.tabela-monitoramento tbody tr:hover{
+background:rgba(255,255,255,.03);
+}
+.preview-relatorio{
+box-shadow:0 20px 50px rgba(0,0,0,.35);
+}
+.badge-status{
+letter-spacing:.4px;
+}
+.kpi-valor{
+letter-spacing:-1px;
+}
+.monitoramento-titulo{
+letter-spacing:-.3px;
+}
+.grafico-box canvas{
+max-height:340px!important;
+}
+.timeline-dot{
+box-shadow:0 0 10px rgba(59,130,246,.7);
+}
+.ranking-item:hover{
+background:rgba(255,255,255,.03);
+border-radius:12px;
+}
+.editor-analise:focus{
+border:1px solid rgba(59,130,246,.6);
+box-shadow:0 0 0 3px rgba(59,130,246,.18);
+}
+.select-monitoramento:focus,
+.input-busca:focus{
+outline:none;
+box-shadow:0 0 0 3px rgba(59,130,246,.18);
+}
+@media(max-width:700px){
+.topbar{
+padding:0 12px;
+}
+.titulo-sistema{
+font-size:15px;
+}
+.subtitulo-sistema{
+display:none;
+}
+.logo-box{
+width:40px;
+height:40px;
+font-size:20px;
+}
+.kpi-valor{
+font-size:28px;
+}
+.monitoramento-titulo{
+font-size:15px;
+}
+.grafico-box{
+padding:14px;
+}
+}
