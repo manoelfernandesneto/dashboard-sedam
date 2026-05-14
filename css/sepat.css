@@ -116,3 +116,50 @@ canvas{width:100%!important;max-width:100%!important}
 =========================================================*/
 @media(max-width:1100px){.kpis-sepat{grid-template-columns:repeat(2,1fr)}.grid-dashboard-sepat{grid-template-columns:1fr}.card-grafico-sepat.full{grid-column:auto}.tabs-sepat{top:80px}.topo-sepat{min-height:80px}.tab-sepat{min-width:120px;height:60px;font-size:10px}.main-sepat{padding:12px}}
 @media(max-width:640px){.topo-sepat{flex-direction:column;align-items:flex-start;gap:10px}.topo-acoes-sepat{width:100%}.btn-topo-sepat{flex:1}.tabs-sepat{top:128px}.kpis-sepat{grid-template-columns:1fr}.kpi-sepat{height:105px}.kpi-sepat strong{font-size:34px}.cards-resumo-sepat{grid-template-columns:1fr}.input-busca-sepat,.select-sepat{min-width:100%;width:100%}}
+/*=========================================================
+012 SEPAT REFINAMENTO VISUAL DOS PAINEIS
+=========================================================*/
+.main-sepat{max-width:1800px;margin:0 auto;padding:18px}
+.view-sepat{width:100%}
+.kpis-sepat{grid-template-columns:repeat(4,minmax(180px,1fr));gap:12px}
+.kpi-sepat{height:108px;border-radius:22px;padding:16px 18px}
+.kpi-sepat div{font-size:10px;line-height:1.15}
+.kpi-sepat strong{font-size:34px}
+.grid-dashboard-sepat{gap:14px}
+.card-grafico-sepat{border-radius:22px;padding:14px;min-height:315px}
+.card-grafico-sepat canvas{height:245px!important}
+.card-grafico-sepat.full canvas{height:280px!important}
+.card-grafico-sepat.grande canvas{height:310px!important}
+.card-title-sepat{font-size:12px;margin-bottom:8px}
+.barra-filtros-sepat{border-radius:20px;padding:10px;margin-bottom:12px}
+.btn-filtro-sepat,.btn-pdf-sepat{height:38px;border-radius:12px;font-size:11px;padding:0 14px}
+.input-busca-sepat,.select-sepat{height:38px;border-radius:12px;font-size:11px}
+.cards-resumo-sepat{grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:12px}
+.card-resumo-sepat{min-height:150px;border-radius:20px;padding:14px}
+.card-resumo-head{font-size:10px;line-height:1.15}
+.card-resumo-desc{font-size:11px;line-height:1.25;margin-top:6px}
+.card-resumo-total{font-size:30px;margin-top:8px}
+.tabela-wrap-sepat{border-radius:20px;max-height:calc(100vh - 245px);overflow:auto}
+.tabela-sepat{min-width:1180px}
+.tabela-sepat th{font-size:9px;padding:8px 9px;white-space:nowrap}
+.tabela-sepat td{font-size:10px;padding:7px 8px;line-height:1.2}
+.tabela-sepat td:nth-child(1){width:120px}
+.tabela-sepat td:nth-child(2){width:70px}
+.tabela-sepat td:nth-child(3){min-width:260px}
+.tabela-sepat td:nth-child(4){min-width:260px}
+.tabela-sepat td:nth-child(5){min-width:150px}
+.descricao-grafico-sepat{border-radius:18px;padding:14px;font-size:12px;line-height:1.4}
+.tabs-sepat{padding:12px 16px;gap:10px}
+.tab-sepat{min-width:126px;height:58px;border-radius:18px;font-size:10px}
+.topo-sepat{min-height:74px;padding:12px 20px}
+.titulo-sepat{font-size:21px}
+.usuario-sepat{font-size:11px}
+.btn-topo-sepat{padding:8px 13px;font-size:11px;border-radius:12px}
+.modal-card-sepat{border-radius:22px;padding:18px}
+.modal-title-sepat{font-size:16px}
+.modal-text-sepat{font-size:12px}
+.modal-grid-sepat{grid-template-columns:repeat(5,minmax(70px,1fr))}
+.modal-mes-sepat{border-radius:12px;padding:8px}
+.modal-mes-sepat div:last-child{font-size:16px}
+@media(max-width:1200px){.kpis-sepat{grid-template-columns:repeat(2,1fr)}.grid-dashboard-sepat{grid-template-columns:1fr}.card-grafico-sepat.full{grid-column:auto}.tabela-wrap-sepat{max-height:none}}
+@media(max-width:680px){.main-sepat{padding:10px}.kpis-sepat{grid-template-columns:1fr}.kpi-sepat{height:96px}.kpi-sepat strong{font-size:30px}.tabs-sepat{top:126px}.card-grafico-sepat canvas{height:230px!important}.cards-resumo-sepat{grid-template-columns:1fr}.barra-filtros-sepat{align-items:stretch}.btn-filtro-sepat,.btn-pdf-sepat,.input-busca-sepat,.select-sepat{width:100%;min-width:100%}}
