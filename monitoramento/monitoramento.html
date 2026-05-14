@@ -120,7 +120,26 @@ AUDITOR
 ➕ Novo Monitoramento
 </button>
 
-<input type="text" id="buscaMonitoramento" placeholder="Pesquisar..." class="input-busca">
+<div class="filtros-monitoramento">
+
+<input type="text" id="buscaMonitoramento" placeholder="Pesquisar..." class="input-busca" onkeyup="filtrarMonitoramentos()">
+
+<select id="filtroStatus" class="select-monitoramento" onchange="filtrarMonitoramentos()">
+<option value="">Todos Status</option>
+<option>EXECUTADA</option>
+<option>PARCIALMENTE EXECUTADA</option>
+<option>NÃO EXECUTADA</option>
+<option>EM ANDAMENTO</option>
+</select>
+
+<select id="filtroCriticidade" class="select-monitoramento" onchange="filtrarMonitoramentos()">
+<option value="">Criticidade</option>
+<option>ALTA</option>
+<option>MÉDIA</option>
+<option>BAIXA</option>
+</select>
+
+</div>
 
 </div>
 
