@@ -183,7 +183,31 @@ AUDITOR
 
 <div class="analise-box">
 
-<textarea id="textoAnalise" class="textarea-analise" placeholder="Digite a análise técnica..."></textarea>
+<div class="toolbar-analise">
+
+<button class="btn-editor" onclick="formatarTexto('bold')">
+<b>B</b>
+</button>
+
+<button class="btn-editor" onclick="formatarTexto('italic')">
+<i>I</i>
+</button>
+
+<button class="btn-editor" onclick="formatarTexto('underline')">
+<u>U</u>
+</button>
+
+<button class="btn-editor" onclick="inserirTopico()">
+• Tópico
+</button>
+
+<button class="btn-editor" onclick="inserirConclusaoPadrao()">
+📌 Conclusão
+</button>
+
+</div>
+
+<div id="textoAnalise" class="editor-analise" contenteditable="true"></div>
 
 <button class="btn-padrao" onclick="salvarAnalise()">
 💾 Salvar Análise
