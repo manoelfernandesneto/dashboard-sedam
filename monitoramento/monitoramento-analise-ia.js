@@ -142,7 +142,7 @@ if(status==='NÃO EXECUTADA'){
 texto+=`Determinar adoção imediata de providências pela unidade jurisdicionada.\n`
 }
 
-document.getElementById('textoAnalise').value=texto
+document.getElementById('textoAnalise').innerText=texto
 
 await client
 .from('monitoramento_itens')
@@ -166,7 +166,7 @@ return
 
 let texto=document
 .getElementById('textoAnalise')
-.value
+.innerText
 
 if(!texto){
 alert('Digite a análise')
@@ -210,9 +210,7 @@ return
 }
 
 alert('Análise salva')
-
 await carregarAnalises()
-
 }
 
 async function carregarAnalises(){
@@ -380,5 +378,36 @@ document.getElementById('previewRelatorio').innerHTML=
 `<pre class="texto-analise-pre">${texto}</pre>`
 
 abrirTela('relatorios')
+
+}
+function formatarTexto(comando){
+
+document.execCommand(
+comando,
+false,
+null
+)
+
+}
+
+function inserirTopico(){
+
+document.execCommand(
+'insertText',
+false,
+'\n• '
+)
+
+}
+
+function inserirConclusaoPadrao(){
+
+let texto='\n\nCONCLUSÃO:\nConforme análise das evidências apresentadas, verifica-se evolução parcial das medidas monitoradas, persistindo pontos que demandam acompanhamento contínuo pela equipe técnica.\n'
+
+document.execCommand(
+'insertText',
+false,
+texto
+)
 
 }
