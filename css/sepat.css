@@ -9,7 +9,7 @@ canvas{width:100%!important;max-width:100%!important}
 /*=========================================================
 002 SEPAT LOGIN
 =========================================================*/
-.login-sepat{position:fixed;inset:0;z-index:1000;display:flex;align-items:center;justify-content:center;background:url('assets/portovelho.png') center center/cover no-repeat}
+.login-sepat{position:fixed;inset:0;z-index:1000;display:flex;align-items:center;justify-content:center;background:url('../assets/portovelho.png') center center/cover no-repeat}
 .login-bg-sepat{position:absolute;inset:0;background:linear-gradient(135deg,rgba(0,72,150,.25),rgba(0,0,0,.35));backdrop-filter:blur(1px)}
 .login-card-sepat{position:relative;z-index:2;width:min(360px,90vw);background:rgba(255,255,255,.78);border:1px solid rgba(255,255,255,.9);box-shadow:0 25px 70px rgba(0,0,0,.35);border-radius:28px;padding:34px 28px;display:flex;flex-direction:column;gap:14px;text-align:center;backdrop-filter:blur(16px)}
 .login-logo-sepat{font-size:46px;font-weight:1000;color:#0759c9;letter-spacing:4px;line-height:1;text-shadow:0 2px 0 rgba(255,255,255,.8)}
@@ -19,6 +19,8 @@ canvas{width:100%!important;max-width:100%!important}
 .login-btn-sepat{height:52px;border:none;border-radius:14px;background:#0759c9;color:#ffffff;font-weight:1000;cursor:pointer;box-shadow:0 12px 26px rgba(7,89,201,.28)}
 .login-btn-sepat:hover{background:#064db0}
 .login-voltar-sepat{height:38px;border:none;background:transparent;color:#0f3f83;font-weight:900;cursor:pointer}
+.painel-img-sepat{background-image:linear-gradient(rgba(0,80,170,.08),rgba(0,80,170,.08)),url('../assets/sepat-card.png')}
+.painel-img-queimadas{background-image:linear-gradient(rgba(120,40,10,.10),rgba(120,40,10,.10)),url('../assets/queimadas-card.png')}
 /*=========================================================
 003 SEPAT APP TOPO
 =========================================================*/
