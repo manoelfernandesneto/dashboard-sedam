@@ -917,18 +917,28 @@ renderDashboard()
 
 
 
+/*=========================================================
+005 SEDAM CORE FUNCTION RENDERRESUMOITENS
+=========================================================*/
+function compareSubitem(a,b){
+let sa=String(a.item||a.subitem||'0.0').replace(/[^\d\.]/g,'')
+let sb=String(b.item||b.subitem||'0.0').replace(/[^\d\.]/g,'')
+let pa=sa.split('.').map(n=>parseInt(n)||0)
+let pb=sb.split('.').map(n=>parseInt(n)||0)
+let max=Math.max(pa.length,pb.length)
+for(let i=0;i<max;i++){
+let va=pa[i]||0
+let vb=pb[i]||0
+if(va!==vb)return va-vb
+}
+return 0
+}
 function renderResumoItens(){
-
 let box=document.getElementById('cards-container')
-
 if(!box)return
-
 let mapa={}
-
 ;(window.allData||[]).forEach(i=>{
-
 let item=String(i.item||'0')
-
 if(!mapa[item]){
 mapa[item]={
 item:item,
@@ -937,29 +947,21 @@ total:0,
 qtd:0
 }
 }
-
 mapa[item].total+=Number(getTotal(i)||0)
 mapa[item].qtd++
-
 })
-
 let lista=Object.values(mapa).map(i=>({
 ...i,
 media:Math.round(i.total/(i.qtd||1))
 }))
-
-lista=lista.sort((a,b)=>Number(a.item)-Number(b.item))
-
+lista=lista.sort(compareSubitem)
 box.innerHTML=lista.map(i=>{
-
 let cor='bg-status-red'
-
 if(i.media>=100){
 cor='bg-status-green'
 }else if(i.media>=31){
 cor='bg-status-yellow'
 }
-
 return`
 <div class="card-micro ${cor} rounded-xl p-2 shadow cursor-pointer">
 <div class="text-[10px] font-black text-center">ITEM ${i.item}</div>
@@ -967,9 +969,7 @@ return`
 <div class="percent-big text-center mt-2">${i.media}%</div>
 </div>
 `
-
 }).join('')
-
 }
 
 /*=========================================================
