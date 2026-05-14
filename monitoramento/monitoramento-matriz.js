@@ -1,3 +1,5 @@
+window.ITEM_EDITANDO=null
+
 async function carregarItensMatriz(){
 
 if(!MONITORAMENTO_ATUAL)return
@@ -19,24 +21,53 @@ let html=''
 
 html+=`
 <tr>
+
 <td>${i.item||'-'}</td>
+
 <td>${i.subitem||'-'}</td>
-<td>${i.deliberacao||'-'}</td>
+
 <td>
 <span class="badge-status ${getClasseStatus(i.status)}">
 ${i.status||'-'}
 </span>
 </td>
-<td>${i.criticidade||'-'}</td>
-<td>${formatarData(i.prazo)}</td>
-<td>${Number(i.percentual||0)}%</td>
+
 <td>
-<div style="display:flex;gap:6px;flex-wrap:wrap;">
-<button class="btn-padrao azul" onclick="editarItem(${i.id})">Editar</button>
-<button class="btn-padrao verde" onclick="abrirEvidencias(${i.id})">Evidências</button>
-<button class="btn-padrao vermelho" onclick="excluirItem(${i.id})">Excluir</button>
-</div>
+${Number(i.percentual||0)}%
 </td>
+
+<td>
+${i.criticidade||'-'}
+</td>
+
+<td>
+${formatarData(i.prazo)}
+</td>
+
+<td>
+
+<div style="display:flex;gap:6px;flex-wrap:wrap;">
+
+<button class="btn-padrao azul" onclick="editarItemMatriz(${i.id})">
+Editar
+</button>
+
+<button class="btn-padrao verde" onclick="abrirEvidencias(${i.id})">
+Evidências
+</button>
+
+<button class="btn-padrao amarelo" onclick="abrirAnalises(${i.id})">
+Análises
+</button>
+
+<button class="btn-padrao vermelho" onclick="excluirItem(${i.id})">
+Excluir
+</button>
+
+</div>
+
+</td>
+
 </tr>
 `
 
@@ -46,62 +77,80 @@ document.getElementById('tbodyMatriz').innerHTML=html
 
 }
 
-async function novoItemMatriz(){
+async function salvarNovoItemMatriz(){
 
 if(!MONITORAMENTO_ATUAL){
 alert('Selecione um monitoramento')
 return
 }
 
-let item=prompt('Item')
+let payload={
 
-if(!item)return
+monitoramento_id:MONITORAMENTO_ATUAL,
 
-let subitem=prompt('Subitem')
+item:document.getElementById('mItem').value,
 
-let deliberacao=prompt('Deliberação')
+subitem:document.getElementById('mSubitem').value,
 
-let achado=prompt('Achado')
+status:document.getElementById('mStatus').value,
 
-let causa=prompt('Causa')
+criticidade:document.getElementById('mCriticidade').value,
 
-let efeito=prompt('Efeito')
+prazo:document.getElementById('mPrazo').value,
 
-let acao=prompt('Ação do Gestor')
+percentual:Number(
+document.getElementById('mPercentual').value||0
+),
 
-let produto=prompt('Produto Esperado')
+achado:document.getElementById('mAchado').value,
 
-let entrega=prompt('Entrega Esperada')
+causa:document.getElementById('mCausa').value,
 
-let beneficio=prompt('Benefício Esperado')
+efeito:document.getElementById('mEfeito').value,
 
-let criticidade=prompt('Criticidade')
+deliberacao:document.getElementById('mDeliberacao').value,
 
-let prazo=prompt('Prazo YYYY-MM-DD')
+acao_gestor:document.getElementById('mAcaoGestor').value,
 
-let status='EM ANDAMENTO'
+produto_esperado:document.getElementById('mProduto').value,
 
-let percentual=0
+entrega_esperada:document.getElementById('mEntrega').value,
+
+beneficio_esperado:document.getElementById('mBeneficio').value
+
+}
+
+if(!payload.item){
+alert('Informe o item')
+return
+}
+
+if(ITEM_EDITANDO){
 
 let{error}=await client
 .from('monitoramento_itens')
-.insert([{
-monitoramento_id:MONITORAMENTO_ATUAL,
-item:item,
-subitem:subitem,
-deliberacao:deliberacao,
-achado:achado,
-causa:causa,
-efeito:efeito,
-acao_gestor:acao,
-produto_esperado:produto,
-entrega_esperada:entrega,
-beneficio_esperado:beneficio,
-criticidade:criticidade,
-prazo:prazo,
-status:status,
-percentual:percentual
-}])
+.update(payload)
+.eq('id',ITEM_EDITANDO)
+
+if(error){
+console.log(error)
+alert('Erro ao atualizar')
+return
+}
+
+await registrarLog(
+'EDIÇÃO ITEM MATRIZ',
+'monitoramento_itens',
+ITEM_EDITANDO
+)
+
+ITEM_EDITANDO=null
+
+}else{
+
+let{error}=await client
+.from('monitoramento_itens')
+.insert([payload])
 
 if(error){
 console.log(error)
@@ -109,12 +158,24 @@ alert('Erro ao inserir')
 return
 }
 
-await carregarItensMatriz()
-await carregarDashboard()
+await registrarLog(
+'NOVO ITEM MATRIZ',
+'monitoramento_itens',
+0
+)
 
 }
 
-async function editarItem(id){
+await carregarItensMatriz()
+await carregarDashboard()
+
+limparFormularioMatriz()
+
+alert('Item salvo')
+
+}
+
+async function editarItemMatriz(id){
 
 let{data,error}=await client
 .from('monitoramento_itens')
@@ -122,47 +183,79 @@ let{data,error}=await client
 .eq('id',id)
 .single()
 
-if(error||!data)return
-
-let status=prompt('Status',data.status||'')
-
-if(status===null)return
-
-let percentual=prompt('Percentual',data.percentual||0)
-
-let criticidade=prompt('Criticidade',data.criticidade||'')
-
-let prazo=prompt('Prazo',data.prazo||'')
-
-let deliberacao=prompt('Deliberação',data.deliberacao||'')
-
-let acao=prompt('Ação do Gestor',data.acao_gestor||'')
-
-let produto=prompt('Produto Esperado',data.produto_esperado||'')
-
-let beneficio=prompt('Benefício Esperado',data.beneficio_esperado||'')
-
-let{error:updateError}=await client
-.from('monitoramento_itens')
-.update({
-status:status,
-percentual:Number(percentual||0),
-criticidade:criticidade,
-prazo:prazo,
-deliberacao:deliberacao,
-acao_gestor:acao,
-produto_esperado:produto,
-beneficio_esperado:beneficio
-})
-.eq('id',id)
-
-if(updateError){
-console.log(updateError)
+if(error||!data){
+console.log(error)
 return
 }
 
-await carregarItensMatriz()
-await carregarDashboard()
+ITEM_EDITANDO=id
+
+document.getElementById('mItem').value=data.item||''
+
+document.getElementById('mSubitem').value=data.subitem||''
+
+document.getElementById('mStatus').value=data.status||'EM ANDAMENTO'
+
+document.getElementById('mCriticidade').value=data.criticidade||'MÉDIA'
+
+document.getElementById('mPrazo').value=data.prazo||''
+
+document.getElementById('mPercentual').value=data.percentual||0
+
+document.getElementById('mAchado').value=data.achado||''
+
+document.getElementById('mCausa').value=data.causa||''
+
+document.getElementById('mEfeito').value=data.efeito||''
+
+document.getElementById('mDeliberacao').value=data.deliberacao||''
+
+document.getElementById('mAcaoGestor').value=data.acao_gestor||''
+
+document.getElementById('mProduto').value=data.produto_esperado||''
+
+document.getElementById('mEntrega').value=data.entrega_esperada||''
+
+document.getElementById('mBeneficio').value=data.beneficio_esperado||''
+
+window.scrollTo({
+top:0,
+behavior:'smooth'
+})
+
+}
+
+function limparFormularioMatriz(){
+
+ITEM_EDITANDO=null
+
+document.getElementById('mItem').value=''
+
+document.getElementById('mSubitem').value=''
+
+document.getElementById('mStatus').value='EM ANDAMENTO'
+
+document.getElementById('mCriticidade').value='ALTA'
+
+document.getElementById('mPrazo').value=''
+
+document.getElementById('mPercentual').value='0'
+
+document.getElementById('mAchado').value=''
+
+document.getElementById('mCausa').value=''
+
+document.getElementById('mEfeito').value=''
+
+document.getElementById('mDeliberacao').value=''
+
+document.getElementById('mAcaoGestor').value=''
+
+document.getElementById('mProduto').value=''
+
+document.getElementById('mEntrega').value=''
+
+document.getElementById('mBeneficio').value=''
 
 }
 
@@ -180,8 +273,34 @@ console.log(error)
 return
 }
 
+await registrarLog(
+'EXCLUSÃO ITEM MATRIZ',
+'monitoramento_itens',
+id
+)
+
 await carregarItensMatriz()
 await carregarDashboard()
+
+}
+
+function abrirEvidencias(id){
+
+ITEM_EVIDENCIA_ATUAL=id
+
+abrirTela('evidencias')
+
+carregarEvidencias()
+
+}
+
+function abrirAnalises(id){
+
+ITEM_EVIDENCIA_ATUAL=id
+
+abrirTela('analises')
+
+carregarAnalises()
 
 }
 
@@ -192,15 +311,5 @@ if(!d)return'-'
 let dt=new Date(d)
 
 return dt.toLocaleDateString('pt-BR')
-
-}
-
-function abrirEvidencias(id){
-
-window.ITEM_EVIDENCIA_ATUAL=id
-
-abrirTela('evidencias')
-
-carregarEvidencias()
 
 }
