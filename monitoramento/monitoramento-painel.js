@@ -358,3 +358,304 @@ document.addEventListener('DOMContentLoaded',async()=>{
 await carregarListaMonitoramentos()
 
 })
+
+async function filtrarMonitoramentos(){
+
+let busca=document
+.getElementById('buscaMonitoramento')
+.value
+.toLowerCase()
+
+let status=document
+.getElementById('filtroStatus')
+.value
+
+let criticidade=document
+.getElementById('filtroCriticidade')
+.value
+
+let query=client
+.from('monitoramentos')
+.select('*')
+.order('id',{ascending:false})
+
+if(status){
+query=query.eq('status',status)
+}
+
+if(criticidade){
+query=query.eq('criticidade',criticidade)
+}
+
+let{data,error}=await query
+
+if(error){
+console.log(error)
+return
+}
+
+if(busca){
+
+data=(data||[]).filter(m=>
+
+(m.titulo||'')
+.toLowerCase()
+.includes(busca)
+
+||
+
+(m.orgao||'')
+.toLowerCase()
+.includes(busca)
+
+||
+
+(m.processo||'')
+.toLowerCase()
+.includes(busca)
+
+)
+
+}
+
+renderizarMonitoramentos(data||[])
+
+}
+
+function renderizarMonitoramentos(data){
+
+let html=''
+
+;(data||[]).forEach(m=>{
+
+let percentual=0
+
+if(m.percentual){
+percentual=Number(m.percentual)
+}
+
+html+=`
+<div class="card-monitoramento">
+
+<div class="card-monitoramento-topo">
+
+<div>
+<div class="monitoramento-titulo">
+${m.titulo||'-'}
+</div>
+
+<div class="monitoramento-subtitulo">
+${m.orgao||'-'} • ${m.processo||'-'}
+</div>
+</div>
+
+<div class="badge-status ${getClasseStatus(m.status)}">
+${m.status||'-'}
+</div>
+
+</div>
+
+<div class="monitoramento-info-grid">
+
+<div>
+<b>Acórdão:</b>
+${m.acordao||'-'}
+</div>
+
+<div>
+<b>Relator:</b>
+${m.relator||'-'}
+</div>
+
+<div>
+<b>Auditor:</b>
+${m.auditor_responsavel||'-'}
+</div>
+
+<div>
+<b>Criticidade:</b>
+${m.criticidade||'-'}
+</div>
+
+</div>
+
+<div class="progress-monitoramento">
+<div class="progress-monitoramento-bar" style="width:${percentual}%"></div>
+</div>
+
+<div class="monitoramento-actions">
+
+<button class="btn-padrao" onclick="abrirMonitoramento(${m.id})">
+Abrir
+</button>
+
+<button class="btn-padrao azul" onclick="editarMonitoramento(${m.id})">
+Editar
+</button>
+
+<button class="btn-padrao vermelho" onclick="excluirMonitoramento(${m.id})">
+Excluir
+</button>
+
+</div>
+
+</div>
+`
+
+})
+
+document.getElementById('listaMonitoramentos').innerHTML=html
+
+}
+
+async function carregarTimeline(){
+
+let{data,error}=await client
+.from('monitoramento_logs')
+.select('*')
+.order('id',{ascending:false})
+.limit(20)
+
+if(error){
+console.log(error)
+return
+}
+
+let html=`
+<div class="timeline-box">
+<div class="monitoramento-titulo">
+📌 Últimas Movimentações
+</div>
+`
+
+;(data||[]).forEach(l=>{
+
+html+=`
+<div class="timeline-item">
+
+<div class="timeline-dot"></div>
+
+<div class="timeline-content">
+
+<div class="timeline-title">
+${l.acao||'-'}
+</div>
+
+<div class="timeline-date">
+${formatarDataHora(l.created_at)}
+</div>
+
+<div class="timeline-text">
+Usuário: ${l.usuario||'-'}
+</div>
+
+</div>
+
+</div>
+`
+
+})
+
+html+=`</div>`
+
+document
+.getElementById('tela-dashboard')
+.insertAdjacentHTML(
+'beforeend',
+html
+)
+
+}
+
+async function carregarRanking(){
+
+let{data,error}=await client
+.from('monitoramentos')
+.select('*')
+
+if(error){
+console.log(error)
+return
+}
+
+let mapa={}
+
+;(data||[]).forEach(m=>{
+
+let auditor=m.auditor_responsavel||'NÃO INFORMADO'
+
+if(!mapa[auditor]){
+mapa[auditor]=0
+}
+
+mapa[auditor]++
+
+})
+
+let ranking=Object.entries(mapa)
+.sort((a,b)=>b[1]-a[1])
+
+let html=`
+<div class="ranking-box">
+<div class="monitoramento-titulo">
+🏆 Ranking de Monitoramentos
+</div>
+`
+
+ranking.forEach(r=>{
+
+html+=`
+<div class="ranking-item">
+
+<div class="ranking-left">
+
+<div class="ranking-title">
+${r[0]}
+</div>
+
+<div class="ranking-subtitle">
+Monitoramentos vinculados
+</div>
+
+</div>
+
+<div class="ranking-value">
+${r[1]}
+</div>
+
+</div>
+`
+
+})
+
+html+=`</div>`
+
+document
+.getElementById('tela-dashboard')
+.insertAdjacentHTML(
+'beforeend',
+html
+)
+
+}
+
+function formatarDataHora(d){
+
+if(!d)return'-'
+
+let dt=new Date(d)
+
+return dt.toLocaleDateString('pt-BR')+
+' '+
+dt.toLocaleTimeString('pt-BR')
+
+}
+
+document.addEventListener('DOMContentLoaded',async()=>{
+
+await carregarTimeline()
+await carregarRanking()
+
+})
+
+ok
