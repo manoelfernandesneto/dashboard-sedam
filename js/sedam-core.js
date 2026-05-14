@@ -2,74 +2,20 @@
 001 SEDAM CORE DOMCONTENTLOADED
 =========================================================*/
 document.addEventListener("DOMContentLoaded",async ()=>{
-
-document.getElementById('dataInicio').value='2025-01-01'
-document.getElementById('dataFim').value='2028-01-01'
-
-document.body.classList.add("login-bg")
-
-localStorage.removeItem('uid')
-
-let userLocal=localStorage.getItem('user')
-
-if(userLocal){
-
-try{
-
-let perfil=JSON.parse(userLocal)
-
-if(perfil&&perfil.username){
-
-window.userP=perfil
-userP=perfil
-aplicarPermissoesAbas()
-document.body.classList.remove('login-bg')
-
-document.getElementById('login-screen')
-.classList.add('hidden')
-
-document.getElementById('dashboard')
-.classList.remove('hidden')
-
-document.getElementById('user-info').innerHTML=
-(perfil.nome_completo||'-')+
-' • '+
-(perfil.cargo||'-')+
-' • '+
-(perfil.origem||'-')
-
-await carregarDados()
-
-setTimeout(()=>{
-
-switchTab('dashboard')
-
-if(typeof renderDashboard==='function'){
-renderDashboard()
-}
-
-},500)
-
-return
-
-}
-
-}catch(e){
-
-console.log(e)
-
-localStorage.removeItem('user')
-
-}
-
-}
-
 let geral=document.getElementById('painel-geral-acesso')
 let login=document.getElementById('login-screen')
 let dash=document.getElementById('dashboard')
+let dataInicio=document.getElementById('dataInicio')
+let dataFim=document.getElementById('dataFim')
+if(dataInicio)dataInicio.value='2025-01-01'
+if(dataFim)dataFim.value='2028-01-01'
+document.body.classList.remove("login-bg")
+localStorage.removeItem('uid')
 if(geral){
-geral.style.display='flex'
 geral.classList.remove('hidden')
+geral.style.display='flex'
+geral.style.visibility='visible'
+geral.style.opacity='1'
 }
 if(login){
 login.classList.add('hidden')
@@ -77,9 +23,23 @@ login.style.display='none'
 }
 if(dash){
 dash.classList.add('hidden')
+dash.style.display='none'
+}
+let userLocal=localStorage.getItem('user')
+if(userLocal){
+try{
+let perfil=JSON.parse(userLocal)
+if(perfil&&perfil.username){
+window.userP=perfil
+userP=perfil
+aplicarPermissoesAbas()
+}
+}catch(e){
+console.log(e)
+localStorage.removeItem('user')
+}
 }
 })
-
 /*=========================================================
 002 SEDAM CORE FUNCTION LOGIN
 =========================================================*/
@@ -1772,23 +1732,37 @@ let geral=document.getElementById('painel-geral-acesso')
 let login=document.getElementById('login-screen')
 let dash=document.getElementById('dashboard')
 if(geral){
-geral.style.display='none'
 geral.classList.add('hidden')
+geral.style.display='none'
 }
 if(window.userP&&window.userP.username){
-if(login)login.classList.add('hidden')
-if(dash)dash.classList.remove('hidden')
-switchTab('dashboard')
-if(typeof carregarDados==='function'){
-carregarDados()
+if(login){
+login.classList.add('hidden')
+login.style.display='none'
 }
+if(dash){
+dash.classList.remove('hidden')
+dash.style.display='block'
+dash.style.visibility='visible'
+dash.style.opacity='1'
+}
+carregarDados().then(()=>{
+switchTab('dashboard')
+if(typeof renderDashboard==='function'){
+renderDashboard()
+}
+})
 }else{
+document.body.classList.add("login-bg")
 if(login){
 login.classList.remove('hidden')
 login.style.display='flex'
+login.style.visibility='visible'
+login.style.opacity='1'
 }
 if(dash){
 dash.classList.add('hidden')
+dash.style.display='none'
 }
 }
 }
@@ -1797,4 +1771,24 @@ window.location.href='sepatindex.html'
 }
 function abrirPainelQueimadas(){
 alert('Painel de Combate às Queimadas em desenvolvimento.')
+}
+function voltarPainelGeralSedam(){
+let geral=document.getElementById('painel-geral-acesso')
+let login=document.getElementById('login-screen')
+let dash=document.getElementById('dashboard')
+document.body.classList.remove("login-bg")
+if(geral){
+geral.classList.remove('hidden')
+geral.style.display='flex'
+geral.style.visibility='visible'
+geral.style.opacity='1'
+}
+if(login){
+login.classList.add('hidden')
+login.style.display='none'
+}
+if(dash){
+dash.classList.add('hidden')
+dash.style.display='none'
+}
 }
