@@ -1490,8 +1490,8 @@ document.getElementById('graficoDashboardPizza'),
 type:'doughnut',
 data:{
 labels:[
-'100% Cumpridos',
-'Em Andamento',
+'Cumpridos 100%',
+'Em Andamento 30% a 99%',
 'Abaixo de 30%',
 'Pendentes'
 ],
