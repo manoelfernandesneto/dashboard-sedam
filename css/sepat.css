@@ -1,0 +1,118 @@
+/*=========================================================
+001 SEPAT CSS BASE
+=========================================================*/
+*{box-sizing:border-box}
+body{margin:0;font-family:Inter,Arial,sans-serif;background:#eef5ff;color:#0f172a;overflow-x:hidden}
+.hidden{display:none!important}
+button,input,select{font-family:inherit}
+canvas{width:100%!important;max-width:100%!important}
+/*=========================================================
+002 SEPAT LOGIN
+=========================================================*/
+.login-sepat{position:fixed;inset:0;z-index:1000;display:flex;align-items:center;justify-content:center;background:url('assets/portovelho.png') center center/cover no-repeat}
+.login-bg-sepat{position:absolute;inset:0;background:linear-gradient(135deg,rgba(0,72,150,.25),rgba(0,0,0,.35));backdrop-filter:blur(1px)}
+.login-card-sepat{position:relative;z-index:2;width:min(360px,90vw);background:rgba(255,255,255,.78);border:1px solid rgba(255,255,255,.9);box-shadow:0 25px 70px rgba(0,0,0,.35);border-radius:28px;padding:34px 28px;display:flex;flex-direction:column;gap:14px;text-align:center;backdrop-filter:blur(16px)}
+.login-logo-sepat{font-size:46px;font-weight:1000;color:#0759c9;letter-spacing:4px;line-height:1;text-shadow:0 2px 0 rgba(255,255,255,.8)}
+.login-sub-sepat{font-size:15px;font-weight:1000;color:#0f172a;margin-bottom:8px;text-transform:uppercase;letter-spacing:1px}
+.login-input-sepat{height:48px;border:none;border-radius:14px;background:#ffffff;color:#0f172a;font-weight:800;padding:0 16px;outline:none;box-shadow:inset 0 0 0 1px rgba(15,23,42,.08)}
+.login-input-sepat:focus{box-shadow:0 0 0 3px rgba(7,89,201,.22)}
+.login-btn-sepat{height:52px;border:none;border-radius:14px;background:#0759c9;color:#ffffff;font-weight:1000;cursor:pointer;box-shadow:0 12px 26px rgba(7,89,201,.28)}
+.login-btn-sepat:hover{background:#064db0}
+.login-voltar-sepat{height:38px;border:none;background:transparent;color:#0f3f83;font-weight:900;cursor:pointer}
+/*=========================================================
+003 SEPAT APP TOPO
+=========================================================*/
+.app-sepat{min-height:100vh;background:linear-gradient(180deg,#eaf3ff,#f8fbff)}
+.topo-sepat{min-height:84px;background:linear-gradient(135deg,#0050aa,#0877d8);display:flex;align-items:center;justify-content:space-between;padding:16px 24px;color:#ffffff;box-shadow:0 12px 30px rgba(0,80,170,.22);position:sticky;top:0;z-index:50}
+.titulo-sepat{font-size:24px;font-weight:1000;letter-spacing:1px}
+.usuario-sepat{font-size:12px;font-weight:800;opacity:.92;margin-top:4px}
+.topo-acoes-sepat{display:flex;gap:10px;align-items:center}
+.btn-topo-sepat{border:1px solid rgba(255,255,255,.45);background:rgba(255,255,255,.14);color:#ffffff;border-radius:14px;padding:10px 16px;font-size:12px;font-weight:1000;cursor:pointer}
+.btn-topo-sepat.sair{background:rgba(127,29,29,.35)}
+.btn-topo-sepat:hover{background:rgba(255,255,255,.24)}
+/*=========================================================
+004 SEPAT TABS
+=========================================================*/
+.tabs-sepat{display:flex;gap:12px;align-items:center;padding:16px 18px;background:#f4f8ff;border-bottom:1px solid rgba(15,23,42,.08);position:sticky;top:84px;z-index:45;overflow-x:auto}
+.tab-sepat{min-width:145px;height:68px;border:none;border-radius:22px;background:#ffffff;color:#0f172a;font-size:12px;font-weight:1000;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;cursor:pointer;box-shadow:0 8px 24px rgba(15,23,42,.08);border:1px solid rgba(15,23,42,.05)}
+.tab-sepat:hover{transform:translateY(-2px)}
+.tab-sepat.tab-active{background:linear-gradient(135deg,#0759c9,#0ea5e9);color:#ffffff;box-shadow:0 16px 34px rgba(7,89,201,.28)}
+.tab-sepat span{white-space:nowrap}
+/*=========================================================
+005 SEPAT MAIN E KPIS
+=========================================================*/
+.main-sepat{padding:20px}
+.view-sepat{animation:fadeSepat .18s ease}
+@keyframes fadeSepat{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.kpis-sepat{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:18px}
+.kpi-sepat{height:130px;border-radius:26px;padding:20px;display:flex;flex-direction:column;align-items:flex-start;justify-content:space-between;color:#ffffff;box-shadow:0 18px 40px rgba(15,23,42,.16)}
+.kpi-sepat div{font-size:12px;font-weight:1000;text-transform:uppercase;letter-spacing:.5px;opacity:.95}
+.kpi-sepat strong{font-size:42px;font-weight:1000;line-height:1}
+.kpi-sepat.azul{background:linear-gradient(135deg,#0759c9,#38bdf8)}
+.kpi-sepat.verde{background:linear-gradient(135deg,#047857,#34d399)}
+.kpi-sepat.roxo{background:linear-gradient(135deg,#6d28d9,#a78bfa)}
+.kpi-sepat.dourado{background:linear-gradient(135deg,#b45309,#f59e0b)}
+/*=========================================================
+006 SEPAT GRAFICOS
+=========================================================*/
+.grid-dashboard-sepat{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.card-grafico-sepat{background:rgba(255,255,255,.9);border:1px solid rgba(15,23,42,.07);border-radius:28px;padding:18px;box-shadow:0 14px 36px rgba(15,23,42,.08);min-height:360px}
+.card-grafico-sepat.full{grid-column:1/-1}
+.card-grafico-sepat.grande{min-height:430px}
+.card-title-sepat{font-size:14px;font-weight:1000;color:#0f172a;margin-bottom:12px;text-transform:uppercase;letter-spacing:.5px}
+.card-grafico-sepat canvas{height:290px!important}
+.card-grafico-sepat.grande canvas{height:350px!important}
+.descricao-grafico-sepat{margin-top:14px;background:#ffffff;border-radius:22px;padding:18px;font-size:14px;font-weight:800;line-height:1.5;color:#0f172a;box-shadow:0 10px 28px rgba(15,23,42,.08)}
+/*=========================================================
+007 SEPAT FILTROS
+=========================================================*/
+.barra-filtros-sepat{display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin-bottom:16px;background:rgba(255,255,255,.78);border-radius:24px;padding:12px;box-shadow:0 10px 30px rgba(15,23,42,.07)}
+.btn-filtro-sepat,.btn-pdf-sepat{height:42px;border:none;border-radius:14px;padding:0 16px;font-size:12px;font-weight:1000;cursor:pointer}
+.btn-filtro-sepat{background:#e0f2fe;color:#0759c9}
+.btn-pdf-sepat{background:#dc2626;color:#ffffff}
+.input-busca-sepat,.select-sepat{height:42px;border:none;border-radius:14px;background:#ffffff;color:#0f172a;font-size:12px;font-weight:800;padding:0 14px;outline:none;box-shadow:inset 0 0 0 1px rgba(15,23,42,.08)}
+.input-busca-sepat{min-width:280px;flex:1}
+.select-sepat{min-width:260px;max-width:100%;flex:1}
+/*=========================================================
+008 SEPAT CARDS RESUMO
+=========================================================*/
+.cards-resumo-sepat{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:14px}
+.card-resumo-sepat{min-height:190px;border-radius:24px;padding:16px;box-shadow:0 14px 34px rgba(15,23,42,.12);cursor:pointer;display:flex;flex-direction:column;justify-content:space-between;border:1px solid rgba(255,255,255,.7)}
+.card-resumo-sepat:hover{transform:translateY(-3px)}
+.card-resumo-sepat.verde{background:linear-gradient(135deg,#bbf7d0,#86efac)}
+.card-resumo-sepat.amarelo{background:linear-gradient(135deg,#fef3c7,#fde68a)}
+.card-resumo-sepat.vermelho{background:linear-gradient(135deg,#fecaca,#fca5a5)}
+.card-resumo-sepat.cinza{background:linear-gradient(135deg,#e2e8f0,#cbd5e1)}
+.card-resumo-head{font-size:12px;font-weight:1000;color:#0f172a;text-transform:uppercase}
+.card-resumo-desc{font-size:12px;font-weight:800;color:#111827;line-height:1.35;margin-top:8px}
+.card-resumo-total{font-size:38px;font-weight:1000;color:#0f172a;text-align:right;margin-top:12px}
+/*=========================================================
+009 SEPAT TABELA
+=========================================================*/
+.tabela-wrap-sepat{width:100%;overflow:auto;background:#ffffff;border-radius:24px;box-shadow:0 14px 36px rgba(15,23,42,.08);border:1px solid rgba(15,23,42,.06)}
+.tabela-sepat{width:100%;min-width:1250px;border-collapse:collapse}
+.tabela-sepat th{background:#0759c9;color:#ffffff;font-size:10px;text-transform:uppercase;letter-spacing:.4px;padding:10px;text-align:left;position:sticky;top:0}
+.tabela-sepat td{font-size:11px;font-weight:700;color:#0f172a;padding:9px 10px;border-bottom:1px solid #e5e7eb;vertical-align:top}
+.tabela-sepat tr:nth-child(even){background:#f8fbff}
+.tabela-sepat tr:hover{background:#e0f2fe}
+.td-total-sepat{font-weight:1000;color:#047857!important}
+.input-mes-sepat{width:58px;height:30px;border:1px solid #cbd5e1;border-radius:10px;text-align:center;font-size:11px;font-weight:900}
+/*=========================================================
+010 SEPAT PERFIS E MODAL
+=========================================================*/
+.lista-perfis-sepat{background:#ffffff;border-radius:24px;padding:16px;box-shadow:0 14px 36px rgba(15,23,42,.08)}
+.perfil-row-sepat{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:10px;padding:10px;border-bottom:1px solid #e5e7eb;font-size:12px;font-weight:800}
+.modal-sepat{position:fixed;inset:0;background:rgba(15,23,42,.55);z-index:999;display:flex;align-items:center;justify-content:center;padding:20px}
+.modal-card-sepat{width:min(820px,94vw);max-height:88vh;overflow:auto;background:#ffffff;border-radius:28px;padding:22px;box-shadow:0 25px 80px rgba(0,0,0,.35);position:relative}
+.modal-close-sepat{position:absolute;right:16px;top:12px;width:36px;height:36px;border:none;border-radius:50%;background:#ef4444;color:#ffffff;font-size:24px;font-weight:1000;cursor:pointer}
+.modal-title-sepat{font-size:18px;font-weight:1000;color:#0759c9;margin-bottom:10px}
+.modal-text-sepat{font-size:13px;font-weight:800;line-height:1.5;color:#0f172a}
+.modal-grid-sepat{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-top:14px}
+.modal-mes-sepat{background:#f1f5f9;border-radius:14px;padding:10px;text-align:center}
+.modal-mes-sepat div:first-child{font-size:10px;font-weight:1000;color:#475569}
+.modal-mes-sepat div:last-child{font-size:18px;font-weight:1000;color:#0759c9}
+/*=========================================================
+011 SEPAT RESPONSIVO
+=========================================================*/
+@media(max-width:1100px){.kpis-sepat{grid-template-columns:repeat(2,1fr)}.grid-dashboard-sepat{grid-template-columns:1fr}.card-grafico-sepat.full{grid-column:auto}.tabs-sepat{top:80px}.topo-sepat{min-height:80px}.tab-sepat{min-width:120px;height:60px;font-size:10px}.main-sepat{padding:12px}}
+@media(max-width:640px){.topo-sepat{flex-direction:column;align-items:flex-start;gap:10px}.topo-acoes-sepat{width:100%}.btn-topo-sepat{flex:1}.tabs-sepat{top:128px}.kpis-sepat{grid-template-columns:1fr}.kpi-sepat{height:105px}.kpi-sepat strong{font-size:34px}.cards-resumo-sepat{grid-template-columns:1fr}.input-busca-sepat,.select-sepat{min-width:100%;width:100%}}
