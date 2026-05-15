@@ -97,14 +97,22 @@ window.location.href='index.html'
 006 SEPAT CORE PERMISSOES
 =========================================================*/
 function aplicarPermissoesSepat(){
+
 let tabPerfis=document.getElementById('tab-perfis')
+
 if(!tabPerfis)return
+
 tabPerfis.classList.add('hidden')
 tabPerfis.style.display='none'
-if(sepatUser&&Number(sepatUser.nivel_acesso||0)===1){
+
+if(
+sepatUser &&
+Number(sepatUser.nivel_acesso||0)===1
+){
 tabPerfis.classList.remove('hidden')
 tabPerfis.style.display='flex'
 }
+
 }
 /*=========================================================
 007 SEPAT CORE SWITCHTAB
@@ -490,12 +498,23 @@ if(modal)modal.classList.add('hidden')
 017 SEPAT CORE RENDER TABELA MONITORAMENTO
 =========================================================*/
 function renderTabelaSepat(){
+
 let tbody=document.getElementById('tbodySepat')
+
 if(!tbody)return
-let busca=String(document.getElementById('buscaMonitoramentoSepat')?.value||'').toLowerCase().trim()
+
+let busca=String(
+document.getElementById('buscaMonitoramentoSepat')?.value||''
+)
+.toLowerCase()
+.trim()
+
 let lista=[...(sepatData||[])].sort(compareSepat)
+
 if(busca){
+
 lista=lista.filter(i=>{
+
 return[
 i.siglaitem,
 i.subitem,
@@ -504,30 +523,146 @@ i.descricaoitem,
 i.produto,
 i.responsavel,
 i.setor
-].join(' ').toLowerCase().includes(busca)
+]
+.join(' ')
+.toLowerCase()
+.includes(busca)
+
 })
+
 }
+
+const mesAtual='mai'
+
 tbody.innerHTML=lista.map(i=>{
+
 let total=getTotalSepat(i)
-return`
+
+let html=`
 <tr>
-<td><b>${i.siglaitem||'-'}</b><br><span>${truncarSepat(i.item||'-',80)}</span></td>
-<td><b>${i.subitem||'-'}</b></td>
-<td>${truncarSepat(i.descricaoitem||i.item||'-',160)}</td>
-<td>${truncarSepat(i.produto||'-',150)}</td>
-<td>${i.responsavel||'-'}</td>
-<td>${Number(i.jan||0)}%</td>
-<td>${Number(i.fev||0)}%</td>
-<td>${Number(i.mar||0)}%</td>
-<td>${Number(i.abr||0)}%</td>
-<td>${Number(i.mai||0)}%</td>
-<td class="td-total-sepat">${total}%</td>
+
+<td>
+<b>${i.siglaitem||'-'}</b>
+<br>
+<span>${i.item||'-'}</span>
+</td>
+
+<td>
+<b>${i.subitem||'-'}</b>
+<br>
+${i.descricaoitem||'-'}
+</td>
+
+<td>
+${i.produto||'-'}
+</td>
+
+<td>
+${i.responsavel||'-'}
+</td>
+`
+
+MESES_SEPAT.forEach(mes=>{
+
+let nivel=Number(sepatUser?.nivel_acesso||99)
+
+let valorAtual=Number(i[mes]||0)
+
+let podeEditar=false
+
+/*=========================================================
+NIVEL 1
+EDITA SEMPRE
+=========================================================*/
+if(nivel===1){
+podeEditar=true
+}
+
+/*=========================================================
+NIVEL 2
+SOMENTE MES VIGENTE
+E APENAS PRIMEIRO PREENCHIMENTO
+=========================================================*/
+if(
+nivel===2 &&
+mes===mesAtual &&
+valorAtual===0
+){
+podeEditar=true
+}
+
+let clsMes=
+mes===mesAtual
+?'mes-atual-sepat'
+:''
+
+html+=`
+<td class="${clsMes}">
+<input
+type="number"
+min="0"
+max="100"
+step="1"
+value="${Number(i[mes]||0)}"
+${podeEditar?'':'disabled'}
+class="input-mes-sepat"
+onchange="salvarPercentualSepat('${i.id}','${mes}',this.value)"
+>
+</td>
+`
+
+})
+
+html+=`
+<td class="td-total-sepat">
+${total}%
+</td>
 </tr>
 `
+
+return html
+
 }).join('')
+
 }
 /*=========================================================
-018 SEPAT CORE RENDER CONCLUIDOS
+018 SEPAT CORE SALVAR PERCENTUAL
+=========================================================*/
+async function salvarPercentualSepat(id,mes,valor){
+
+valor=Number(valor||0)
+
+if(isNaN(valor))valor=0
+
+if(valor<0)valor=0
+if(valor>100)valor=100
+
+let update={}
+update[mes]=valor
+
+let {error}=await sepatClient
+.from('sepat_deliberacoes')
+.update(update)
+.eq('id',id)
+
+if(error){
+console.log(error)
+alert('Erro ao salvar percentual')
+return
+}
+
+let item=sepatData.find(i=>String(i.id)===String(id))
+
+if(item){
+item[mes]=valor
+}
+
+renderDashboardSepat()
+
+}
+
+/*=========================================================
+019 SEPAT CORE RENDER CONCLUIDOS
 =========================================================*/
 function renderConcluidosSepat(){
 let box=document.getElementById('cardsConcluidosSepat')
@@ -556,7 +691,7 @@ box.innerHTML=lista.map(i=>`
 `).join('')
 }
 /*=========================================================
-019 SEPAT CORE POPULAR ITENS GRAFICOS
+020 SEPAT CORE POPULAR ITENS GRAFICOS
 =========================================================*/
 function popularItensSepat(){
 let sel=document.getElementById('filtroItemSepat')
@@ -573,7 +708,7 @@ let lista=Object.values(mapa).sort((a,b)=>compareSepat(a.base,b.base))
 sel.innerHTML='<option value="todos">TODOS OS ITENS</option>'+lista.map(i=>`<option value="${i.siglaitem}">${i.siglaitem} - ${truncarSepat(i.item,90)}</option>`).join('')
 }
 /*=========================================================
-020 SEPAT CORE POPULAR SUBITENS GRAFICOS
+021 SEPAT CORE POPULAR SUBITENS GRAFICOS
 =========================================================*/
 function popularSubitensSepat(){
 let sel=document.getElementById('filtroSubitemSepat')
@@ -593,7 +728,7 @@ return `<option value="${id}" title="${i.subitem} • ${getTotalSepat(i)}% • $
 sel.innerHTML=html
 }
 /*=========================================================
-021 SEPAT CORE RENDER GRAFICO MASTER
+022 SEPAT CORE RENDER GRAFICO MASTER
 =========================================================*/
 function renderGraficoMasterSepat(){
 let canvas=document.getElementById('graficoMasterSepat')
@@ -660,7 +795,7 @@ box.innerHTML=`<b>${titulo}</b><br>${desc}<br><br>JAN: <b>${valores[0]}%</b> | F
 }
 }
 /*=========================================================
-022 SEPAT CORE CARREGAR PERFIS
+023 SEPAT CORE CARREGAR PERFIS
 =========================================================*/
 async function carregarPerfisSepat(){
 let box=document.getElementById('listaPerfisSepat')
@@ -691,7 +826,7 @@ ${lista.map(p=>`
 `
 }
 /*=========================================================
-023 SEPAT PDF HELPERS
+024 SEPAT PDF HELPERS
 =========================================================*/
 function criarDocSepat(orientacao='p'){
 const {jsPDF}=window.jspdf
@@ -713,7 +848,7 @@ doc.text('Página '+i+' de '+total,w-8,h-6,{align:'right'})
 }
 }
 /*=========================================================
-024 SEPAT PDF RESUMO
+025 SEPAT PDF RESUMO
 =========================================================*/
 function gerarPDFResumoSepat(){
 let doc=criarDocSepat('p')
@@ -758,7 +893,7 @@ rodapeSepat(doc)
 doc.save('pdf_resumo_tag_sepat.pdf')
 }
 /*=========================================================
-025 SEPAT PDF MONITORAMENTO
+026 SEPAT PDF MONITORAMENTO
 =========================================================*/
 function gerarPDFMonitoramentoSepat(){
 let doc=criarDocSepat('l')
@@ -853,7 +988,7 @@ rodapeSepat(doc)
 doc.save('pdf_monitoramento_tag_sepat.pdf')
 }
 /*=========================================================
-026 SEPAT PDF GRAFICOS
+027 SEPAT PDF GRAFICOS
 =========================================================*/
 function gerarPDFGraficosSepat(){
 let doc=criarDocSepat('p')
@@ -873,7 +1008,7 @@ rodapeSepat(doc)
 doc.save('pdf_graficos_tag_sepat.pdf')
 }
 /*=========================================================
-027 SEPAT PDF CONCLUIDOS
+028 SEPAT PDF CONCLUIDOS
 =========================================================*/
 function gerarPDFConcluidosSepat(){
 let doc=criarDocSepat('l')
