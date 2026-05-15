@@ -601,6 +601,10 @@ ${i.produto||'-'}
 <td>
 ${i.cargo||'-'}
 </td>
+
+<td>
+${i.data_inicio||'-'}
+</td>
 `
 
 MESES_SEPAT.forEach(mes=>{
