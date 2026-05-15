@@ -285,7 +285,7 @@ let meses=['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','de
 for(let x=1;x<meses.length;x++){
 let anterior=meses[x-1]
 let atual=meses[x]
-if(Number(i[anterior]||0)>=100&&Number(i[atual]||0)<=0){
+if(Number(i[anterior]||0)>=100){
 i[atual]=100
 }
 }
@@ -705,11 +705,12 @@ mes==='dez'
 html+=`
 <td class="mes-col mes-${mes} ${clsMes} ${ocultar?'hidden':''}">
 <input
-type="number"
+type="text"
+inputmode="numeric"
 min="0"
 max="100"
 step="1"
-value="${Number(i[mes]||0)}"
+value="${parseInt(Number(i[mes]||0))}"
 ${podeEditar?'':'disabled'}
 class="input-mes-sepat"
 onchange="salvarPercentualSepat('${i.id}','${mes}',this.value)"
