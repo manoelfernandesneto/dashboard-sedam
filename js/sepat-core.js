@@ -322,11 +322,16 @@ type:'line',
 data:{
 labels:MESES_LABEL_SEPAT,
 datasets:[{
-label:'Média Geral SEPAT',
+label:'EVOLUÇÃO GERAL',
 data:valores,
-borderWidth:3,
-pointRadius:5,
-pointHoverRadius:7,
+borderColor:'#16a34a',
+backgroundColor:'rgba(34,197,94,.18)',
+borderWidth:4,
+pointRadius:6,
+pointHoverRadius:8,
+pointBackgroundColor:'#16a34a',
+pointBorderColor:'#ffffff',
+pointBorderWidth:2,
 tension:.35,
 fill:true
 }]
@@ -335,13 +340,21 @@ options:{
 responsive:true,
 maintainAspectRatio:false,
 plugins:{
-legend:{display:false},
+legend:{
+display:true,
+position:'top',
+labels:{
+font:{size:14,weight:'900'},
+color:'#111827'
+}
+},
 tooltip:{callbacks:{label:(ctx)=>ctx.raw+'%'}},
 datalabels:{
 display:true,
 anchor:'end',
 align:'top',
-font:{weight:'900',size:10},
+font:{weight:'1000',size:14},
+color:'#111827',
 formatter:(v)=>v+'%'
 }
 },
@@ -371,7 +384,13 @@ data:{
 labels:['100% Cumpridos','Em andamento','Abaixo de 30%','Pendentes'],
 datasets:[{
 data:[concluidos,andamento,criticos,pendentes],
-borderWidth:2,
+backgroundColor:[
+'#22c55e',
+'#eab308',
+'#ef4444',
+'#94a3b8'
+],
+borderWidth:3,
 borderColor:'#ffffff'
 }]
 },
@@ -380,11 +399,20 @@ responsive:true,
 maintainAspectRatio:false,
 cutout:'58%',
 plugins:{
-legend:{position:'bottom',labels:{font:{weight:'900',size:11},boxWidth:14}},
+legend:{
+position:'right',
+labels:{
+font:{weight:'1000',size:16},
+color:'#111827',
+padding:24,
+boxWidth:18
+}
+},
 tooltip:{callbacks:{label:(ctx)=>ctx.label+': '+ctx.raw}},
 datalabels:{
 display:true,
-font:{weight:'900',size:10},
+font:{weight:'1000',size:18},
+color:'#111827',
 formatter:(v,ctx)=>{
 let total=ctx.chart.data.datasets[0].data.reduce((a,b)=>a+b,0)
 if(!total)return'0%'
@@ -421,11 +449,17 @@ type:'bar',
 data:{
 labels:labels,
 datasets:[{
-label:'Média por Item',
+label:'MÉDIA POR ITEM ESTRATÉGICO',
 data:valores,
-borderRadius:8,
+backgroundColor:valores.map(v=>{
+if(v>=100)return'#22c55e'
+if(v>=30)return'#eab308'
+if(v>0)return'#ef4444'
+return'#94a3b8'
+}),
+borderRadius:10,
 borderSkipped:false,
-maxBarThickness:24
+maxBarThickness:28
 }]
 },
 options:{
@@ -438,13 +472,21 @@ datalabels:{
 display:true,
 anchor:'end',
 align:'top',
-font:{weight:'900',size:8},
+font:{weight:'1000',size:12},
+color:'#111827',
 formatter:(v)=>v+'%'
 }
 },
 scales:{
 y:{beginAtZero:true,max:100,ticks:{callback:(v)=>v+'%'}},
-x:{ticks:{font:{weight:'900',size:8},maxRotation:60,minRotation:45}}
+x:{
+ticks:{
+font:{weight:'1000',size:11},
+color:'#111827',
+maxRotation:55,
+minRotation:55
+}
+}
 }
 },
 plugins:[ChartDataLabels]
