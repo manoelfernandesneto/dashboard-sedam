@@ -16,7 +16,18 @@ const MESES_SEPAT=['jan','fev','mar','abr','mai','jun','jul','ago','set','out','
 const MES_ATUAL_SEPAT=new Date().getMonth()
 const MESES_LABEL_SEPAT=['JAN','FEV','MAR','ABR','MAI','JUN','JUL','AGO','SET','OUT','NOV','DEZ']
 const NOTA_TECNICA_SEPAT='As informações constantes neste painel, gráficos, indicadores e relatórios possuem caráter preliminar e meramente informativo, sendo baseadas nos dados declarados e apresentados até o presente momento pelos jurisdicionados envolvidos. Ressalta-se que tais informações ainda não passaram pela análise técnica de consistência documental, verificação de evidências, validação metodológica e conferência conclusiva pela equipe técnica de auditores designados.'
-
+/*=========================================================
+008 FORMATAR DATA SEPAT
+=========================================================*/
+function formatarDataSepat(v){
+if(!v)return'-'
+let d=new Date(v)
+if(isNaN(d))return v
+let dia=String(d.getDate()).padStart(2,'0')
+let mes=String(d.getMonth()+1).padStart(2,'0')
+let ano=d.getFullYear()
+return`${dia}-${mes}-${ano}`
+}
 /*=========================================================
 008 MESES AUTOMATICOS SEPAT
 =========================================================*/
@@ -660,7 +671,7 @@ ${i.cargo||'-'}
 </td>
 
 <td>
-${i.data_inicio||'-'}
+${formatarDataSepat(i.data_inicio)}
 </td>
 `
 
