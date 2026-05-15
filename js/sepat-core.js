@@ -13,6 +13,7 @@ let graficoPizzaSepat=null
 let graficoBarrasSepat=null
 let graficoMasterSepat=null
 const MESES_SEPAT=['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez']
+const MES_ATUAL_SEPAT=new Date().getMonth()
 const MESES_LABEL_SEPAT=['JAN','FEV','MAR','ABR','MAI','JUN','JUL','AGO','SET','OUT','NOV','DEZ']
 const NOTA_TECNICA_SEPAT='As informações constantes neste painel, gráficos, indicadores e relatórios possuem caráter preliminar e meramente informativo, sendo baseadas nos dados declarados e apresentados até o presente momento pelos jurisdicionados envolvidos. Ressalta-se que tais informações ainda não passaram pela análise técnica de consistência documental, verificação de evidências, validação metodológica e conferência conclusiva pela equipe técnica de auditores designados.'
 
@@ -316,7 +317,8 @@ let canvas=document.getElementById('graficoLinhaSepat')
 if(!canvas)return
 let ctx=canvas.getContext('2d')
 if(graficoLinhaSepat)graficoLinhaSepat.destroy()
-let valores=MESES_SEPAT.map(m=>{
+let labels=MESES_LABEL_SEPAT.slice(0,MES_ATUAL_SEPAT+1)
+let valores=MESES_SEPAT.slice(0,MES_ATUAL_SEPAT+1).map(m=>{
 let soma=0
 let qtd=0
 lista.forEach(i=>{
@@ -331,7 +333,7 @@ return Math.round(soma/(qtd||1))
 graficoLinhaSepat=new Chart(ctx,{
 type:'line',
 data:{
-labels:MESES_LABEL_SEPAT,
+labels:labels,
 datasets:[{
 label:'EVOLUÇÃO GERAL',
 data:valores,
