@@ -648,7 +648,7 @@ mes==='dez'
 )
 
 html+=`
-<td class="${clsMes} ${ocultar?'hidden mes-col mes-'+mes:''}">
+<td class="mes-col mes-${mes} ${clsMes} ${ocultar?'hidden':''}">
 <input
 type="number"
 min="0"
