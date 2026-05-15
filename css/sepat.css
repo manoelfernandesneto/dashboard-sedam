@@ -144,6 +144,7 @@ canvas{width:100%!important;max-width:100%!important}
 .tabela-wrap-sepat{border-radius:20px;max-height:calc(100vh - 245px);overflow:auto}
 .tabela-sepat{min-width:1180px}
 .tabela-sepat th{font-size:9px;padding:7px 6px;line-height:1;white-space:nowrap}
+
 .tabela-sepat td{
 font-size:10px;
 padding:6px 7px;
@@ -197,6 +198,27 @@ word-break:break-word;
 .modal-grid-sepat{grid-template-columns:repeat(5,minmax(70px,1fr))}
 .modal-mes-sepat{border-radius:12px;padding:8px}
 .modal-mes-sepat div:last-child{font-size:16px}
-.mes-atual-sepat{transform:scale(1.15);background:#fff8d6!important;position:relative;z-index:5;border-left:2px solid #f59e0b!important;border-right:2px solid #f59e0b!important}
-.mes-atual-sepat input{font-size:12px!important;font-weight:1000!important;background:#fffbe7!important;border:2px solid #f59e0b!important;height:30px!important}
-.input-mes-sepat:disabled{background:#e5e7eb!important;color:#64748b!important;cursor:not-allowed;opacity:1!important}
+/*=========================================================
+MES VIGENTE SEPAT
+=========================================================*/
+.mes-atual-sepat{
+transform:scale(1.08);
+background:#fff8d6!important;
+position:relative;
+z-index:5;
+border-left:2px solid #f59e0b!important;
+border-right:2px solid #f59e0b!important;
+}
+.mes-atual-sepat input{
+font-size:11px!important;
+font-weight:1000!important;
+background:#fffbe7!important;
+border:2px solid #f59e0b!important;
+height:28px!important;
+}
+.input-mes-sepat:disabled{
+background:#e5e7eb!important;
+color:#64748b!important;
+cursor:not-allowed;
+opacity:1!important;
+}
