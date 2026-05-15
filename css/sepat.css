@@ -127,14 +127,14 @@ letter-spacing:.5px;
 008 SEPAT CARDS RESUMO
 =========================================================*/
 .cards-resumo-sepat{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:12px}
-.card-resumo-sepat{min-height:150px;border-radius:20px;padding:14px;box-shadow:0 14px 34px rgba(15,23,42,.12);cursor:pointer;display:flex;flex-direction:column;justify-content:space-between;border:1px solid rgba(255,255,255,.7)}
+.card-resumo-sepat{min-height:auto;border-radius:20px;padding:16px;box-shadow:0 14px 34px rgba(15,23,42,.12);cursor:pointer;display:flex;flex-direction:column;justify-content:flex-start;border:1px solid rgba(255,255,255,.7)}
 .card-resumo-sepat:hover{transform:translateY(-3px)}
 .card-resumo-sepat.verde{background:linear-gradient(135deg,#bbf7d0,#86efac)}
 .card-resumo-sepat.amarelo{background:linear-gradient(135deg,#fef3c7,#fde68a)}
 .card-resumo-sepat.vermelho{background:linear-gradient(135deg,#fecaca,#fca5a5)}
 .card-resumo-sepat.cinza{background:linear-gradient(135deg,#e2e8f0,#cbd5e1)}
 .card-resumo-head{font-size:10px;font-weight:1000;color:#0f172a;text-transform:uppercase;line-height:1.15}
-.card-resumo-desc{font-size:11px;font-weight:800;color:#111827;line-height:1.25;margin-top:6px}
+.card-resumo-desc{font-size:12px;font-weight:700;color:#111827;line-height:1.45;margin-top:8px;white-space:normal!important;word-break:break-word;overflow:visible!important;text-overflow:unset!important;display:block!important}
 .card-resumo-total{font-size:30px;font-weight:1000;color:#0f172a;text-align:right;margin-top:8px}
 
 /*=========================================================
