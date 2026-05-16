@@ -176,28 +176,35 @@ document.getElementById('sepat-user-info').innerText=
 (perfil.origem||'SEPAT')
 
 aplicarPermissoesSepat()
-
 await carregarSepatDados()
-
 setTimeout(()=>{
+let itens=[...new Set(
+(sepatData||[])
+.map(i=>String(i.siglaitem||'').trim())
+.filter(v=>v&&v!=='-')
+)].length
 
-let itens=[...new Set((sepatData||[]).map(i=>String(i.siglaitem||'').trim()).filter(Boolean))].length
-let subitens=(sepatData||[]).length
-let produtos=[...new Set((sepatData||[]).map(i=>String(i.produto||'').trim()).filter(Boolean))].length
+let subitens=(sepatData||[]).filter(i=>
+String(i.subitem||'').trim()!==''
+).length
+
+let produtos=[...new Set(
+(sepatData||[])
+.map(i=>String(i.produto||'').trim())
+.filter(v=>v&&v!=='-')
+)].length
 
 let miniItens=document.getElementById('miniItensSepat')
 let miniSubitens=document.getElementById('miniSubitensSepat')
 let miniProdutos=document.getElementById('miniProdutosSepat')
 
-if(miniItens)miniItens.innerText=itens
-if(miniSubitens)miniSubitens.innerText=subitens
-if(miniProdutos)miniProdutos.innerText=produtos
+if(miniItens)miniItens.innerText=itens||0
+if(miniSubitens)miniSubitens.innerText=subitens||0
+if(miniProdutos)miniProdutos.innerText=produtos||0
 
-},400)
+},900)
 
 switchSepatTab('dashboard')
-
-}
 /*=========================================================
 004 SEPAT CORE LOGOUT
 =========================================================*/
@@ -392,6 +399,29 @@ total_cumprimento:Number(i.total_cumprimento||0)
 })).sort(compareSepat)
 sepatFiltrados=[...sepatData]
 renderDashboardSepat()
+let itens=[...new Set(
+(sepatData||[])
+.map(i=>String(i.siglaitem||'').trim())
+.filter(v=>v&&v!=='-')
+)].length
+
+let subitens=(sepatData||[]).filter(i=>
+String(i.subitem||'').trim()!==''
+).length
+
+let produtos=[...new Set(
+(sepatData||[])
+.map(i=>String(i.produto||'').trim())
+.filter(v=>v&&v!=='-')
+)].length
+
+let miniItens=document.getElementById('miniItensSepat')
+let miniSubitens=document.getElementById('miniSubitensSepat')
+let miniProdutos=document.getElementById('miniProdutosSepat')
+
+if(miniItens)miniItens.innerText=itens||0
+if(miniSubitens)miniSubitens.innerText=subitens||0
+if(miniProdutos)miniProdutos.innerText=produtos||0
 }
 /*=========================================================
 010 SEPAT CORE RENDER DASHBOARD
