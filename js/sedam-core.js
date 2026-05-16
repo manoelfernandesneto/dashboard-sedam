@@ -2,6 +2,7 @@
 001 SEDAM CORE DOMCONTENTLOADED
 =========================================================*/
 document.addEventListener("DOMContentLoaded",async ()=>{
+document.body.style.visibility='hidden'
 let geral=document.getElementById('painel-geral-acesso')
 let login=document.getElementById('login-screen')
 let dash=document.getElementById('dashboard')
@@ -39,6 +40,7 @@ console.log(e)
 localStorage.removeItem('user')
 }
 }
+document.body.style.visibility='visible'
 })
 /*=========================================================
 002 SEDAM CORE FUNCTION LOGIN
