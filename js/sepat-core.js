@@ -32,46 +32,31 @@ return`${dia}-${mes}-${ano}`
 008 MESES AUTOMATICOS SEPAT
 =========================================================*/
 function controlarMesesSepat(){
-
-let mesAtual=5
-
-let meses=[
-'jan',
-'fev',
-'mar',
-'abr',
-'mai',
-'jun',
-'jul',
-'ago',
-'set',
-'out',
-'nov',
-'dez'
-]
-
+let mesAtual=new Date().getMonth()+1
+let meses=['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez']
 meses.forEach((m,index)=>{
-
 let numero=index+1
-
 document.querySelectorAll('.mes-'+m).forEach(el=>{
-
 if(numero<=mesAtual){
-
 el.classList.remove('hidden')
 el.style.display='table-cell'
-
 }else{
-
 el.classList.add('hidden')
 el.style.display='none'
-
 }
-
 })
-
 })
-
+let lista=[...(sepatData||[])]
+lista.forEach(async i=>{
+for(let x=0;x<11;x++){
+let atual=meses[x]
+let prox=meses[x+1]
+if(Number(i[atual]||0)>=100&&Number(i[prox]||0)<=0){
+i[prox]=100
+await sepatClient.from('sepat_deliberacoes').update({[prox]:100}).eq('id',i.id)
+}
+}
+})
 }
 /*=========================================================
 002 SEPAT CORE DOMCONTENTLOADED
@@ -282,21 +267,35 @@ mini.classList.remove('hidden')
 
 }
 
-if(t==='dashboard')renderDashboardSepat()
+if(t==='dashboard'){
+renderDashboardSepat()
+controlarMesesSepat()
+}
 
-if(t==='resumo')renderResumoSepat()
+if(t==='resumo'){
+renderResumoSepat()
+controlarMesesSepat()
+}
 
-if(t==='monitoramento')renderTabelaSepat()
+if(t==='monitoramento'){
+renderTabelaSepat()
+controlarMesesSepat()
+}
 
 if(t==='graficos'){
 popularItensSepat()
 popularSubitensSepat()
 renderGraficoMasterSepat()
+controlarMesesSepat()
 }
 
-if(t==='concluidos')renderConcluidosSepat()
+if(t==='concluidos'){
+renderConcluidosSepat()
+controlarMesesSepat()
+}
 
 if(t==='perfis'){
+
 if(
 !sepatUser||
 Number(sepatUser.nivel_acesso||0)!==1
@@ -304,9 +303,13 @@ Number(sepatUser.nivel_acesso||0)!==1
 switchSepatTab('dashboard')
 return
 }
+
 carregarPerfisSepat()
+
 }
+
 if(t==='perfistce'){
+
 if(
 !sepatUser||
 Number(sepatUser.nivel_acesso||0)!==1
@@ -314,8 +317,11 @@ Number(sepatUser.nivel_acesso||0)!==1
 switchSepatTab('dashboard')
 return
 }
+
 carregarPerfisTCEROSepat()
+
 }
+
 }
 /*=========================================================
 008 SEPAT CORE HELPERS
@@ -377,7 +383,10 @@ sepatData=[]
 sepatFiltrados=[]
 return
 }
-sepatData=(data||[]).map(i=>({
+let meses=['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez']
+let mesAtual=new Date().getMonth()+1
+sepatData=(data||[]).map(i=>{
+let obj={
 ...i,
 siglaitem:String(i.siglaitem||'').trim(),
 item:String(i.item||'').trim(),
@@ -396,9 +405,22 @@ out:Number(i.out||0),
 nov:Number(i.nov||0),
 dez:Number(i.dez||0),
 total_cumprimento:Number(i.total_cumprimento||0)
-})).sort(compareSepat)
+}
+for(let x=1;x<mesAtual;x++){
+let anterior=meses[x-1]
+let atual=meses[x]
+if(Number(obj[anterior]||0)>=100){
+obj[atual]=100
+}
+}
+return obj
+}).sort(compareSepat)
+
 sepatFiltrados=[...sepatData]
+
 renderDashboardSepat()
+controlarMesesSepat()
+
 let itens=[...new Set(
 (sepatData||[])
 .map(i=>String(i.siglaitem||'').trim())
@@ -423,38 +445,38 @@ if(miniItens)miniItens.innerText=itens||0
 if(miniSubitens)miniSubitens.innerText=subitens||0
 if(miniProdutos)miniProdutos.innerText=produtos||0
 }
+
 /*=========================================================
 010 SEPAT CORE RENDER DASHBOARD
 =========================================================*/
 function renderDashboardSepat(){
+
 let lista=[...(sepatData||[])].sort(compareSepat)
-lista=lista.map(i=>{
-let meses=['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez']
-for(let x=1;x<meses.length;x++){
-let anterior=meses[x-1]
-let atual=meses[x]
-if(Number(i[anterior]||0)>=100){
-i[atual]=100
-}
-}
-return i
-})
+
 let totalItens=[...new Set(lista.map(i=>String(i.siglaitem||'').trim()).filter(Boolean))].length
+
 let totalSubitens=lista.length
+
 let totalProdutos=[...new Set(lista.map(i=>String(i.produto||'').trim()).filter(Boolean))].length
+
 let validos=lista.filter(i=>!isNaN(getTotalSepat(i)))
+
 let media=Math.round(validos.reduce((acc,c)=>acc+getTotalSepat(c),0)/(validos.length||1))
+
 let kpiItens=document.getElementById('kpiItensSepat')
 let kpiSubitens=document.getElementById('kpiSubitensSepat')
 let kpiProdutos=document.getElementById('kpiProdutosSepat')
 let kpiMedia=document.getElementById('kpiMediaSepat')
+
 if(kpiItens)kpiItens.innerText=totalItens
 if(kpiSubitens)kpiSubitens.innerText=totalSubitens
 if(kpiProdutos)kpiProdutos.innerText=totalProdutos
 if(kpiMedia)kpiMedia.innerText=media+'%'
+
 renderGraficoLinhaSepat(lista)
 renderGraficoPizzaSepat(lista)
 renderGraficoBarrasSepat(lista)
+
 }
 /*=========================================================
 011 SEPAT CORE GRAFICO LINHA
@@ -686,7 +708,7 @@ media:media
 box.innerHTML=grupos.map(g=>{
 let titulo=modoResumoSepat==='item'?g.base.siglaitem:g.base.subitem
 let subtitulo=modoResumoSepat==='item'?g.base.item:g.base.produto
-let desc=modoResumoSepat==='item'?g.base.item:g.base.subitem
+let desc=modoResumoSepat==='item'?g.base.item:g.base.descricaoitem
 return`
 <div class="card-resumo-sepat ${corClasseSepat(g.media)}" onclick="abrirModalResumoSepat('${g.chave}')">
 <div>
@@ -721,7 +743,7 @@ let media=Math.round(lista.reduce((acc,c)=>acc+getTotalSepat(c),0)/(lista.length
 conteudo.innerHTML=`
 <div class="modal-title-sepat">${modoResumoSepat==='item'?'ITEM':'SUBITEM'} ${modoResumoSepat==='item'?base.siglaitem:base.subitem} • ${media}%</div>
 <div class="modal-text-sepat"><b>Item:</b> ${base.item||'-'}</div>
-<div class="modal-text-sepat"><b>Descrição:</b> ${base.subitem||'-'}</div>
+<div class="modal-text-sepat"><b>Descrição:</b> ${base.descricaoitem||'-'}</div>
 <div class="modal-text-sepat"><b>Total de registros:</b> ${lista.length}</div>
 ${lista.map(i=>`
 <div style="margin-top:14px;border-top:1px solid #e5e7eb;padding-top:12px;">
