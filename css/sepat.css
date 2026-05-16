@@ -250,3 +250,4 @@ letter-spacing:.5px;
 .mini-kpi-topo-sepat.azul{background:linear-gradient(135deg,#2563eb,#38bdf8)}
 .mini-kpi-topo-sepat.verde{background:linear-gradient(135deg,#059669,#34d399)}
 .mini-kpi-topo-sepat.roxo{background:linear-gradient(135deg,#7c3aed,#a78bfa)}
+.inputPerfilSepat,.inputPerfilTCEROSepat{width:100%;height:34px;border:1px solid #cbd5e1;border-radius:10px;padding:0 10px;font-size:12px;font-weight:800;background:#fff;color:#0f172a}
