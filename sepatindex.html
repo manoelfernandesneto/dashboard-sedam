@@ -74,6 +74,10 @@ Sair
 <button id="tab-graficos" onclick="switchSepatTab('graficos')" class="tab-sepat">📈<span>Gráficos</span></button>
 <button id="tab-concluidos" onclick="switchSepatTab('concluidos')" class="tab-sepat">🏆<span>100% Cumpridos</span></button>
 <button id="tab-perfis" onclick="switchSepatTab('perfis')" class="tab-sepat hidden">👥<span>Perfis SEPAT</span></button>
+<button id="tab-perfistce" class="tab-sepat hidden" onclick="switchSepatTab('perfistce')">
+<div>🛡️</div>
+<span>PERFIS TCE-RO</span>
+</button>
 </nav>
 <main class="main-sepat">
 <!--=========================================================
@@ -101,8 +105,8 @@ Sair
 <div>MÉDIA GERAL</div>
 <strong id="kpiMediaSepat">0%</strong>
 </div>
-
 </div>
+  
 <div class="grid-dashboard-sepat">
 <div class="card-grafico-sepat">
 <div class="card-title-sepat">Evolução Mensal</div>
@@ -117,6 +121,16 @@ Sair
 <canvas id="graficoBarrasSepat"></canvas>
 </div>
 </div>
+  
+<div id="view-perfistce" class="view-sepat hidden">
+<div style="display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap">
+<button class="btn-filtro-sepat" onclick="habilitarEdicaoPerfisTCEROSepat()">EDITAR</button>
+<button class="btn-filtro-sepat" onclick="novoPerfilTCEROSepat()">INSERIR</button>
+<button class="btn-filtro-sepat" onclick="salvarPerfisTCEROSepat()">SALVAR</button>
+</div>
+<div id="listaPerfisTCEROSepat" class="lista-perfis-sepat"></div>
+</div>
+  
 </section>
 <!--=========================================================
 005 SEPAT RESUMO
