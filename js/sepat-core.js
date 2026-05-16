@@ -208,7 +208,7 @@ carregarPerfisSepat()
 008 SEPAT CORE HELPERS
 =========================================================*/
 function getTotalSepat(i){
-let vals=MESES_SEPAT.map(m=>{
+let vals=MESES_SEPAT.slice(0,MES_ATUAL_SEPAT+1).map(m=>{
 let v=Number(i[m]||0)
 return isNaN(v)?0:v
 })
@@ -896,7 +896,7 @@ titulo='SUBITEM '+(achado.subitem||'-')+' • '+(achado.siglaitem||'-')
 desc=(achado.produto||'-')+'<br><br><b>Item:</b> '+(achado.item||'-')
 }
 }
-let valores=MESES_SEPAT.map((m,idx)=>{
+let valores=MESES_SEPAT.slice(0,MES_ATUAL_SEPAT+1).map((m,idx)=>{
 let total=0
 lista.forEach(i=>{
 let valor=0
@@ -909,7 +909,7 @@ return Math.round(total/(lista.length||1))
 graficoMasterSepat=new Chart(ctx,{
 type:'bar',
 data:{
-labels:MESES_LABEL_SEPAT,
+labels:MESES_LABEL_SEPAT.slice(0,MES_ATUAL_SEPAT+1),
 datasets:[{
 label:titulo,
 data:valores,
