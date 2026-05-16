@@ -1808,3 +1808,22 @@ dash.classList.add('hidden')
 dash.style.display='none'
 }
 }
+
+async function backupSedam(){
+let {data,error}=await client
+.from('deliberacoes')
+.select('*')
+if(error){
+console.log(error)
+alert('Erro ao gerar backup')
+return
+}
+let blob=new Blob(
+[JSON.stringify(data,null,2)],
+{type:'application/json'}
+)
+let a=document.createElement('a')
+a.href=URL.createObjectURL(blob)
+a.download='backup_sedam_'+new Date().toISOString().slice(0,10)+'.json'
+a.click()
+}
