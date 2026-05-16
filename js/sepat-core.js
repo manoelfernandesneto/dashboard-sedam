@@ -1182,6 +1182,9 @@ ${editandoPerfisSepat?`<input class="inputPerfilSepat" data-id="${p.id}" data-ca
 <div>
 ${editandoPerfisSepat?`<input class="inputPerfilSepat" data-id="${p.id}" data-campo="nivel_acesso" value="${p.nivel_acesso||4}">`:(p.nivel_acesso||'-')}
 </div>
+<div style="display:flex;justify-content:flex-end">
+${editandoPerfisSepat?`<button onclick="excluirPerfilSepat('${p.id}')" style="width:28px;height:28px;border:none;border-radius:8px;background:#ef4444;color:#fff;font-weight:1000;cursor:pointer">×</button>`:''}
+</div>
 </div>
 `).join('')}
 `
@@ -1415,8 +1418,11 @@ editandoPerfisSepat=true
 carregarPerfisSepat()
 }
 
+
 async function salvarPerfisSepat(){
+
 let linhas=document.querySelectorAll('.inputPerfilSepat')
+
 for(let l of linhas){
 
 let id=l.dataset.id
@@ -1436,7 +1442,7 @@ for(let p of sepatPerfis){
 if(String(p.id).startsWith('novo_')){
 
 await sepatClient
-.from('perfis')
+.from('sepat_perfis')
 .insert([{
 nome_completo:p.nome_completo,
 username:p.username,
@@ -1447,7 +1453,7 @@ nivel_acesso:Number(p.nivel_acesso||4)
 }else{
 
 await sepatClient
-.from('perfis')
+.from('sepat_perfis')
 .update({
 nome_completo:p.nome_completo,
 username:p.username,
@@ -1455,11 +1461,19 @@ cargo:p.cargo,
 nivel_acesso:Number(p.nivel_acesso||4)
 })
 .eq('id',p.id)
+
 }
+
 }
+
 alert('Perfis salvos')
+
+editandoPerfisSepat=false
+
 carregarPerfisSepat()
+
 }
+
 let sepatPerfisTCERO=[]
 let editandoPerfisTCEROSepat=false
 
@@ -1588,5 +1602,24 @@ alert('Perfis TCE-RO salvos')
 editandoPerfisTCEROSepat=false
 
 carregarPerfisTCEROSepat()
+
+}
+
+async function excluirPerfilSepat(id){
+
+if(!confirm('Excluir perfil?'))return
+
+let {error}=await sepatClient
+.from('sepat_perfis')
+.delete()
+.eq('id',id)
+
+if(error){
+console.log(error)
+alert('Erro ao excluir')
+return
+}
+
+carregarPerfisSepat()
 
 }
