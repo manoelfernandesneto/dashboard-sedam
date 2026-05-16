@@ -263,30 +263,27 @@ document.getElementById('user-info').innerHTML=
 ' • '+
 (perfil.origem||'-')
 
-let adminsBackup=['manoel','vagner']
-
+let adminsBackup=[
+'manoel',
+'vagner',
+'franciscovagner',
+'francisco.vagner',
+'vagner9'
+]
 let btnBackup=document.getElementById('btnBackupSedam')
-
 if(btnBackup){
-
-if(
-adminsBackup.includes(
-String(perfil.username||'').toLowerCase()
-)
-){
-
+let usuarioAtual=String(perfil.username||'')
+.toLowerCase()
+.trim()
+if(adminsBackup.includes(usuarioAtual)){
 btnBackup.classList.remove('hidden')
 btnBackup.style.display='inline-flex'
 btnBackup.style.visibility='visible'
 btnBackup.style.opacity='1'
-
 }else{
-
 btnBackup.classList.add('hidden')
 btnBackup.style.display='none'
-
 }
-
 }
 
 let tabPerfis=document.getElementById('tab-perfis')
