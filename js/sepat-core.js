@@ -250,6 +250,24 @@ tabPerfisTCERO.classList.remove('hidden')
 tabPerfisTCERO.classList.add('hidden')
 }
 }
+let adminsBackup=['manoel','vagner']
+
+let btnBackup=document.getElementById('btnBackupSepat')
+
+if(btnBackup){
+
+if(
+adminsBackup.includes(
+String(sepatUser?.username||'')
+.toLowerCase()
+)
+){
+btnBackup.classList.remove('hidden')
+}else{
+btnBackup.classList.add('hidden')
+}
+
+}
 }
 /*=========================================================
 007 SEPAT CORE SWITCHTAB
@@ -1629,4 +1647,31 @@ function voltarPainelGeral(){
 localStorage.removeItem('sepatUser')
 localStorage.removeItem('sepat_tab')
 window.location.href='index.html'
+}
+
+async function backupSepat(){
+
+let {data,error}=await sepatClient
+.from('sepat_deliberacoes')
+.select('*')
+
+if(error){
+console.log(error)
+alert('Erro backup')
+return
+}
+
+let blob=new Blob(
+[JSON.stringify(data,null,2)],
+{type:'application/json'}
+)
+
+let a=document.createElement('a')
+
+a.href=URL.createObjectURL(blob)
+
+a.download='backup_sepat_'+new Date().toISOString().slice(0,10)+'.json'
+
+a.click()
+
 }
