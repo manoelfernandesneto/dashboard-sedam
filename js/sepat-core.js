@@ -1118,17 +1118,28 @@ console.log(error)
 box.innerHTML='Erro ao carregar perfis.'
 return
 }
-let lista=data||[]
+sepatPerfis=data||[]
 box.innerHTML=`
-<div class="perfil-row-sepat" style="font-weight:1000;background:#e0f2fe;border-radius:14px;">
-<div>Nome</div><div>Usuário</div><div>Cargo</div><div>Nível</div>
+<div class="perfil-row-sepat" style="font-weight:1000;background:#dbeafe;border-radius:14px">
+<div>NOME</div>
+<div>USUÁRIO</div>
+<div>CARGO</div>
+<div>NÍVEL</div>
 </div>
-${lista.map(p=>`
+${sepatPerfis.map(p=>`
 <div class="perfil-row-sepat">
-<div>${p.nome_completo||'-'}</div>
-<div>${p.username||'-'}</div>
-<div>${p.cargo||'-'}</div>
-<div>${p.nivel_acesso||'-'}</div>
+<div>
+${editandoPerfisSepat?`<input class="inputPerfilSepat" data-id="${p.id}" data-campo="nome_completo" value="${p.nome_completo||''}">`:(p.nome_completo||'-')}
+</div>
+<div>
+${editandoPerfisSepat?`<input class="inputPerfilSepat" data-id="${p.id}" data-campo="username" value="${p.username||''}">`:(p.username||'-')}
+</div>
+<div>
+${editandoPerfisSepat?`<input class="inputPerfilSepat" data-id="${p.id}" data-campo="cargo" value="${p.cargo||''}">`:(p.cargo||'-')}
+</div>
+<div>
+${editandoPerfisSepat?`<input class="inputPerfilSepat" data-id="${p.id}" data-campo="nivel_acesso" value="${p.nivel_acesso||4}">`:(p.nivel_acesso||'-')}
+</div>
 </div>
 `).join('')}
 `
@@ -1346,7 +1357,7 @@ let editandoPerfisSepat=false
 
 function habilitarEdicaoPerfisSepat(){
 editandoPerfisSepat=!editandoPerfisSepat
-renderPerfisSepat()
+carregarPerfisSepat()
 }
 
 function novoPerfilSepat(){
@@ -1358,7 +1369,8 @@ username:'',
 cargo:'',
 nivel_acesso:4
 })
-renderPerfisSepat()
+editandoPerfisSepat=true
+carregarPerfisSepat()
 }
 
 async function salvarPerfisSepat(){
