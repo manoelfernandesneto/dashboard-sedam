@@ -1,46 +1,134 @@
 /*=========================================================
 001 SEDAM CORE DOMCONTENTLOADED
 =========================================================*/
-document.addEventListener("DOMContentLoaded",async ()=>{
+document.addEventListener("DOMContentLoaded",async()=>{
+
 document.body.style.visibility='hidden'
+
 let geral=document.getElementById('painel-geral-acesso')
 let login=document.getElementById('login-screen')
 let dash=document.getElementById('dashboard')
+
 let dataInicio=document.getElementById('dataInicio')
 let dataFim=document.getElementById('dataFim')
+
 if(dataInicio)dataInicio.value='2025-01-01'
 if(dataFim)dataFim.value='2028-01-01'
-document.body.classList.remove("login-bg")
+
 localStorage.removeItem('uid')
+
+let userLocal=localStorage.getItem('user')
+
+if(userLocal){
+
+try{
+
+let perfil=JSON.parse(userLocal)
+
+if(perfil&&perfil.username){
+
+window.userP=perfil
+userP=perfil
+
+document.body.classList.remove("login-bg")
+
+if(geral){
+geral.classList.add('hidden')
+geral.style.display='none'
+}
+
+if(login){
+login.classList.add('hidden')
+login.style.display='none'
+}
+
+if(dash){
+dash.classList.remove('hidden')
+dash.style.display='block'
+dash.style.visibility='visible'
+dash.style.opacity='1'
+}
+
+let info=document.getElementById('user-info')
+
+if(info){
+info.innerHTML=
+(perfil.nome_completo||'-')+
+' • '+
+(perfil.cargo||'-')+
+' • '+
+(perfil.origem||'-')
+}
+
+aplicarPermissoesAbas()
+
+await carregarDados()
+
+setTimeout(()=>{
+
+let abaSalva=localStorage.getItem('activeTab')||'dashboard'
+
+switchTab(abaSalva)
+
+if(typeof renderDashboard==='function'){
+renderDashboard()
+}
+
+if(typeof renderResumo==='function'){
+renderResumo()
+}
+
+if(typeof renderTable==='function'){
+renderTable()
+}
+
+if(typeof renderConcluidos==='function'){
+renderConcluidos()
+}
+
+if(typeof initPainelGrafico==='function'){
+initPainelGrafico()
+}
+
+},400)
+
+document.body.style.visibility='visible'
+
+return
+
+}
+
+}catch(e){
+
+console.log(e)
+
+localStorage.removeItem('user')
+
+}
+
+}
+
+document.body.classList.remove("login-bg")
+
 if(geral){
 geral.classList.remove('hidden')
 geral.style.display='flex'
 geral.style.visibility='visible'
 geral.style.opacity='1'
 }
+
 if(login){
 login.classList.add('hidden')
 login.style.display='none'
 }
+
 if(dash){
 dash.classList.add('hidden')
 dash.style.display='none'
 }
-let userLocal=localStorage.getItem('user')
-if(userLocal){
-try{
-let perfil=JSON.parse(userLocal)
-if(perfil&&perfil.username){
-window.userP=perfil
-userP=perfil
-aplicarPermissoesAbas()
-}
-}catch(e){
-console.log(e)
-localStorage.removeItem('user')
-}
-}
+
 document.body.style.visibility='visible'
+
 })
 /*=========================================================
 002 SEDAM CORE FUNCTION LOGIN
