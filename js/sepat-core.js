@@ -1449,15 +1449,23 @@ carregarPerfisTCEROSepat()
 }
 
 async function salvarPerfisTCEROSepat(){
+
 let inputs=document.querySelectorAll('.inputPerfilTCEROSepat')
+
 inputs.forEach(i=>{
+
 let perfil=sepatPerfisTCERO.find(p=>String(p.id)===String(i.dataset.id))
+
 if(perfil){
 perfil[i.dataset.campo]=i.value
 }
+
 })
+
 for(let p of sepatPerfisTCERO){
+
 if(String(p.id).startsWith('novo_')){
+
 await sepatClient
 .from('perfistce')
 .insert([{
@@ -1466,7 +1474,9 @@ username:p.username,
 cargo:p.cargo,
 nivel_acesso:Number(p.nivel_acesso||4)
 }])
+
 }else{
+
 await sepatClient
 .from('perfistce')
 .update({
@@ -1476,9 +1486,15 @@ cargo:p.cargo,
 nivel_acesso:Number(p.nivel_acesso||4)
 })
 .eq('id',p.id)
+
 }
+
 }
+
 alert('Perfis TCE-RO salvos')
+
 editandoPerfisTCEROSepat=false
+
 carregarPerfisTCEROSepat()
+
 }
