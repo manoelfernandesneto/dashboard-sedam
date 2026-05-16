@@ -532,7 +532,7 @@ mapa[chave]=[]
 }
 mapa[chave].push(i)
 })
-let grupos=Object.keys(mapa).map(k=>{
+let ocultar100Resumo=document.getElementById('ocultar100ResumoSepat')?.checked||false
 let arr=mapa[k]||[]
 let base=arr[0]||{}
 let media=Math.round(arr.reduce((acc,c)=>acc+getTotalSepat(c),0)/(arr.length||1))
@@ -542,6 +542,9 @@ base:base,
 lista:arr,
 media:media
 }
+}).filter(g=>{
+if(!ocultar100Resumo)return true
+return Number(g.media||0)<100
 }).sort((a,b)=>compareSepat(a.base,b.base))
 box.innerHTML=grupos.map(g=>{
 let titulo=modoResumoSepat==='item'?g.base.siglaitem:g.base.subitem
