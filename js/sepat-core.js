@@ -608,6 +608,10 @@ function renderResumoSepat(){
 let box=document.getElementById('cardsResumoSepat')
 if(!box)return
 let lista=[...(sepatData||[])].sort(compareSepat)
+let ocultar100Resumo=document.getElementById('ocultar100ResumoSepat')?.checked||false
+if(ocultar100Resumo){
+lista=lista.filter(i=>getTotalSepat(i)<100)
+}
 let mapa={}
 lista.forEach(i=>{
 let chave=modoResumoSepat==='item'?String(i.siglaitem||''):String(i.subitem||'')
@@ -617,7 +621,6 @@ mapa[chave]=[]
 }
 mapa[chave].push(i)
 })
-let ocultar100Resumo=document.getElementById('ocultar100ResumoSepat')?.checked||false
 let grupos=Object.keys(mapa).map(k=>{
 let arr=mapa[k]||[]
 let base=arr[0]||{}
@@ -628,9 +631,6 @@ base:base,
 lista:arr,
 media:media
 }
-}).filter(g=>{
-if(!ocultar100Resumo)return true
-return Number(g.media||0)<100
 }).sort((a,b)=>compareSepat(a.base,b.base))
 box.innerHTML=grupos.map(g=>{
 let titulo=modoResumoSepat==='item'?g.base.siglaitem:g.base.subitem
@@ -713,11 +713,9 @@ document.getElementById('buscaMonitoramentoSepat')?.value||''
 .trim()
 let ocultar100=document.getElementById('ocultar100Sepat')?.checked||false
 let lista=[...(sepatData||[])].sort(compareSepat)
-
+let ocultar100=document.getElementById('ocultar100Sepat')?.checked||false
 if(busca){
-
 lista=lista.filter(i=>{
-
 return[
 i.siglaitem,
 i.subitem,
