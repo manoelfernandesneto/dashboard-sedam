@@ -1810,20 +1810,31 @@ dash.style.display='none'
 }
 
 async function backupSedam(){
-let {data,error}=await client
-.from('deliberacoes')
-.select('*')
+try{
+let tabelas=['deliberacoes','perfis','perfistce','evolucao_mensal']
+let backup={}
+for(let t of tabelas){
+let {data,error}=await client.from(t).select('*')
 if(error){
 console.log(error)
-alert('Erro ao gerar backup')
-return
+continue
+}
+backup[t]=data||[]
 }
 let blob=new Blob(
-[JSON.stringify(data,null,2)],
+[JSON.stringify(backup,null,2)],
 {type:'application/json'}
 )
 let a=document.createElement('a')
 a.href=URL.createObjectURL(blob)
 a.download='backup_sedam_'+new Date().toISOString().slice(0,10)+'.json'
+document.body.appendChild(a)
 a.click()
+a.remove()
+URL.revokeObjectURL(a.href)
+alert('Backup Sedam realizado com sucesso')
+}catch(e){
+console.log(e)
+alert('Erro ao gerar backup')
+}
 }
