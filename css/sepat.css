@@ -1,398 +1,168 @@
-/*=========================================================
-001 SEPAT CSS BASE
-=========================================================*/
-*{box-sizing:border-box}
-body{margin:0;font-family:Inter,Arial,sans-serif;background:#eef5ff;color:#0f172a;overflow-x:hidden}
-.hidden{display:none!important}
-button,input,select{font-family:inherit}
-canvas{width:100%!important;max-width:100%!important}
+/*=========================================================001 SEPAT CSS RESET E BASE=========================================================*/
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{width:100%;min-height:100%;}
+body{font-family:Inter,Arial,sans-serif;background:#eef5ff;color:#0f172a;overflow-x:hidden;-webkit-font-smoothing:antialiased;}
+.hidden{display:none!important;}
+button,input,select,textarea{font-family:inherit;}
+button{outline:none;}
+input,select,textarea{outline:none;}
+canvas{width:100%!important;max-width:100%!important;}
+img{max-width:100%;display:block;}
 
-/*=========================================================
-002 SEPAT LOGIN
-=========================================================*/
-.login-sepat{
-position:fixed;
-inset:0;
-z-index:1000;
-display:flex;
-align-items:center;
-justify-content:center;
-overflow:auto;
-background:url('../assets/portovelho.png') center center/cover no-repeat;
-}
+/*=========================================================002 LOGIN SEPAT=========================================================*/
+.login-sepat{position:fixed;inset:0;z-index:1000;display:flex;align-items:center;justify-content:center;overflow:auto;background:url('../assets/portovelho.png') center center/cover no-repeat;}
+.login-sepat::before{content:'';position:absolute;inset:0;background:rgba(255,255,255,.18);backdrop-filter:blur(2px);z-index:0;}
+.login-bg-sepat{position:absolute;inset:0;z-index:0;background:linear-gradient(135deg,rgba(0,72,150,.10),rgba(0,0,0,.18));backdrop-filter:blur(.3px);}
+.login-card-sepat{position:relative;z-index:2;width:min(360px,90vw);padding:34px 28px;display:flex;flex-direction:column;gap:14px;text-align:center;border-radius:28px;background:rgba(255,255,255,.78);border:1px solid rgba(255,255,255,.9);box-shadow:0 25px 70px rgba(0,0,0,.35);backdrop-filter:blur(16px);}
+.login-card-sepat-img,.login-card-sedam-img{position:relative;z-index:20;width:100%;max-width:520px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;}
+.login-img-unificada{position:relative;z-index:1;width:100%;max-width:500px;border-radius:34px;box-shadow:0 20px 45px rgba(0,0,0,.25);pointer-events:none;}
+.login-actions-sepat,.login-actions-sedam{position:relative;z-index:30;width:100%;max-width:360px;display:flex;flex-direction:column;gap:12px;margin-top:-30px;padding:22px;background:rgba(255,255,255,.92);border-radius:24px;box-shadow:0 10px 30px rgba(0,0,0,.18);backdrop-filter:blur(10px);}
+.login-actions-sepat *,.login-actions-sedam *{pointer-events:auto;}
+.login-logo-sepat{font-size:46px;font-weight:1000;color:#0759c9;letter-spacing:4px;line-height:1;text-shadow:0 2px 0 rgba(255,255,255,.8);}
+.login-sub-sepat{font-size:15px;font-weight:1000;color:#0f172a;margin-bottom:8px;text-transform:uppercase;letter-spacing:1px;}
+.login-input-sepat{height:48px;padding:0 16px;border:none;border-radius:14px;background:#ffffff;color:#0f172a;font-weight:800;box-shadow:inset 0 0 0 1px rgba(15,23,42,.08);}
+.login-input-sepat:focus{box-shadow:0 0 0 3px rgba(7,89,201,.22);}
+.login-btn-sepat{height:52px;border:none;border-radius:14px;background:#0759c9;color:#ffffff;font-weight:1000;cursor:pointer;box-shadow:0 12px 26px rgba(7,89,201,.28);transition:.2s ease;}
+.login-btn-sepat:hover{background:#064db0;transform:translateY(-1px);}
+.login-voltar-sepat{height:38px;border:none;background:transparent;color:#0f3f83;font-weight:900;cursor:pointer;}
+.painel-img-sepat{background-image:linear-gradient(rgba(0,80,170,.08),rgba(0,80,170,.08)),url('../assets/sepat-card.png');}
+.painel-img-queimadas{background-image:linear-gradient(rgba(120,40,10,.10),rgba(120,40,10,.10)),url('../assets/queimadas-card.png');}
+.painel-img-unificada{width:100%;height:100%;object-fit:cover;border-radius:0;}
 
-.login-sepat::before{
-content:'';
-position:absolute;
-inset:0;
-background:rgba(255,255,255,.18);
-backdrop-filter:blur(2px);
-z-index:0;
-}
+/*=========================================================003 APP E TOPO=========================================================*/
+.app-sepat{min-height:100vh;background:linear-gradient(180deg,#eaf3ff,#f8fbff);}
+.main-sepat{max-width:1800px;margin:0 auto;padding:18px;border-radius:26px;background:linear-gradient(rgba(255,255,255,.82),rgba(255,255,255,.82)),url('../assets/bandeira-ro.png') center center/560px no-repeat;}
+.topo-sepat{position:sticky;top:0;z-index:50;min-height:74px;padding:12px 20px;display:flex;align-items:center;justify-content:space-between;color:#ffffff;background:linear-gradient(135deg,#0050aa,#0a67c7);border-bottom:1px solid rgba(255,255,255,.18);box-shadow:0 12px 30px rgba(0,80,170,.22);}
+.titulo-sepat{font-size:21px;font-weight:1000;letter-spacing:1px;}
+.usuario-sepat{font-size:11px;font-weight:800;opacity:.92;margin-top:4px;}
+.topo-acoes-sepat{display:flex;align-items:center;gap:10px;}
+.btn-topo-sepat{padding:8px 13px;border-radius:12px;border:1px solid rgba(255,255,255,.45);background:rgba(255,255,255,.14);color:#ffffff;font-size:11px;font-weight:1000;cursor:pointer;transition:.2s ease;}
+.btn-topo-sepat:hover{background:rgba(255,255,255,.24);}
+.btn-topo-sepat.sair{background:rgba(127,29,29,.35);}
 
-.login-card-sepat-img{
-position:relative;
-z-index:20;
-width:100%;
-max-width:520px;
-display:flex;
-flex-direction:column;
-align-items:center;
-justify-content:center;
-gap:18px;
-}
+/*=========================================================004 MINI KPIS TOPO=========================================================*/
+.mini-kpis-topo-sepat{display:flex;align-items:center;gap:8px;margin-right:12px;}
+.mini-kpi-topo-sepat{min-width:84px;height:48px;padding:4px 10px;display:flex;flex-direction:column;align-items:center;justify-content:center;border-radius:14px;color:#ffffff;font-weight:1000;box-shadow:0 6px 18px rgba(0,0,0,.12);}
+.mini-kpi-topo-sepat span{font-size:18px;line-height:1;}
+.mini-kpi-topo-sepat small{font-size:9px;letter-spacing:.5px;}
+.mini-kpi-topo-sepat.azul{background:linear-gradient(135deg,#2563eb,#38bdf8);}
+.mini-kpi-topo-sepat.verde{background:linear-gradient(135deg,#059669,#34d399);}
+.mini-kpi-topo-sepat.roxo{background:linear-gradient(135deg,#7c3aed,#a78bfa);}
 
-.login-img-unificada{
-width:100%;
-max-width:500px;
-border-radius:34px;
-box-shadow:0 20px 45px rgba(0,0,0,.28);
-display:block;
-pointer-events:none;
-}
+/*=========================================================005 TABS=========================================================*/
+.tabs-sepat{position:sticky;top:74px;z-index:45;display:flex;align-items:center;gap:10px;padding:12px 16px;overflow-x:auto;background:#eceff3;border-bottom:1px solid rgba(15,23,42,.08);backdrop-filter:blur(6px);}
+.tab-sepat{min-width:126px;height:58px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;border:none;border-radius:18px;background:#f8f8f8;color:#0f172a;font-size:14px;font-weight:1000;text-transform:uppercase;cursor:pointer;border:1px solid rgba(15,23,42,.06);box-shadow:0 8px 20px rgba(15,23,42,.06);transition:.2s ease;}
+.tab-sepat:hover{transform:translateY(-2px);}
+.tab-sepat.tab-active{background:linear-gradient(135deg,#0b73d1,#1597ff);color:#ffffff;box-shadow:0 16px 34px rgba(7,89,201,.28);}
+.tab-sepat span{white-space:nowrap;}
 
-.login-actions-sepat{
-position:relative;
-z-index:30;
-width:100%;
-max-width:360px;
-display:flex;
-flex-direction:column;
-gap:12px;
-margin-top:-28px;
-padding:22px;
-background:rgba(255,255,255,.96);
-border-radius:24px;
-box-shadow:0 14px 34px rgba(0,0,0,.18);
-}
+/*=========================================================006 VIEWS E ANIMAÇÕES=========================================================*/
+.view-sepat{width:100%;animation:fadeSepat .18s ease;}
+@keyframes fadeSepat{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
 
-.login-actions-sepat *{
-pointer-events:auto;
-}
-.login-bg-sepat{position:absolute;inset:0;background:linear-gradient(135deg,rgba(0,72,150,.10),rgba(0,0,0,.18));backdrop-filter:blur(.3px)}
-.login-card-sepat{position:relative;z-index:2;width:min(360px,90vw);background:rgba(255,255,255,.78);border:1px solid rgba(255,255,255,.9);box-shadow:0 25px 70px rgba(0,0,0,.35);border-radius:28px;padding:34px 28px;display:flex;flex-direction:column;gap:14px;text-align:center;backdrop-filter:blur(16px)}
-.login-logo-sepat{font-size:46px;font-weight:1000;color:#0759c9;letter-spacing:4px;line-height:1;text-shadow:0 2px 0 rgba(255,255,255,.8)}
-.login-sub-sepat{font-size:15px;font-weight:1000;color:#0f172a;margin-bottom:8px;text-transform:uppercase;letter-spacing:1px}
-.login-input-sepat{height:48px;border:none;border-radius:14px;background:#ffffff;color:#0f172a;font-weight:800;padding:0 16px;outline:none;box-shadow:inset 0 0 0 1px rgba(15,23,42,.08)}
-.login-input-sepat:focus{box-shadow:0 0 0 3px rgba(7,89,201,.22)}
-.login-btn-sepat{height:52px;border:none;border-radius:14px;background:#0759c9;color:#ffffff;font-weight:1000;cursor:pointer;box-shadow:0 12px 26px rgba(7,89,201,.28)}
-.login-btn-sepat:hover{background:#064db0}
-.login-voltar-sepat{height:38px;border:none;background:transparent;color:#0f3f83;font-weight:900;cursor:pointer}
-.painel-img-sepat{background-image:linear-gradient(rgba(0,80,170,.08),rgba(0,80,170,.08)),url('../assets/sepat-card.png')}
-.painel-img-queimadas{background-image:linear-gradient(rgba(120,40,10,.10),rgba(120,40,10,.10)),url('../assets/queimadas-card.png')}
+/*=========================================================007 KPIS PRINCIPAIS=========================================================*/
+.kpis-sepat{display:grid;grid-template-columns:repeat(4,minmax(180px,1fr));gap:16px;margin-top:10px;margin-bottom:20px;}
+.kpi-sepat{position:relative;overflow:hidden;height:138px;padding:18px 22px;display:flex;flex-direction:column;align-items:flex-start;justify-content:space-between;border-radius:28px;color:#ffffff;border:1px solid rgba(255,255,255,.18);box-shadow:0 18px 40px rgba(15,23,42,.16);}
+.kpi-sepat::before{content:"";position:absolute;top:-40px;right:-40px;width:120px;height:120px;border-radius:50%;background:rgba(255,255,255,.10);}
+.kpi-sepat div{font-size:15px;font-weight:1000;text-transform:uppercase;letter-spacing:.8px;line-height:1.1;color:#ffffff;text-shadow:0 1px 2px rgba(0,0,0,.18);}
+.kpi-sepat strong{font-size:62px;font-weight:1000;line-height:1;color:#ffffff;text-shadow:0 2px 4px rgba(0,0,0,.15);}
+.kpi-sepat.azul{background:linear-gradient(135deg,#0759c9,#38bdf8);}
+.kpi-sepat.verde{background:linear-gradient(135deg,#047857,#34d399);}
+.kpi-sepat.roxo{background:linear-gradient(135deg,#6d28d9,#a78bfa);}
+.kpi-sepat.dourado{background:linear-gradient(135deg,#b45309,#f59e0b);}
 
-/*=========================================================
-003 SEPAT APP TOPO
-=========================================================*/
-.app-sepat{min-height:100vh;background:linear-gradient(180deg,#eaf3ff,#f8fbff)}
-.topo-sepat{min-height:74px;background:linear-gradient(135deg,#0050aa,#0877d8);display:flex;align-items:center;justify-content:space-between;padding:12px 20px;color:#ffffff;box-shadow:0 12px 30px rgba(0,80,170,.22);position:sticky;top:0;z-index:50}
-.titulo-sepat{font-size:21px;font-weight:1000;letter-spacing:1px}
-.usuario-sepat{font-size:11px;font-weight:800;opacity:.92;margin-top:4px}
-.topo-acoes-sepat{display:flex;gap:10px;align-items:center}
-.btn-topo-sepat{border:1px solid rgba(255,255,255,.45);background:rgba(255,255,255,.14);color:#ffffff;border-radius:12px;padding:8px 13px;font-size:11px;font-weight:1000;cursor:pointer}
-.btn-topo-sepat.sair{background:rgba(127,29,29,.35)}
-.btn-topo-sepat:hover{background:rgba(255,255,255,.24)}
+/*=========================================================008 DASHBOARD E GRÁFICOS=========================================================*/
+.grid-dashboard-sepat{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.card-grafico-sepat{min-height:350px;padding:18px;border-radius:34px;background:rgba(255,255,255,.86);border:1px solid rgba(15,23,42,.06);box-shadow:0 14px 36px rgba(15,23,42,.08);backdrop-filter:blur(6px);}
+.card-grafico-sepat.full{grid-column:1/-1;}
+.card-grafico-sepat.grande{min-height:400px;}
+.card-title-sepat{margin-bottom:16px;font-size:28px;font-weight:1000;color:#111827;text-transform:uppercase;letter-spacing:.5px;}
+.card-grafico-sepat canvas{height:245px!important;filter:contrast(1.08) saturate(1.15);}
+.card-grafico-sepat.full canvas{height:280px!important;}
+.card-grafico-sepat.grande canvas{height:310px!important;}
+.chart-container-sepat{position:relative;height:100%;width:100%;}
+.grafico-label-sepat{font-size:14px!important;font-weight:1000!important;color:#111827!important;}
+.descricao-grafico-sepat{margin-top:12px;padding:14px;border-radius:18px;background:#ffffff;font-size:14px;font-weight:800;line-height:1.5;color:#0f172a;box-shadow:0 10px 28px rgba(15,23,42,.08);}
 
-/*=========================================================
-004 SEPAT TABS
-=========================================================*/
-.tabs-sepat{display:flex;gap:10px;align-items:center;padding:12px 16px;background:#f4f8ff;border-bottom:1px solid rgba(15,23,42,.08);position:sticky;top:74px;z-index:45;overflow-x:auto}
-.tab-sepat{min-width:126px;height:58px;border:none;border-radius:18px;background:#ffffff;color:#0f172a;font-size:10px;font-weight:1000;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;cursor:pointer;box-shadow:0 8px 24px rgba(15,23,42,.08);border:1px solid rgba(15,23,42,.05)}
-.tab-sepat:hover{transform:translateY(-2px)}
-.tab-sepat.tab-active{background:linear-gradient(135deg,#0759c9,#0ea5e9);color:#ffffff;box-shadow:0 16px 34px rgba(7,89,201,.28)}
-.tab-sepat span{white-space:nowrap}
+/*=========================================================009 FILTROS=========================================================*/
+.barra-filtros-sepat{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:12px;padding:10px;border-radius:20px;background:rgba(255,255,255,.78);box-shadow:0 10px 30px rgba(15,23,42,.07);}
+.btn-filtro-sepat,.btn-pdf-sepat{height:38px;padding:0 14px;border:none;border-radius:12px;font-size:11px;font-weight:1000;cursor:pointer;transition:.2s ease;}
+.btn-filtro-sepat{background:#e0f2fe;color:#0759c9;}
+.btn-pdf-sepat{background:#dc2626;color:#ffffff;}
+.input-busca-sepat,.select-sepat{height:38px;padding:0 14px;border:none;border-radius:12px;background:#ffffff;color:#0f172a;font-size:11px;font-weight:800;box-shadow:inset 0 0 0 1px rgba(15,23,42,.08);}
+.input-busca-sepat{min-width:280px;flex:1;}
+.select-sepat{min-width:260px;max-width:100%;flex:1;}
 
-/*=========================================================
-005 SEPAT MAIN E KPIS
-=========================================================*/
-.main-sepat{max-width:1800px;margin:0 auto;padding:18px}
-.view-sepat{width:100%;animation:fadeSepat .18s ease}
-@keyframes fadeSepat{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
-.kpis-sepat{display:grid;grid-template-columns:repeat(4,minmax(180px,1fr));gap:12px;margin-bottom:16px}
-.kpi-sepat{
-height:138px;
-border-radius:28px;
-padding:18px 22px;
-display:flex;
-flex-direction:column;
-align-items:flex-start;
-justify-content:space-between;
-color:#ffffff;
-box-shadow:0 18px 40px rgba(15,23,42,.16);
-border:1px solid rgba(255,255,255,.18);
-}
-.kpi-sepat div{
-font-size:15px;
-font-weight:1000;
-text-transform:uppercase;
-letter-spacing:.8px;
-line-height:1.1;
-color:#ffffff;
-text-shadow:0 1px 2px rgba(0,0,0,.18);
-}
-.kpi-sepat strong{
-font-size:62px;
-font-weight:1000;
-line-height:1;
-color:#ffffff;
-text-shadow:0 2px 4px rgba(0,0,0,.15);
-}
-.kpi-sepat.azul{background:linear-gradient(135deg,#0759c9,#38bdf8)}
-.kpi-sepat.verde{background:linear-gradient(135deg,#047857,#34d399)}
-.kpi-sepat.roxo{background:linear-gradient(135deg,#6d28d9,#a78bfa)}
-.kpi-sepat.dourado{background:linear-gradient(135deg,#b45309,#f59e0b)}
+/*=========================================================010 CARDS RESUMO=========================================================*/
+.cards-resumo-sepat{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:12px;}
+.card-resumo-sepat{padding:16px;display:flex;flex-direction:column;justify-content:flex-start;border-radius:20px;border:1px solid rgba(255,255,255,.7);box-shadow:0 14px 34px rgba(15,23,42,.12);cursor:pointer;transition:.2s ease;}
+.card-resumo-sepat:hover{transform:translateY(-3px);}
+.card-resumo-sepat.verde{background:linear-gradient(135deg,#bbf7d0,#86efac);}
+.card-resumo-sepat.amarelo{background:linear-gradient(135deg,#fef3c7,#fde68a);}
+.card-resumo-sepat.vermelho{background:linear-gradient(135deg,#fecaca,#fca5a5);}
+.card-resumo-sepat.cinza{background:linear-gradient(135deg,#e2e8f0,#cbd5e1);}
+.card-resumo-head{font-size:10px;font-weight:1000;color:#0f172a;text-transform:uppercase;line-height:1.15;}
+.card-resumo-desc{margin-top:8px;font-size:12px;font-weight:700;color:#111827;line-height:1.45;white-space:normal!important;word-break:break-word;overflow:visible!important;text-overflow:unset!important;display:block!important;}
+.card-resumo-total{margin-top:8px;font-size:30px;font-weight:1000;color:#0f172a;text-align:right;}
 
-/*=========================================================
-006 SEPAT GRAFICOS
-=========================================================*/
-.grid-dashboard-sepat{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-.card-grafico-sepat{
-background:rgba(255,255,255,.82);
-border:1px solid rgba(15,23,42,.06);
-border-radius:34px;
-padding:18px;
-box-shadow:0 14px 36px rgba(15,23,42,.08);
-min-height:350px;
-backdrop-filter:blur(6px);
-}
-.card-grafico-sepat.full{grid-column:1/-1}
-.card-grafico-sepat.grande{min-height:400px}
-.card-title-sepat{
-font-size:28px;
-font-weight:1000;
-color:#111827;
-margin-bottom:16px;
-text-transform:uppercase;
-letter-spacing:.5px;
-}
-.card-grafico-sepat canvas{height:245px!important}
-.card-grafico-sepat.full canvas{height:280px!important}
-.card-grafico-sepat.grande canvas{height:310px!important}
-.descricao-grafico-sepat{margin-top:12px;background:#ffffff;border-radius:18px;padding:14px;font-size:12px;font-weight:800;line-height:1.4;color:#0f172a;box-shadow:0 10px 28px rgba(15,23,42,.08)}
+/*=========================================================011 TABELAS=========================================================*/
+.tabela-wrap-sepat{width:100%;overflow:auto;max-height:calc(100vh - 245px);border-radius:20px;background:#ffffff;border:1px solid rgba(15,23,42,.06);box-shadow:0 14px 36px rgba(15,23,42,.08);}
+.tabela-sepat{width:100%;min-width:980px;border-collapse:collapse;background:#dce5df;}
+.tabela-sepat th{position:sticky;top:0;z-index:20;padding:10px 8px!important;background:#f3f4f6!important;color:#111827!important;font-size:12px!important;font-weight:1000!important;text-transform:uppercase!important;letter-spacing:.5px!important;text-align:left;white-space:nowrap;border-bottom:2px solid #cbd5e1!important;}
+.tabela-sepat td{padding:6px 7px;font-size:10px;font-weight:700;color:#0f172a;line-height:1.35;vertical-align:top;white-space:normal!important;word-break:break-word;overflow:visible!important;text-overflow:unset!important;height:auto!important;border-bottom:1px solid #cfd8d3!important;}
+.tabela-sepat tr:nth-child(even){background:#d9e2dc;}
+.tabela-sepat tr:hover{background:#d0dad4;}
+.tabela-sepat th:nth-child(1),.tabela-sepat td:nth-child(1){position:sticky;left:0;z-index:6;width:42px!important;min-width:42px!important;max-width:42px!important;padding:4px 2px!important;text-align:center;background:#eef6ff;font-size:10px;font-weight:1000;line-height:1.05;white-space:nowrap!important;}
+.tabela-sepat tr:nth-child(even) td:nth-child(1){background:#e2ece6;}
+.tabela-sepat td:nth-child(2){width:24%;min-width:420px;font-size:11px;font-weight:500;line-height:1.45;color:#111827;}
+.tabela-sepat td:nth-child(3){width:16%;min-width:180px;font-size:10px;line-height:1.25;}
+.tabela-sepat td:nth-child(4){width:12%;min-width:170px;font-size:10px;line-height:1.2;}
+.tabela-sepat td:nth-child(5){width:8%;min-width:110px;font-size:10px;line-height:1.1;text-align:center;}
+.tabela-sepat td:nth-child(n+6){width:44px;min-width:44px;padding:3px 2px;text-align:center;font-size:10px;font-weight:1000;}
+.tabela-sepat td:last-child,.tabela-sepat th:last-child{position:sticky;right:0;z-index:7;background:#f3f4f6;}
+.td-total-sepat{font-size:10px!important;font-weight:1000;color:#111827!important;text-align:center;background:#f3f4f6!important;border-left:1px solid #d1d5db!important;}
+.input-mes-sepat{width:42px;height:28px;padding:0 2px;border:none;border-radius:7px;background:#ffffff;font-size:12px;font-weight:1000;color:#111827;text-align:center;box-shadow:inset 0 0 0 1px rgba(0,0,0,.10);appearance:textfield;-moz-appearance:textfield;}
+.input-mes-sepat::-webkit-outer-spin-button,.input-mes-sepat::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;}
+.input-mes-sepat:disabled{background:#e5e7eb!important;color:#64748b!important;cursor:not-allowed;opacity:1!important;}
+.mes-atual-sepat{position:relative;z-index:5;transform:scale(1.05);background:#fff8d6!important;border-left:2px solid #f59e0b!important;border-right:2px solid #f59e0b!important;}
+.mes-atual-sepat input{height:32px!important;font-size:13px!important;font-weight:1000!important;color:#111827!important;background:#fffbe7!important;border:2px solid #f59e0b!important;}
 
-/*=========================================================
-007 SEPAT FILTROS
-=========================================================*/
-.barra-filtros-sepat{display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin-bottom:12px;background:rgba(255,255,255,.78);border-radius:20px;padding:10px;box-shadow:0 10px 30px rgba(15,23,42,.07)}
-.btn-filtro-sepat,.btn-pdf-sepat{height:38px;border:none;border-radius:12px;padding:0 14px;font-size:11px;font-weight:1000;cursor:pointer}
-.btn-filtro-sepat{background:#e0f2fe;color:#0759c9}
-.btn-pdf-sepat{background:#dc2626;color:#ffffff}
-.input-busca-sepat,.select-sepat{height:38px;border:none;border-radius:12px;background:#ffffff;color:#0f172a;font-size:11px;font-weight:800;padding:0 14px;outline:none;box-shadow:inset 0 0 0 1px rgba(15,23,42,.08)}
-.input-busca-sepat{min-width:280px;flex:1}
-.select-sepat{min-width:260px;max-width:100%;flex:1}
+/*=========================================================012 PERFIS E MODAIS=========================================================*/
+.lista-perfis-sepat{padding:14px;border-radius:20px;background:#ffffff;box-shadow:0 14px 36px rgba(15,23,42,.08);}
+.perfil-row-sepat{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:10px;padding:10px;border-bottom:1px solid #e5e7eb;font-size:11px;font-weight:800;}
+.inputPerfilSepat,.inputPerfilTCEROSepat{width:100%;height:34px;padding:0 10px;border:1px solid #cbd5e1;border-radius:10px;background:#fff;color:#0f172a;font-size:12px;font-weight:800;}
+.modal-sepat{position:fixed;inset:0;z-index:999;display:flex;align-items:center;justify-content:center;padding:20px;background:rgba(15,23,42,.55);}
+.modal-card-sepat{position:relative;width:min(820px,94vw);max-height:88vh;overflow:auto;padding:18px;border-radius:22px;background:#ffffff;box-shadow:0 25px 80px rgba(0,0,0,.35);}
+.modal-close-sepat{position:absolute;top:12px;right:16px;width:34px;height:34px;border:none;border-radius:50%;background:#ef4444;color:#ffffff;font-size:22px;font-weight:1000;cursor:pointer;}
+.modal-title-sepat{margin-bottom:10px;font-size:16px;font-weight:1000;color:#0759c9;}
+.modal-text-sepat{font-size:12px;font-weight:800;line-height:1.45;color:#0f172a;}
+.modal-grid-sepat{display:grid;grid-template-columns:repeat(5,minmax(70px,1fr));gap:8px;margin-top:14px;}
+.modal-mes-sepat{padding:8px;text-align:center;border-radius:12px;background:#f1f5f9;}
+.modal-mes-sepat div:first-child{font-size:10px;font-weight:1000;color:#475569;}
+.modal-mes-sepat div:last-child{font-size:16px;font-weight:1000;color:#0759c9;}
 
-/*=========================================================
-008 SEPAT CARDS RESUMO
-=========================================================*/
-.cards-resumo-sepat{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:12px}
-.card-resumo-sepat{min-height:auto;border-radius:20px;padding:16px;box-shadow:0 14px 34px rgba(15,23,42,.12);cursor:pointer;display:flex;flex-direction:column;justify-content:flex-start;border:1px solid rgba(255,255,255,.7)}
-.card-resumo-sepat:hover{transform:translateY(-3px)}
-.card-resumo-sepat.verde{background:linear-gradient(135deg,#bbf7d0,#86efac)}
-.card-resumo-sepat.amarelo{background:linear-gradient(135deg,#fef3c7,#fde68a)}
-.card-resumo-sepat.vermelho{background:linear-gradient(135deg,#fecaca,#fca5a5)}
-.card-resumo-sepat.cinza{background:linear-gradient(135deg,#e2e8f0,#cbd5e1)}
-.card-resumo-head{font-size:10px;font-weight:1000;color:#0f172a;text-transform:uppercase;line-height:1.15}
-.card-resumo-desc{font-size:12px;font-weight:700;color:#111827;line-height:1.45;margin-top:8px;white-space:normal!important;word-break:break-word;overflow:visible!important;text-overflow:unset!important;display:block!important}
-.card-resumo-total{font-size:30px;font-weight:1000;color:#0f172a;text-align:right;margin-top:8px}
-
-/*=========================================================
-009 SEPAT TABELA
-=========================================================*/
-.tabela-wrap-sepat{width:100%;overflow:auto;background:#ffffff;border-radius:20px;box-shadow:0 14px 36px rgba(15,23,42,.08);border:1px solid rgba(15,23,42,.06);max-height:calc(100vh - 245px)}
-.tabela-sepat{width:100%;min-width:1180px;border-collapse:collapse;background:#dce5df}
-.tabela-sepat th{background:#f3f4f6!important;color:#111827!important;font-size:9px;text-transform:uppercase;letter-spacing:.3px;padding:7px 6px;text-align:left;position:sticky;top:0;z-index:20;white-space:nowrap;border-bottom:1px solid #d1d5db!important}
-.tabela-sepat td{font-size:10px;font-weight:700;color:#0f172a;padding:6px 7px;line-height:1.35;vertical-align:top;white-space:normal!important;word-break:break-word;overflow:visible!important;text-overflow:unset!important;height:auto!important;border-bottom:1px solid #cfd8d3!important}
-.tabela-sepat tr:nth-child(even){background:#d9e2dc}
-.tabela-sepat tr:hover{background:#d0dad4}
-.tabela-sepat th:nth-child(1),.tabela-sepat td:nth-child(1){width:42px!important;min-width:42px!important;max-width:42px!important;text-align:center;padding:4px 2px!important;position:sticky;left:0;z-index:6;background:#eef6ff;font-size:10px;font-weight:1000;line-height:1.05;white-space:nowrap!important}
-.tabela-sepat tr:nth-child(even) td:nth-child(1){background:#e2ece6}
-.tabela-sepat td:nth-child(2){width:48%;min-width:880px;font-size:11px;font-weight:800;line-height:1.35}
-.tabela-sepat td:nth-child(3){width:16%;min-width:180px;font-size:10px;line-height:1.25}
-.tabela-sepat td:nth-child(4){width:12%;min-width:170px;font-size:10px;line-height:1.2}
-.tabela-sepat td:nth-child(5){width:8%;min-width:110px;font-size:10px;line-height:1.1;text-align:center}
-.tabela-sepat td:nth-child(n+6){width:52px;min-width:52px;text-align:center;font-size:10px;font-weight:1000;padding:4px 3px}
-.tabela-sepat td:last-child,.tabela-sepat th:last-child{position:sticky;right:0;z-index:7;background:#f3f4f6}
-.td-total-sepat{font-weight:1000;color:#111827!important;background:#f3f4f6!important;text-align:center;font-size:10px!important;border-left:1px solid #d1d5db!important}
-.input-mes-sepat{width:46px;height:24px;font-size:10px;font-weight:1000;border:none;border-radius:6px;background:#ffffff;text-align:center;padding:0;box-shadow:inset 0 0 0 1px rgba(0,0,0,.08)}
-.input-mes-sepat:disabled{background:#e5e7eb!important;color:#64748b!important;cursor:not-allowed;opacity:1!important}
-.mes-atual-sepat{transform:scale(1.05);background:#fff8d6!important;position:relative;z-index:5;border-left:2px solid #f59e0b!important;border-right:2px solid #f59e0b!important}
-.mes-atual-sepat input{font-size:11px!important;font-weight:1000!important;background:#fffbe7!important;border:2px solid #f59e0b!important;height:28px!important}
-/*=========================================================
-010 SEPAT PERFIS E MODAL
-=========================================================*/
-.lista-perfis-sepat{background:#ffffff;border-radius:20px;padding:14px;box-shadow:0 14px 36px rgba(15,23,42,.08)}
-.perfil-row-sepat{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:10px;padding:10px;border-bottom:1px solid #e5e7eb;font-size:11px;font-weight:800}
-.modal-sepat{position:fixed;inset:0;background:rgba(15,23,42,.55);z-index:999;display:flex;align-items:center;justify-content:center;padding:20px}
-.modal-card-sepat{width:min(820px,94vw);max-height:88vh;overflow:auto;background:#ffffff;border-radius:22px;padding:18px;box-shadow:0 25px 80px rgba(0,0,0,.35);position:relative}
-.modal-close-sepat{position:absolute;right:16px;top:12px;width:34px;height:34px;border:none;border-radius:50%;background:#ef4444;color:#ffffff;font-size:22px;font-weight:1000;cursor:pointer}
-.modal-title-sepat{font-size:16px;font-weight:1000;color:#0759c9;margin-bottom:10px}
-.modal-text-sepat{font-size:12px;font-weight:800;line-height:1.45;color:#0f172a}
-.modal-grid-sepat{display:grid;grid-template-columns:repeat(5,minmax(70px,1fr));gap:8px;margin-top:14px}
-.modal-mes-sepat{background:#f1f5f9;border-radius:12px;padding:8px;text-align:center}
-.modal-mes-sepat div:first-child{font-size:10px;font-weight:1000;color:#475569}
-.modal-mes-sepat div:last-child{font-size:16px;font-weight:1000;color:#0759c9}
-
-/*=========================================================
-011 SEPAT RESPONSIVO
-=========================================================*/
+/*=========================================================013 RESPONSIVO=========================================================*/
 @media(max-width:1200px){
-.kpis-sepat{grid-template-columns:repeat(2,1fr)}
-.grid-dashboard-sepat{grid-template-columns:1fr}
-.card-grafico-sepat.full{grid-column:auto}
-.tabela-wrap-sepat{max-height:none}
+.kpis-sepat{grid-template-columns:repeat(2,1fr);}
+.grid-dashboard-sepat{grid-template-columns:1fr;}
+.card-grafico-sepat.full{grid-column:auto;}
+.tabela-wrap-sepat{max-height:none;}
 }
 
 @media(max-width:680px){
-.main-sepat{padding:10px}
-.topo-sepat{flex-direction:column;align-items:flex-start;gap:10px}
-.topo-acoes-sepat{width:100%}
-.btn-topo-sepat{flex:1}
-.tabs-sepat{top:118px}
-.kpis-sepat{grid-template-columns:1fr}
-.kpi-sepat{height:96px}
-.kpi-sepat strong{font-size:30px}
-.grid-dashboard-sepat{grid-template-columns:1fr}
-.card-grafico-sepat canvas{height:230px!important}
-.cards-resumo-sepat{grid-template-columns:1fr}
-.barra-filtros-sepat{align-items:stretch}
-.btn-filtro-sepat,.btn-pdf-sepat,.input-busca-sepat,.select-sepat{width:100%;min-width:100%}
-}
-
-/*=========================================================
-012 SEPAT TABELA REFINADA
-=========================================================*/
-.tabela-wrap-sepat{width:100%;overflow:auto;background:#ffffff;border-radius:20px;box-shadow:0 14px 36px rgba(15,23,42,.08);border:1px solid rgba(15,23,42,.06);max-height:calc(100vh - 245px)}
-.tabela-sepat{width:100%;min-width:980px;border-collapse:collapse;background:#dce5df}
-.tabela-sepat th{background:#f3f4f6!important;color:#111827!important;font-size:12px!important;font-weight:1000!important;text-transform:uppercase!important;letter-spacing:.5px!important;padding:10px 8px!important;text-align:left;position:sticky;top:0;z-index:20;white-space:nowrap;border-bottom:2px solid #cbd5e1!important}
-.tabela-sepat td{font-size:10px;font-weight:700;color:#0f172a;padding:6px 7px;line-height:1.35;vertical-align:top;white-space:normal!important;word-break:break-word;overflow:visible!important;text-overflow:unset!important;height:auto!important;border-bottom:1px solid #cfd8d3!important}
-.tabela-sepat tr:nth-child(even){background:#d9e2dc}
-.tabela-sepat tr:hover{background:#d0dad4}
-.tabela-sepat th:nth-child(1),.tabela-sepat td:nth-child(1){width:42px!important;min-width:42px!important;max-width:42px!important;text-align:center;padding:4px 2px!important;position:sticky;left:0;z-index:6;background:#eef6ff;font-size:10px;font-weight:1000;line-height:1.05;white-space:nowrap!important}
-.tabela-sepat tr:nth-child(even) td:nth-child(1){background:#e2ece6}
-.tabela-sepat td:nth-child(2){width:24%;min-width:420px;font-size:11px;font-weight:500;line-height:1.45;color:#111827}
-.tabela-sepat td:nth-child(3){width:16%;min-width:180px;font-size:10px;line-height:1.25}
-.tabela-sepat td:nth-child(4){width:12%;min-width:170px;font-size:10px;line-height:1.2}
-.tabela-sepat td:nth-child(5){width:8%;min-width:110px;font-size:10px;line-height:1.1;text-align:center}
-.tabela-sepat td:nth-child(n+6){width:44px;min-width:44px;text-align:center;font-size:10px;font-weight:1000;padding:3px 2px}
-.tabela-sepat td:last-child,.tabela-sepat th:last-child{position:sticky;right:0;z-index:7;background:#f3f4f6}
-.td-total-sepat{font-weight:1000;color:#111827!important;background:#f3f4f6!important;text-align:center;font-size:10px!important;border-left:1px solid #d1d5db!important}
-.input-mes-sepat{width:42px;height:28px;font-size:12px;font-weight:1000;border:none;border-radius:7px;background:#ffffff;text-align:center;padding:0 2px;box-shadow:inset 0 0 0 1px rgba(0,0,0,.10);appearance:textfield;-moz-appearance:textfield}
-.input-mes-sepat::-webkit-outer-spin-button,.input-mes-sepat::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
-.input-mes-sepat:disabled{background:#e5e7eb!important;color:#64748b!important;cursor:not-allowed;opacity:1!important}
-.mes-atual-sepat{transform:scale(1.05);background:#fff8d6!important;position:relative;z-index:5;border-left:2px solid #f59e0b!important;border-right:2px solid #f59e0b!important}
-.mes-atual-sepat input{font-size:13px!important;font-weight:1000!important;background:#fffbe7!important;border:2px solid #f59e0b!important;height:32px!important;color:#111827!important}
-/*=========================================================
-013 SEPAT DASHBOARD ESTILO SEDAM
-=========================================================*/
-.main-sepat{background:linear-gradient(rgba(255,255,255,.82),rgba(255,255,255,.82)),url('../assets/bandeira-ro.png') center center/560px no-repeat;border-radius:26px}
-.topo-sepat{background:linear-gradient(135deg,#0050aa,#0a67c7);border-bottom:1px solid rgba(255,255,255,.18)}
-.tabs-sepat{background:#eceff3;backdrop-filter:blur(6px)}
-.tab-sepat{background:#f8f8f8;font-size:14px;font-weight:1000;text-transform:uppercase;border:1px solid rgba(15,23,42,.06);box-shadow:0 8px 20px rgba(15,23,42,.06)}
-.tab-sepat.tab-active{background:linear-gradient(135deg,#0b73d1,#1597ff);color:#ffffff;box-shadow:0 16px 34px rgba(7,89,201,.28)}
-.kpis-sepat{margin-top:10px;margin-bottom:20px;gap:16px}
-.kpi-sepat{position:relative;overflow:hidden}
-.kpi-sepat::before{content:"";position:absolute;top:-40px;right:-40px;width:120px;height:120px;background:rgba(255,255,255,.10);border-radius:50%}
-.kpi-sepat div{font-size:15px!important;font-weight:1000!important;text-transform:uppercase!important;letter-spacing:.8px!important;line-height:1.1!important;color:#ffffff!important;text-shadow:0 1px 2px rgba(0,0,0,.18)!important}
-.kpi-sepat strong{font-size:62px!important;font-weight:1000!important;line-height:1!important;color:#ffffff!important;text-shadow:0 2px 4px rgba(0,0,0,.15)!important}
-.card-grafico-sepat{background:rgba(255,255,255,.86)!important;border-radius:34px!important;padding:18px!important;backdrop-filter:blur(6px)!important}
-.card-title-sepat{font-size:28px!important;font-weight:1000!important;color:#111827!important;margin-bottom:16px!important;text-transform:uppercase!important;letter-spacing:.5px!important}
-.card-grafico-sepat canvas{filter:contrast(1.08) saturate(1.15)}
-.descricao-grafico-sepat{font-size:14px!important;font-weight:800!important;line-height:1.5!important}
-.chart-container-sepat{position:relative;height:100%;width:100%}
-.grafico-label-sepat{font-size:14px!important;font-weight:1000!important;color:#111827!important}
-@media(max-width:680px){.kpi-sepat strong{font-size:42px!important}.card-title-sepat{font-size:20px!important}.tab-sepat{font-size:11px!important}}
-.mini-kpis-topo-sepat{display:flex;gap:8px;align-items:center;margin-right:12px}
-.mini-kpi-topo-sepat{min-width:84px;height:48px;border-radius:14px;padding:4px 10px;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#ffffff;font-weight:1000;box-shadow:0 6px 18px rgba(0,0,0,.12)}
-.mini-kpi-topo-sepat span{font-size:18px;line-height:1}
-.mini-kpi-topo-sepat small{font-size:9px;letter-spacing:.5px}
-.mini-kpi-topo-sepat.azul{background:linear-gradient(135deg,#2563eb,#38bdf8)}
-.mini-kpi-topo-sepat.verde{background:linear-gradient(135deg,#059669,#34d399)}
-.mini-kpi-topo-sepat.roxo{background:linear-gradient(135deg,#7c3aed,#a78bfa)}
-.inputPerfilSepat,.inputPerfilTCEROSepat{width:100%;height:34px;border:1px solid #cbd5e1;border-radius:10px;padding:0 10px;font-size:12px;font-weight:800;background:#fff;color:#0f172a}
-.login-card-sepat-img,
-.login-card-sedam-img{
-width:100%;
-max-width:520px;
-display:flex;
-flex-direction:column;
-align-items:center;
-justify-content:center;
-gap:18px;
-}
-
-.login-img-unificada{
-width:100%;
-max-width:500px;
-border-radius:34px;
-box-shadow:0 20px 45px rgba(0,0,0,.25);
-display:block;
-}
-
-.login-actions-sepat,
-.login-actions-sedam{
-width:100%;
-max-width:360px;
-display:flex;
-flex-direction:column;
-gap:12px;
-margin-top:-8px;
-}
-
-.painel-img-unificada{
-width:100%;
-height:100%;
-object-fit:cover;
-display:block;
-border-radius:0;
-}
-.login-card-sepat-img,
-.login-card-sedam-img{
-position:relative;
-z-index:2;
-}
-
-.login-img-unificada{
-position:relative;
-z-index:1;
-pointer-events:none;
-}
-
-.login-actions-sepat,
-.login-actions-sedam{
-position:relative;
-z-index:5;
-margin-top:-30px;
-padding:22px;
-background:rgba(255,255,255,.92);
-backdrop-filter:blur(10px);
-border-radius:24px;
-box-shadow:0 10px 30px rgba(0,0,0,.18);
-}
-
-.login-actions-sepat button,
-.login-actions-sedam button,
-.login-actions-sepat input,
-.login-actions-sedam input{
-position:relative;
-z-index:10;
-pointer-events:auto;
-}
-.login-bg-sepat{
-position:absolute;
-inset:0;
-z-index:0;
-}
-
-.login-card-sepat-img{
-position:relative;
-z-index:20;
-}
-
-.login-actions-sepat{
-position:relative;
-z-index:30;
-}
-
-.login-actions-sepat *{
-pointer-events:auto;
+.main-sepat{padding:10px;}
+.topo-sepat{flex-direction:column;align-items:flex-start;gap:10px;}
+.topo-acoes-sepat{width:100%;}
+.btn-topo-sepat{flex:1;}
+.tabs-sepat{top:118px;}
+.tab-sepat{font-size:11px!important;}
+.kpis-sepat{grid-template-columns:1fr;}
+.kpi-sepat{height:96px;}
+.kpi-sepat strong{font-size:42px!important;}
+.grid-dashboard-sepat{grid-template-columns:1fr;}
+.card-title-sepat{font-size:20px!important;}
+.card-grafico-sepat canvas{height:230px!important;}
+.cards-resumo-sepat{grid-template-columns:1fr;}
+.barra-filtros-sepat{align-items:stretch;}
+.btn-filtro-sepat,.btn-pdf-sepat,.input-busca-sepat,.select-sepat{width:100%;min-width:100%;}
 }
