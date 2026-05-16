@@ -73,6 +73,7 @@ aplicarPermissoesSepat()
 await carregarSepatDados()
 controlarMesesSepat()
 switchSepatTab('dashboard')
+
 return
 }catch(e){
 console.log(e)
@@ -190,6 +191,7 @@ if(miniProdutos)miniProdutos.innerText=produtos||0
 },900)
 
 switchSepatTab('dashboard')
+}
 /*=========================================================
 004 SEPAT CORE LOGOUT
 =========================================================*/
