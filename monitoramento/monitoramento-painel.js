@@ -5,52 +5,120 @@ let graficoBeneficios=null
 
 async function carregarDashboard(){
 
-try{
+let origem=''
 
-let{count:total}=await client.from('monitoramento_itens').select('*',{count:'exact',head:true})
+let filtro=document.getElementById('filtroOrigem')
 
-let{count:executadas}=await client.from('monitoramento_itens').select('*',{count:'exact',head:true}).eq('status','EXECUTADA')
+if(filtro){
+origem=filtro.value||''
+}
 
-let{count:parciais}=await client.from('monitoramento_itens').select('*',{count:'exact',head:true}).eq('status','PARCIALMENTE EXECUTADA')
+let query=client
+.from('vw_monitoramento_integrado')
+.select('*')
 
-let{count:naoExecutadas}=await client.from('monitoramento_itens').select('*',{count:'exact',head:true}).eq('status','NÃO EXECUTADA')
+if(origem){
 
-let{count:andamento}=await client.from('monitoramento_itens').select('*',{count:'exact',head:true}).eq('status','EM ANDAMENTO')
+query=query.eq('origem',origem)
 
-document.getElementById('kpiTotal').innerHTML=total||0
-document.getElementById('kpiExecutadas').innerHTML=executadas||0
-document.getElementById('kpiParciais').innerHTML=parciais||0
-document.getElementById('kpiNaoExecutadas').innerHTML=naoExecutadas||0
-document.getElementById('kpiAndamento').innerHTML=andamento||0
+}
+
+let{data,error}=await query
+
+if(error){
+console.log(error)
+return
+}
+
+let total=data.length
+
+let executadas=0
+let parciais=0
+let naoExecutadas=0
+let andamento=0
+
+let riscoAlto=0
+let riscoMedio=0
+let riscoBaixo=0
+
+let beneficios=0
+
+;(data||[]).forEach(i=>{
+
+let percentual=Number(i.percentual||0)
+
+beneficios+=percentual
+
+if(i.status==='EXECUTADA'){
+executadas++
+}
+
+if(i.status==='PARCIALMENTE EXECUTADA'){
+parciais++
+}
+
+if(i.status==='NÃO EXECUTADA'){
+naoExecutadas++
+}
+
+if(i.status==='EM ANDAMENTO'){
+andamento++
+}
+
+if(percentual<40){
+
+riscoAlto++
+
+}else if(percentual<80){
+
+riscoMedio++
+
+}else{
+
+riscoBaixo++
+
+}
+
+})
+
+document.getElementById('kpiTotal').innerHTML=total
+document.getElementById('kpiExecutadas').innerHTML=executadas
+document.getElementById('kpiParciais').innerHTML=parciais
+document.getElementById('kpiNaoExecutadas').innerHTML=naoExecutadas
+document.getElementById('kpiAndamento').innerHTML=andamento
 
 await carregarGraficoStatus(
-executadas||0,
-parciais||0,
-naoExecutadas||0,
-andamento||0
+executadas,
+parciais,
+naoExecutadas,
+andamento
 )
 
-await carregarGraficoEvolucao()
-await carregarGraficoCriticidade()
-await carregarGraficoBeneficios()
-}catch(e){
+await carregarGraficoCriticidade(
+riscoAlto,
+riscoMedio,
+riscoBaixo
+)
 
-console.log(e)
+await carregarGraficoBeneficios(
+beneficios,
+total
+)
 
+await carregarGraficoEvolucao(data||[])
+
+if(typeof carregarAlertasTecnicos==='function'){
+await carregarAlertasTecnicos()
 }
 
 }
 
 async function carregarGraficoStatus(executadas,parciais,naoExecutadas,andamento){
-
 let ctx=document.getElementById('graficoStatus')
-
 if(!ctx)return
-
 if(graficoStatus){
 graficoStatus.destroy()
 }
-
 graficoStatus=new Chart(ctx,{
 type:'doughnut',
 data:{
@@ -98,53 +166,44 @@ plugins:[ChartDataLabels]
 
 }
 
-async function carregarGraficoEvolucao(){
-
-let ctx=document.getElementById('graficoEvolucao')
-
-if(!ctx)return
-
-let{data,error}=await client
-.from('monitoramento_itens')
-.select('created_at,status')
-
-if(error){
-console.log(error)
-return
-}
-
-let mapa={}
-
-;(data||[]).forEach(i=>{
-
-let d=new Date(i.created_at)
-
-let chave=
-String(d.getMonth()+1).padStart(2,'0')+
-'/'+
-d.getFullYear()
-
-if(!mapa[chave]){
-mapa[chave]=0
-}
-
-mapa[chave]++
-
+async function carregarGraficoEvolucao(data){
+let meses=[
+'JAN',
+'FEV',
+'MAR',
+'ABR',
+'MAI',
+'JUN',
+'JUL',
+'AGO',
+'SET',
+'OUT',
+'NOV',
+'DEZ'
+]
+let valores=[]
+for(let i=0;i<12;i++){
+let soma=0
+;(data||[]).forEach(d=>{
+soma+=Number(d.percentual||0)
 })
-
-let labels=Object.keys(mapa)
-let valores=Object.values(mapa)
-
-if(graficoEvolucao){
-graficoEvolucao.destroy()
+let media=0
+if(data.length>0){
+media=(soma/data.length).toFixed(1)
 }
-
-graficoEvolucao=new Chart(ctx,{
+valores.push(media)
+}
+let ctx=document.getElementById('graficoEvolucao')
+if(!ctx)return
+if(window.graficoEvolucaoObj){
+window.graficoEvolucaoObj.destroy()
+}
+window.graficoEvolucaoObj=new Chart(ctx,{
 type:'line',
 data:{
-labels:labels,
+labels:meses,
 datasets:[{
-label:'Evolução de Monitoramentos',
+label:'Evolução Institucional',
 data:valores,
 borderColor:'#3b82f6',
 backgroundColor:'rgba(59,130,246,.2)',
@@ -161,9 +220,7 @@ color:'#fff'
 }
 },
 datalabels:{
-color:'#fff',
-anchor:'end',
-align:'top'
+color:'#fff'
 }
 },
 scales:{
@@ -187,7 +244,6 @@ color:'rgba(255,255,255,.05)'
 },
 plugins:[ChartDataLabels]
 })
-
 }
 
 async function carregarListaMonitoramentos(){
