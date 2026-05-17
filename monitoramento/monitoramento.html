@@ -81,6 +81,9 @@ NÃO IDENTIFICADO
 <button class="nav-btn" onclick="abrirTela('workflow')">
 ✔ Workflow
 </button>
+<button class="nav-btn" onclick="abrirTela('executivo')">
+🏛 Executivo
+</button>
   
 </nav>
 
@@ -574,7 +577,66 @@ Mapa de Risco
 <div id="listaWorkflow"></div>
 
 </section>
+<section id="tela-executivo" class="tela-monitoramento hidden">
 
+<div class="grid-cards">
+
+<div class="card-kpi verde">
+<div class="kpi-titulo">EFETIVIDADE GERAL</div>
+<div id="kpiEfetividade" class="kpi-valor">0%</div>
+</div>
+
+<div class="card-kpi azul">
+<div class="kpi-titulo">ÓRGÃOS</div>
+<div id="kpiOrgaosExecutivo" class="kpi-valor">0</div>
+</div>
+
+<div class="card-kpi amarelo">
+<div class="kpi-titulo">MONITORAMENTOS</div>
+<div id="kpiMonitoramentosExecutivo" class="kpi-valor">0</div>
+</div>
+
+<div class="card-kpi vermelho">
+<div class="kpi-titulo">CRÍTICOS</div>
+<div id="kpiCriticosExecutivo" class="kpi-valor">0</div>
+</div>
+
+</div>
+
+<div class="painel-graficos">
+
+<div class="grafico-box">
+<div class="grafico-header">
+<div class="grafico-titulo">
+Efetividade por Órgão
+</div>
+</div>
+<canvas id="graficoExecutivoOrgaos"></canvas>
+</div>
+
+<div class="grafico-box">
+<div class="grafico-header">
+<div class="grafico-titulo">
+Status Institucional
+</div>
+</div>
+<canvas id="graficoExecutivoStatus"></canvas>
+</div>
+
+</div>
+
+<div class="ranking-box">
+
+<div class="monitoramento-titulo">
+🏛 Painel Estratégico
+</div>
+
+<div id="listaExecutiva"></div>
+
+</div>
+
+</section>
+  
   
 </main>
 
