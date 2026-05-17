@@ -80,46 +80,32 @@ document.getElementById('tbodyMatriz').innerHTML=html
 }
 
 async function salvarNovoItemMatriz(){
-
 if(!MONITORAMENTO_ATUAL){
 alert('Selecione um monitoramento')
 return
 }
-
+if(!MONITORAMENTO_ATUAL){
+alert('Selecione um monitoramento')
+return
+}
 let payload={
-
 monitoramento_id:MONITORAMENTO_ATUAL,
-
 item:document.getElementById('mItem').value,
-
 subitem:document.getElementById('mSubitem').value,
-
 status:document.getElementById('mStatus').value,
-
 criticidade:document.getElementById('mCriticidade').value,
-
 prazo:document.getElementById('mPrazo').value,
-
 percentual:Number(
 document.getElementById('mPercentual').value||0
 ),
-
 achado:document.getElementById('mAchado').value,
-
 causa:document.getElementById('mCausa').value,
-
 efeito:document.getElementById('mEfeito').value,
-
 deliberacao:document.getElementById('mDeliberacao').value,
-
 acao_gestor:document.getElementById('mAcaoGestor').value,
-
 produto_esperado:document.getElementById('mProduto').value,
-
 entrega_esperada:document.getElementById('mEntrega').value,
-
 beneficio_esperado:document.getElementById('mBeneficio').value
-
 }
 
 if(!payload.item){
