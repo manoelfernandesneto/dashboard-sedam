@@ -3,8 +3,7 @@ async function gerarRelatorioCompleto(){
 let{data:monitoramentos,error}=await client
 .from('monitoramentos')
 .select('*')
-.order('id',{ascending:false})
-
+.order('titulo',{ascending:true})
 if(error){
 console.log(error)
 return
@@ -84,7 +83,7 @@ let{data:itens}=await client
 .from('monitoramento_itens')
 .select('*')
 .eq('monitoramento_id',m.id)
-.order('item',{ascending:true})
+itens=ordenarDataGlobal(itens)
 
 for(let item of(itens||[])){
 
