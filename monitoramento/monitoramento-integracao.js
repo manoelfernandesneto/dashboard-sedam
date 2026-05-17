@@ -33,6 +33,7 @@ criticidade='MÉDIA'
 }
 let payload={
 monitoramento_id:MONITORAMENTO_ATUAL,
+deliberacao_id:d.id,
 origem:origem,
 item:d.item,
 subitem:d.subitem,
