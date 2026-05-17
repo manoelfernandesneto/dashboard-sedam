@@ -128,6 +128,10 @@ b.style.display='flex'
 
 document.addEventListener('DOMContentLoaded',async()=>{
 await carregarUsuarioMonitoramento()
+let monitoramentoSalvo=localStorage.getItem('monitoramentoAtual')
+if(monitoramentoSalvo){
+MONITORAMENTO_ATUAL=Number(monitoramentoSalvo)
+}
 await carregarDashboard()
 if(typeof atualizarMonitoramentoAutomatico==='function'){
 await atualizarMonitoramentoAutomatico()
@@ -140,7 +144,6 @@ await atualizarMonitoramentoAutomatico()
 window.addEventListener('error',e=>{
 console.log('ERRO GLOBAL:',e.error)
 })
-
 window.addEventListener('unhandledrejection',e=>{
 console.log('PROMISE ERROR:',e.reason)
 })
