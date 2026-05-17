@@ -13,9 +13,23 @@ if(filtro){
 origem=filtro.value||''
 }
 
+let monitoramento=await carregarMonitoramentoAtual()
+
 let query=client
 .from('vw_monitoramento_integrado')
 .select('*')
+
+if(
+monitoramento&&
+monitoramento.origem
+){
+
+query=query.eq(
+'origem',
+monitoramento.origem
+)
+
+}
 
 if(origem){
 
