@@ -64,6 +64,10 @@ carregarWorkflow()
 if(nome==='executivo'){
 carregarPainelExecutivo()
 }
+if(nome==='central'){
+carregarCentralEvidencias()
+}
+  
 }
 
 async function carregarUsuarioMonitoramento(){
