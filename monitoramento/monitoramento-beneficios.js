@@ -6,6 +6,7 @@ async function carregarPainelBeneficios(){
 let{data,error}=await client
 .from('monitoramento_resultados')
 .select('*')
+data=ordenarDataGlobal(data)
 
 if(error){
 console.log(error)
@@ -191,6 +192,7 @@ plugins:[ChartDataLabels]
 }
 
 async function carregarListaBeneficios(data){
+data=ordenarDataGlobal(data)
 
 let html=''
 
