@@ -1029,7 +1029,12 @@ html+=`
 <div class="alerta-box">
 
 <div class="alerta-titulo">
-⚠ ITEM ${i.item||'-'} • ${i.subitem||'-'}
+<div class="alerta-item">
+⚠ ITEM ${i.item}
+</div>
+<div class="alerta-subitem">
+${i.subitem}
+</div>
 </div>
 
 <div class="alerta-texto">
