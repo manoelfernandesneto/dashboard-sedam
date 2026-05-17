@@ -1112,3 +1112,7 @@ await carregarPainelBeneficios()
 abrirTela('dashboard')
 
 }
+function filtrarOrigemMonitoramento(){
+carregarListaMonitoramentos()
+carregarDashboard()
+}
