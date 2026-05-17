@@ -172,3 +172,51 @@ return null
 }
 return data
 }
+
+function ordenarItensMonitoramento(lista){
+
+return(lista||[]).sort((a,b)=>{
+
+let ia=String(a.item||'0.0')
+.split('.')
+.map(v=>parseInt(v)||0)
+
+let ib=String(b.item||'0.0')
+.split('.')
+.map(v=>parseInt(v)||0)
+
+for(let i=0;i<Math.max(ia.length,ib.length);i++){
+
+let va=ia[i]||0
+let vb=ib[i]||0
+
+if(va!==vb){
+return va-vb
+}
+
+}
+
+let sa=String(a.subitem||'0.0')
+.split('.')
+.map(v=>parseInt(v)||0)
+
+let sb=String(b.subitem||'0.0')
+.split('.')
+.map(v=>parseInt(v)||0)
+
+for(let i=0;i<Math.max(sa.length,sb.length);i++){
+
+let va=sa[i]||0
+let vb=sb[i]||0
+
+if(va!==vb){
+return va-vb
+}
+
+}
+
+return 0
+
+})
+
+}
