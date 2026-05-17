@@ -206,68 +206,7 @@ await carregarEvidencias()
 
 }
 
-async function editarEvidencia(id){
 
-let{data,error}=await client
-.from('monitoramento_evidencias')
-.select('*')
-.eq('id',id)
-.single()
-
-if(error||!data)return
-
-let descricao=prompt(
-'Descrição',
-data.descricao||''
-)
-
-if(descricao===null)return
-
-let confiabilidade=prompt(
-'Confiabilidade',
-data.confiabilidade||''
-)
-
-let status=prompt(
-'Status',
-data.status_validacao||''
-)
-
-let{error:updateError}=await client
-.from('monitoramento_evidencias')
-.update({
-descricao:descricao,
-confiabilidade:confiabilidade,
-status_validacao:status
-})
-.eq('id',id)
-
-if(updateError){
-console.log(updateError)
-return
-}
-
-await carregarEvidencias()
-
-}
-
-async function excluirEvidencia(id){
-
-if(!confirm('Excluir evidência?'))return
-
-let{error}=await client
-.from('monitoramento_evidencias')
-.delete()
-.eq('id',id)
-
-if(error){
-console.log(error)
-return
-}
-
-await carregarEvidencias()
-
-}
 
 async function registrarLog(
 acao,
