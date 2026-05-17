@@ -319,7 +319,12 @@ async function gerarResumoIA(){
 let{data,error}=await client
 .from('monitoramento_itens')
 .select('*')
+data=ordenarDataGlobal(data)
 
+if(error){
+console.log(error)
+return
+}
 if(error){
 console.log(error)
 return
