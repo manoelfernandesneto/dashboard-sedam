@@ -89,89 +89,42 @@ carregarPainelBeneficios()
 }
 
 async function carregarUsuarioMonitoramento(){
-let nome='MANOEL FERNANDES NETO'
-try{
 let userLocal=localStorage.getItem('user')
-if(userLocal){
-let u=JSON.parse(userLocal)
-nome=
-u.nome_completo||
-u.nome||
-u.username||
-nome
+if(!userLocal){
+document.getElementById('usuarioLogado').innerHTML='NÃO IDENTIFICADO'
+return
 }
+try{
+let perfil=JSON.parse(userLocal)
+USER_MONITORAMENTO={
+id:perfil.id||null,
+nome:perfil.nome_completo||perfil.nome||'USUÁRIO',
+username:perfil.username||'',
+nivel:Number(perfil.nivel_acesso||4),
+origem:perfil.origem||'SEDAM'
+}
+document.getElementById('usuarioLogado').innerHTML=`${USER_MONITORAMENTO.nome} • N${USER_MONITORAMENTO.nivel}`
+await aplicarPermissoesMonitoramento()
 }catch(e){
 console.log(e)
+document.getElementById('usuarioLogado').innerHTML='NÃO IDENTIFICADO'
 }
-let{data,error}=await client
-.from('monitoramento_permissoes')
-.select('*')
-.ilike('nome',nome)
-.eq('ativo',true)
-.single()
-
-if(error||!data){
-
-document.getElementById('usuarioLogado').innerHTML=
-'SEM PERMISSÃO'
-
-console.log(error)
-
-return
-
 }
 
-USER_MONITORAMENTO=data
-
-document.getElementById('usuarioLogado').innerHTML=
-data.nome+
-' • NÍVEL '+
-data.nivel
-
-aplicarPermissoes()
-
-}
-
-function aplicarPermissoes(){
-
+async function aplicarPermissoesMonitoramento(){
 if(!USER_MONITORAMENTO)return
-
-let nivel=Number(
-USER_MONITORAMENTO.nivel||5
-)
-
+let nivel=Number(USER_MONITORAMENTO.nivel||4)
+let botoesAdmin=[...document.querySelectorAll('.admin-only')]
 if(nivel>2){
-
-document
-.querySelectorAll('.btn-admin')
-.forEach(b=>b.remove())
-
-}
-
-if(nivel>3){
-
-document
-.querySelectorAll('.somente-supervisor')
-.forEach(b=>b.remove())
-
-}
-
-if(nivel>=5){
-
-document
-.querySelectorAll('input,textarea,select,button')
-.forEach(el=>{
-
-if(
-!el.classList.contains('btn-livre')
-){
-el.disabled=true
-}
-
+botoesAdmin.forEach(b=>{
+b.style.display='none'
 })
-
 }
-
+if((USER_MONITORAMENTO.username||'').toLowerCase()==='manoel'){
+botoesAdmin.forEach(b=>{
+b.style.display='flex'
+})
+}
 }
 
 document.addEventListener('DOMContentLoaded',async()=>{
@@ -185,21 +138,10 @@ await atualizarMonitoramentoAutomatico()
 }
 })
 
-
 window.addEventListener('error',e=>{
-
-console.log(
-'ERRO GLOBAL:',
-e.error
-)
-
+console.log('ERRO GLOBAL:',e.error)
 })
 
 window.addEventListener('unhandledrejection',e=>{
-
-console.log(
-'PROMISE ERROR:',
-e.reason
-)
-
+console.log('PROMISE ERROR:',e.reason)
 })
