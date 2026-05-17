@@ -965,69 +965,34 @@ await carregarDashboard()
 }
 
 async function carregarAlertasTecnicos(){
-
-let{data,error}=await client
-.from('monitoramento_itens')
-.select('*')
-
+let{data,error}=await client.from('monitoramento_itens').select('*')
 if(error){
 console.log(error)
 return
 }
-
-let html=''
-
+let html='<div class="alertas-grid">'
 let hoje=new Date()
-
 ;(data||[]).forEach(i=>{
-
 let alertas=[]
-
 let percentual=Number(i.percentual||0)
-
 if(percentual<40){
-
-alertas.push(
-'Percentual inferior a 40%'
-)
-
+alertas.push('Percentual inferior a 40%')
 }
-
 if(i.criticidade==='ALTA'){
-
-alertas.push(
-'Criticidade alta identificada'
-)
-
+alertas.push('Criticidade alta identificada')
 }
-
 if(i.status==='NÃO EXECUTADA'){
-
-alertas.push(
-'Item não executado'
-)
-
+alertas.push('Item não executado')
 }
-
 if(i.prazo){
-
 let prazo=new Date(i.prazo)
-
 if(prazo<hoje&&i.status!=='EXECUTADA'){
-
-alertas.push(
-'Prazo expirado'
-)
-
+alertas.push('Prazo expirado')
 }
-
 }
-
 if(alertas.length>0){
-
 html+=`
 <div class="alerta-box">
-
 <div class="alerta-titulo">
 <div class="alerta-item">
 ⚠ ITEM ${i.item}
@@ -1036,22 +1001,15 @@ html+=`
 ${i.subitem}
 </div>
 </div>
-
 <div class="alerta-texto">
-
 ${alertas.map(a=>`• ${a}`).join('<br>')}
-
 </div>
-
 </div>
 `
-
 }
-
 })
-
-if(!html){
-
+html+='</div>'
+if(html==='<div class="alertas-grid"></div>'){
 html=`
 <div class="alerta-box" style="background:#064e3b;border-color:#10b981;">
 <div class="alerta-titulo">
@@ -1063,10 +1021,9 @@ Os itens monitorados encontram-se dentro dos parâmetros técnicos esperados.
 </div>
 `
 }
-
 document.getElementById('painelAlertas').innerHTML=html
-
 }
+
 async function abrirMonitoramento(id){
 
 MONITORAMENTO_ATUAL=id
