@@ -197,7 +197,11 @@ if(error){
 console.log(error)
 return
 }
-
+await registrarLog(
+'EXCLUSÃO RESULTADO',
+'monitoramento_resultados',
+id
+)
 await carregarResultados()
 
 }
