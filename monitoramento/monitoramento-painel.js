@@ -105,7 +105,7 @@ beneficios,
 total
 )
 
-await carregarGraficoEvolucao(data||[])
+await carregarGraficoEvolucao()
 
 if(typeof carregarAlertasTecnicos==='function'){
 await carregarAlertasTecnicos()
@@ -166,49 +166,73 @@ plugins:[ChartDataLabels]
 
 }
 
-async function carregarGraficoEvolucao(data){
-let meses=[
-'JAN',
-'FEV',
-'MAR',
-'ABR',
-'MAI',
-'JUN',
-'JUL',
-'AGO',
-'SET',
-'OUT',
-'NOV',
-'DEZ'
-]
-let valores=[]
-for(let i=0;i<12;i++){
-let soma=0
-;(data||[]).forEach(d=>{
-soma+=Number(d.percentual||0)
+async function carregarGraficoEvolucao(){
+
+let{data,error}=await client
+.from('evolucao_mensal')
+.select('*')
+.order('mes_referencia',{ascending:true})
+
+if(error){
+console.log(error)
+return
+}
+
+let mapa={}
+
+;(data||[]).forEach(e=>{
+
+let mes=e.mes_referencia||'SEM MÊS'
+
+if(!mapa[mes]){
+mapa[mes]=[]
+}
+
+mapa[mes].push(
+Number(e.percentual_lancado||0)
+)
+
 })
-let media=0
-if(data.length>0){
-media=(soma/data.length).toFixed(1)
-}
-valores.push(media)
-}
+
+let labels=[]
+let valores=[]
+
+Object.keys(mapa).forEach(m=>{
+
+labels.push(m)
+
+let arr=mapa[m]
+
+let media=
+arr.reduce((a,b)=>a+b,0)
+/arr.length
+
+valores.push(
+Number(media.toFixed(1))
+)
+
+})
+
 let ctx=document.getElementById('graficoEvolucao')
+
 if(!ctx)return
+
 if(window.graficoEvolucaoObj){
 window.graficoEvolucaoObj.destroy()
 }
-window.graficoEvolucaoObj=new Chart(ctx,{
+
+window.graficoEvolucaoObj=
+new Chart(ctx,{
 type:'line',
 data:{
-labels:meses,
+labels:labels,
 datasets:[{
-label:'Evolução Institucional',
+label:'Evolução Real TAGS',
 data:valores,
 borderColor:'#3b82f6',
 backgroundColor:'rgba(59,130,246,.2)',
 fill:true,
-tension:.3
+tension:.35
 }]
 },
 options:{
@@ -220,7 +244,9 @@ color:'#fff'
 }
 },
 datalabels:{
-color:'#fff'
+color:'#fff',
+anchor:'end',
+align:'top'
 }
 },
 scales:{
@@ -244,6 +270,7 @@ color:'rgba(255,255,255,.05)'
 },
 plugins:[ChartDataLabels]
 })
+
 }
 
 async function carregarListaMonitoramentos(){
