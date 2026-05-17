@@ -166,17 +166,34 @@ console.log('PROMISE ERROR:',e.reason)
 
 
 async function carregarMonitoramentoAtual(){
+
 if(!MONITORAMENTO_ATUAL)return null
-let{data,error}=await client
+
+let resposta=await window.client
 .from('monitoramentos')
 .select('*')
 .eq('id',MONITORAMENTO_ATUAL)
 .single()
+
+console.log('RESPOSTA COMPLETA MONITORAMENTO')
+console.log(resposta)
+
+let data=resposta.data
+let error=resposta.error
+
 if(error){
+
+console.log('ERRO REAL SUPABASE:')
 console.log(error)
+
+alert(JSON.stringify(error,null,2))
+
 return null
+
 }
+
 return data
+
 }
 
 function ordenarItensMonitoramento(lista){
