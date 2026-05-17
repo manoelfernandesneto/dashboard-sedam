@@ -1095,3 +1095,13 @@ display:flex;
 align-items:center;
 justify-content:center;
 }
+.preview-relatorio{
+background:#f8fafc!important;
+color:#0f172a!important;
+border-radius:24px;
+padding:28px;
+line-height:1.8;
+}
+.preview-relatorio *{
+color:#0f172a!important;
+}
