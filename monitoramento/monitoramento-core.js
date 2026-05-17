@@ -1,12 +1,9 @@
-const SUPABASE_URL='https://zvtzbiqfwhggysiuiuxh.supabase.co/rest/v1/'
-const SUPABASE_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp2dHpiaXFmd2hnZ3lzaXVpdXhoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc1ODYyMjcsImV4cCI6MjA5MzE2MjIyN30.tCnFZv2B6Kmd9KsyZM8CHClZqsq7Nyu-8nxyYVs_ZMQ'
-
 const client=supabase.createClient(
-SUPABASE_URL,
-SUPABASE_KEY
+window.SUPABASE_URL,
+window.SUPABASE_ANON_KEY
 )
-
 let MONITORAMENTO_ATUAL=null
+let USER_MONITORAMENTO=null
 
 function abrirTela(nome){
 
