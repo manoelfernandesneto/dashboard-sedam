@@ -52,11 +52,84 @@ carregarResultados()
 }
 
 }
+async function carregarUsuarioMonitoramento(){
 
+let nome=prompt(
+'Informe o nome do auditor'
+)
+
+if(!nome)return
+
+let{data,error}=await client
+.from('monitoramento_permissoes')
+.select('*')
+.ilike('nome',nome)
+.eq('ativo',true)
+.single()
+
+if(error||!data){
+
+alert('Usuário sem permissão')
+
+throw error
+
+}
+
+USER_MONITORAMENTO=data
+
+document.getElementById('usuarioLogado').innerHTML=
+data.nome+
+' • NÍVEL '+
+data.nivel
+
+aplicarPermissoes()
+
+}
+
+function aplicarPermissoes(){
+
+if(!USER_MONITORAMENTO)return
+
+let nivel=Number(
+USER_MONITORAMENTO.nivel||5
+)
+
+if(nivel>2){
+
+document
+.querySelectorAll('.btn-admin')
+.forEach(b=>b.remove())
+
+}
+
+if(nivel>3){
+
+document
+.querySelectorAll('.somente-supervisor')
+.forEach(b=>b.remove())
+
+}
+
+if(nivel>=5){
+
+document
+.querySelectorAll('input,textarea,select,button')
+.forEach(el=>{
+
+if(
+!el.classList.contains('btn-livre')
+){
+el.disabled=true
+}
+
+})
+
+}
+
+}
 document.addEventListener('DOMContentLoaded',async()=>{
-
+await carregarUsuarioMonitoramento()
 await carregarDashboard()
-
 })
 
 window.addEventListener('error',e=>{
