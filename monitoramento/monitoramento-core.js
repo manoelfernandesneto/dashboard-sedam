@@ -52,34 +52,26 @@ carregarAnalises()
 if(nome==='resultados'){
 carregarResultados()
 }
-
+if(nome==='historico'){
+carregarHistorico()
 }
+}
+
 async function carregarUsuarioMonitoramento(){
-
 let nome='MANOEL FERNANDES NETO'
-
 try{
-
 let userLocal=localStorage.getItem('user')
-
 if(userLocal){
-
 let u=JSON.parse(userLocal)
-
 nome=
 u.nome_completo||
 u.nome||
 u.username||
 nome
-
 }
-
 }catch(e){
-
 console.log(e)
-
 }
-
 let{data,error}=await client
 .from('monitoramento_permissoes')
 .select('*')
