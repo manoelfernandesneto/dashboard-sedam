@@ -568,7 +568,7 @@ background:#475569;
 body{
 background:
 linear-gradient(rgba(15,23,42,.96),rgba(15,23,42,.98)),
-url('../assets/bg-monitoramento.jpg') center center/cover fixed;
+url('../assets/bg-monitoramento.png') center center/cover fixed;
 }
 .card-kpi{
 position:relative;
