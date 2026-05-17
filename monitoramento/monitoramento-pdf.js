@@ -13,6 +13,23 @@ pdf.setFontSize(10)
 pdf.text('Painel Técnico de Auditoria e Controle',105,23,{align:'center'})
 pdf.setTextColor(0,0,0)
 y=42
+let canvasStatus=document.getElementById('graficoStatus')
+if(canvasStatus){
+let imgStatus=canvasStatus.toDataURL('image/png',1.0)
+pdf.addImage(imgStatus,'PNG',10,y,90,55)
+}
+let canvasCriticidade=document.getElementById('graficoCriticidade')
+if(canvasCriticidade){
+let imgCrit=canvasCriticidade.toDataURL('image/png',1.0)
+pdf.addImage(imgCrit,'PNG',110,y,90,55)
+}
+y+=65
+let canvasEvolucao=document.getElementById('graficoEvolucao')
+if(canvasEvolucao){
+let imgEvolucao=canvasEvolucao.toDataURL('image/png',1.0)
+pdf.addImage(imgEvolucao,'PNG',10,y,190,60)
+}
+y+=72
 let dataAtual=new Date().toLocaleDateString('pt-BR')
 pdf.setFontSize(11)
 pdf.setFont('helvetica','normal')
