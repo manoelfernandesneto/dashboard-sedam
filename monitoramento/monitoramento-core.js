@@ -6,7 +6,9 @@ let MONITORAMENTO_ATUAL=null
 let USER_MONITORAMENTO=null
 
 function abrirTela(nome){
-
+if(!USER_MONITORAMENTO){
+return
+}
 document
 .querySelectorAll('.tela-monitoramento')
 .forEach(t=>t.classList.add('hidden'))
@@ -54,11 +56,29 @@ carregarResultados()
 }
 async function carregarUsuarioMonitoramento(){
 
-let nome=prompt(
-'Informe o nome do auditor'
-)
+let nome='MANOEL FERNANDES NETO'
 
-if(!nome)return
+try{
+
+let userLocal=localStorage.getItem('user')
+
+if(userLocal){
+
+let u=JSON.parse(userLocal)
+
+nome=
+u.nome_completo||
+u.nome||
+u.username||
+nome
+
+}
+
+}catch(e){
+
+console.log(e)
+
+}
 
 let{data,error}=await client
 .from('monitoramento_permissoes')
@@ -69,9 +89,12 @@ let{data,error}=await client
 
 if(error||!data){
 
-alert('Usuário sem permissão')
+document.getElementById('usuarioLogado').innerHTML=
+'SEM PERMISSÃO'
 
-throw error
+console.log(error)
+
+return
 
 }
 
