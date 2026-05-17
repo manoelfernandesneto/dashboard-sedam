@@ -61,7 +61,9 @@ carregarPainelRiscos()
 if(nome==='workflow'){
 carregarWorkflow()
 }
-  
+if(nome==='executivo'){
+carregarPainelExecutivo()
+}
 }
 
 async function carregarUsuarioMonitoramento(){
