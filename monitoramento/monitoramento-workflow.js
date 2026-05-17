@@ -102,52 +102,24 @@ document.getElementById('listaWorkflow').innerHTML=html
 }
 
 async function alterarWorkflow(id,status){
-
 if(!USER_MONITORAMENTO){
 return
 }
-
 let observacao=''
-
 if(status==='REJEITADO'){
-
-observacao=prompt(
-'Informe a observação'
-)||''
-
+observacao=prompt('Informe a observação')||''
 }
-
 let payload={
-
 workflow_status:status,
-
-validado_por:
-USER_MONITORAMENTO.nome,
-
-data_validacao:
-new Date().toISOString(),
-
-observacao_validacao:
-observacao
-
+validado_por:USER_MONITORAMENTO.nome,
+data_validacao:new Date().toISOString(),
+observacao_validacao:observacao
 }
-
-let{error}=await client
-.from('monitoramento_analises')
-.update(payload)
-.eq('id',id)
-
+let{error}=await client.from('monitoramento_analises').update(payload).eq('id',id)
 if(error){
 console.log(error)
 return
 }
-
-await registrarLog(
-'WORKFLOW '+status,
-'monitoramento_analises',
-id
-)
-
+await registrarLog('WORKFLOW '+status,'monitoramento_analises',id)
 await carregarWorkflow()
-
 }
