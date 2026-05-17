@@ -122,7 +122,13 @@ ${e.item_id||'-'}
 <button class="btn-padrao verde" onclick="validarEvidencia(${e.id})">
 ✔ Validar
 </button>
+<button class="btn-padrao azul" onclick="editarEvidencia(${e.id})">
+✏ Editar
+</button>
 
+<button class="btn-padrao vermelho" onclick="excluirEvidencia(${e.id})">
+🗑 Excluir
+</button>
 <button class="btn-padrao vermelho" onclick="rejeitarEvidencia(${e.id})">
 ✖ Rejeitar
 </button>
