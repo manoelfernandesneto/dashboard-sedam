@@ -78,6 +78,9 @@ NÃO IDENTIFICADO
 <button class="nav-btn" onclick="abrirTela('riscos')">
 🔥 Riscos
 </button>
+<button class="nav-btn" onclick="abrirTela('workflow')">
+✔ Workflow
+</button>
   
 </nav>
 
@@ -542,6 +545,37 @@ Mapa de Risco
 <div id="listaRiscos"></div>
 
 </section>
+<section id="tela-workflow" class="tela-monitoramento hidden">
+
+<div class="grid-cards">
+
+<div class="card-kpi">
+<div class="kpi-titulo">RASCUNHO</div>
+<div id="kpiRascunho" class="kpi-valor">0</div>
+</div>
+
+<div class="card-kpi azul">
+<div class="kpi-titulo">EM ANÁLISE</div>
+<div id="kpiEmAnalise" class="kpi-valor">0</div>
+</div>
+
+<div class="card-kpi verde">
+<div class="kpi-titulo">VALIDADO</div>
+<div id="kpiValidado" class="kpi-valor">0</div>
+</div>
+
+<div class="card-kpi vermelho">
+<div class="kpi-titulo">REJEITADO</div>
+<div id="kpiRejeitado" class="kpi-valor">0</div>
+</div>
+
+</div>
+
+<div id="listaWorkflow"></div>
+
+</section>
+
+  
 </main>
 
 </div>
