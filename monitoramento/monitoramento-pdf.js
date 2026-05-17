@@ -18,7 +18,7 @@ pdf.setFontSize(11)
 pdf.setFont('helvetica','normal')
 pdf.text(`Data de emissão: ${dataAtual}`,14,y)
 y+=10
-let{data:monitoramentos,error:monitoramentoError}=await client.from('monitoramentos').select('*').order('id',{ascending:false})
+let{data:monitoramentos,error:monitoramentoError}=await client.from('monitoramentos').select('*').order('titulo',{ascending:true})
 if(monitoramentoError){
 console.log(monitoramentoError)
 return
@@ -52,6 +52,7 @@ y+=6
 pdf.text(`Origem: ${m.origem||'-'}`,14,y)
 y+=10
 let{data:itens,error:itensError}=await client.from('monitoramento_itens').select('*').eq('monitoramento_id',m.id)
+itens=ordenarDataGlobal(itens)
 if(itensError){
 console.log(itensError)
 continue
