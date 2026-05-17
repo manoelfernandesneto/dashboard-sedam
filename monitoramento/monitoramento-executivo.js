@@ -16,6 +16,8 @@ let{data:itens}=await client
 .from('monitoramento_itens')
 .select('*')
 
+itens=ordenarDataGlobal(itens)
+
 let totalItens=itens?.length||0
 
 let soma=0
@@ -276,7 +278,7 @@ plugins:[ChartDataLabels]
 }
 
 async function carregarListaExecutiva(monitoramentos,itens){
-
+itens=ordenarDataGlobal(itens)
 let mapa={}
 
 ;(monitoramentos||[]).forEach(m=>{
