@@ -14,7 +14,8 @@ let{data,error}=await client
 .from('monitoramento_itens')
 .select('*')
 .eq('monitoramento_id',MONITORAMENTO_ATUAL)
-.order('item',{ascending:true})
+
+data=ordenarDataGlobal(data)
 
 if(error){
 console.log(error)
@@ -80,10 +81,6 @@ document.getElementById('tbodyMatriz').innerHTML=html
 }
 
 async function salvarNovoItemMatriz(){
-if(!MONITORAMENTO_ATUAL){
-alert('Selecione um monitoramento')
-return
-}
 if(!MONITORAMENTO_ATUAL){
 alert('Selecione um monitoramento')
 return
@@ -247,7 +244,7 @@ document.getElementById('mBeneficio').value=''
 
 }
 
-async function excluirItem(id){
+async function excluirItemMatriz(id){
 
 if(!confirm('Excluir item?'))return
 
@@ -318,7 +315,8 @@ let{data,error}=await client
 .from('deliberacoes')
 .select('*')
 .ilike('item',`${itemFiltro}%`)
-.order('subitem',{ascending:true})
+
+data=ordenarDataGlobal(data)
 
 if(error){
 console.log(error)
