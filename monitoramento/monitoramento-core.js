@@ -144,3 +144,18 @@ console.log('ERRO GLOBAL:',e.error)
 window.addEventListener('unhandledrejection',e=>{
 console.log('PROMISE ERROR:',e.reason)
 })
+
+
+async function carregarMonitoramentoAtual(){
+if(!MONITORAMENTO_ATUAL)return null
+let{data,error}=await client
+.from('monitoramentos')
+.select('*')
+.eq('id',MONITORAMENTO_ATUAL)
+.single()
+if(error){
+console.log(error)
+return null
+}
+return data
+}
