@@ -275,70 +275,143 @@ plugins:[ChartDataLabels]
 
 }
 
-async function carregarListaExecutiva(
-monitoramentos,
-itens
-){
+async function carregarListaExecutiva(monitoramentos,itens){
 
-let html=''
+let mapa={}
 
 ;(monitoramentos||[]).forEach(m=>{
 
-let relacionados=
-(itens||[])
-.filter(i=>
-i.monitoramento_id===m.id
-)
+let orgao=m.orgao||'NÃO INFORMADO'
 
-let soma=0
+if(!mapa[orgao]){
+
+mapa[orgao]={
+
+total:0,
+soma:0,
+alto:0,
+medio:0,
+baixo:0
+
+}
+
+}
+
+let relacionados=(itens||[])
+.filter(i=>i.monitoramento_id===m.id)
 
 relacionados.forEach(r=>{
 
-soma+=Number(r.percentual||0)
+let percentual=Number(r.percentual||0)
+
+mapa[orgao].total++
+mapa[orgao].soma+=percentual
+
+if(percentual<40){
+
+mapa[orgao].alto++
+
+}else if(percentual<80){
+
+mapa[orgao].medio++
+
+}else{
+
+mapa[orgao].baixo++
+
+}
 
 })
 
+})
+
+let ranking=[]
+
+Object.keys(mapa).forEach(orgao=>{
+
 let media=0
 
-if(relacionados.length>0){
+if(mapa[orgao].total>0){
 
 media=
 (
-soma/
-relacionados.length
+mapa[orgao].soma/
+mapa[orgao].total
 ).toFixed(1)
 
 }
 
-let classe='verde'
+ranking.push({
 
-if(media<40){
+orgao:orgao,
+media:Number(media),
+alto:mapa[orgao].alto,
+medio:mapa[orgao].medio,
+baixo:mapa[orgao].baixo
+
+})
+
+})
+
+ranking.sort((a,b)=>b.media-a.media)
+
+let html=''
+
+ranking.forEach((r,index)=>{
+
+let classe='verde'
+let semaforo='🟢'
+
+if(r.media<40){
 
 classe='vermelho'
+semaforo='🔴'
 
-}else if(media<80){
+}else if(r.media<80){
 
 classe='amarelo'
+semaforo='🟡'
 
 }
 
 html+=`
-<div class="ranking-item">
+<div class="ranking-item executivo-ranking">
+
+<div class="ranking-posicao">
+#${index+1}
+</div>
 
 <div class="ranking-left">
 
 <div class="ranking-title">
-${m.orgao||'-'}
+${semaforo} ${r.orgao}
 </div>
 
 <div class="ranking-subtitle">
-${m.titulo||'-'}
+
+Alto:
+${r.alto}
+
+•
+
+Médio:
+${r.medio}
+
+•
+
+Baixo:
+${r.baixo}
+
 </div>
 
 </div>
+
+<div class="ranking-right">
 
 <div class="badge-status ${classe}">
-${media}%
+${r.media}%
+</div>
+
 </div>
 
 </div>
