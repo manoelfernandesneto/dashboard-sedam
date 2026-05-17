@@ -135,8 +135,18 @@ MONITORAMENTO_ATUAL=Number(monitoramentoSalvo)
 await carregarDashboard()
 if(typeof atualizarMonitoramentoAutomatico==='function'){
 await atualizarMonitoramentoAutomatico()
+window.MONITORAMENTO_SYNC_ATIVO=false
 setInterval(async()=>{
+if(window.MONITORAMENTO_SYNC_ATIVO){
+return
+}
+window.MONITORAMENTO_SYNC_ATIVO=true
+try{
 await atualizarMonitoramentoAutomatico()
+}catch(e){
+console.log(e)
+}
+window.MONITORAMENTO_SYNC_ATIVO=false
 },300000)
 }
 })
