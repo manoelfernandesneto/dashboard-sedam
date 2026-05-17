@@ -1,9 +1,10 @@
+let MONITORAMENTO_ATUAL=null
+let USER_MONITORAMENTO=null
 const client=supabase.createClient(
 window.SUPABASE_URL,
 window.SUPABASE_ANON_KEY
 )
-let MONITORAMENTO_ATUAL=null
-let USER_MONITORAMENTO=null
+
 
 function abrirTela(nome){
 
