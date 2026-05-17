@@ -220,3 +220,6 @@ return 0
 })
 
 }
+function ordenarDataGlobal(data){
+return ordenarItensMonitoramento(data)
+}
