@@ -366,3 +366,51 @@ document
 .classList.add('hidden')
 
 }
+async function exportarWordMonitoramento(){
+
+let conteudo=
+document.getElementById('previewRelatorio')
+.innerHTML
+
+if(!conteudo){
+alert('Gere o relatório primeiro')
+return
+}
+
+let html=`
+<html xmlns:o='urn:schemas-microsoft-com:office:office'
+xmlns:w='urn:schemas-microsoft-com:office:word'
+xmlns='http://www.w3.org/TR/REC-html40'>
+<head>
+<meta charset="utf-8">
+<title>Relatório</title>
+</head>
+<body>
+${conteudo}
+</body>
+</html>
+`
+
+let blob=new Blob(
+['\ufeff',html],
+{type:'application/msword'}
+)
+
+let url=URL.createObjectURL(blob)
+
+let a=document.createElement('a')
+
+a.href=url
+
+a.download=
+'RELATORIO_MONITORAMENTO.doc'
+
+document.body.appendChild(a)
+
+a.click()
+
+document.body.removeChild(a)
+
+URL.revokeObjectURL(url)
+
+}
