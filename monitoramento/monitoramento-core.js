@@ -192,9 +192,12 @@ return ordenarItensMonitoramento(data)
 }
 function aplicarFiltroOrigem(data){
 if(!ORIGEM_ATUAL||ORIGEM_ATUAL==='TODAS'){
-return data
+return data||[]
 }
-return(data||[]).filter(i=>(i.origem||'').toUpperCase()===ORIGEM_ATUAL.toUpperCase())
+return(data||[]).filter(i=>
+String(i.origem||'').toUpperCase()===
+String(ORIGEM_ATUAL||'').toUpperCase()
+)
 }
 /*=========================================================001 MONITORAMENTO CORE LOGIN=========================================================*/
 async function loginMonitoramento(){
