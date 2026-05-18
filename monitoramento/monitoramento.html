@@ -28,23 +28,11 @@
 MONITORAMENTO TÉCNICO
 </div>
 <div class="login-monitoramento-subtitulo">
-Tribunal de Contas • Painel de Auditoria e Monitoramneto
+Tribunal de Contas • Painel de Auditoria e Monitoramento
 </div>
-<input
-id="usuario"
-placeholder="Usuário"
-class="input-login-monitoramento"
->
-<input
-id="senha"
-type="password"
-placeholder="Senha"
-class="input-login-monitoramento"
->
-<button
-onclick="loginMonitoramento()"
-class="btn-login-monitoramento"
->
+<input id="usuario" placeholder="Usuário" class="input-login-monitoramento">
+<input id="senha" type="password" placeholder="Senha" class="input-login-monitoramento">
+<button onclick="loginMonitoramento()" class="btn-login-monitoramento">
 ENTRAR
 </button>
 <div class="login-monitoramento-info">
@@ -53,12 +41,21 @@ ENTRAR
 </div>
 </section>
 
+<!--=========================================================
+002 APP MONITORAMENTO
+=========================================================-->
 <div id="appMonitoramento" style="display:none;">
+
+<!--=========================================================
+003 CABEÇALHO SUPERIOR
+=========================================================-->
 <header class="topbar">
 <div class="topbar-left">
 <div class="logo-box">📊</div>
 <div>
-<h1 class="titulo-sistema">MONITORAMENTO TÉCNICO</h1>
+<h1 class="titulo-sistema">
+MONITORAMENTO TÉCNICO
+</h1>
 <div class="subtitulo-sistema">
 Tribunal de Contas • Painel de Auditoria
 </div>
@@ -79,112 +76,177 @@ Sair
 </button>
 </div>
 </header>
+
+<!--=========================================================
+004 MENU PRINCIPAL
+=========================================================-->
 <nav class="nav-monitoramento" id="navMonitoramento">
+
 <button class="nav-btn nav-active" onclick="abrirTela('dashboard')">
 📈 Dashboard
 </button>
+
 <button class="nav-btn" onclick="abrirTela('monitoramentos')">
 📂 Monitoramentos
 </button>
+
 <button class="nav-btn" onclick="abrirTela('matriz')">
 🧩 Matriz
 </button>
+
 <button class="nav-btn" onclick="abrirTela('evidencias')">
 📎 Evidências
 </button>
+
 <button class="nav-btn" onclick="abrirTela('analises')">
 🧠 Análises
 </button>
+
 <button class="nav-btn" onclick="abrirTela('relatorios')">
 📄 Relatórios
 </button>
+
 <button class="nav-btn" onclick="abrirTela('resultados')">
 📑 Resultados
 </button>
+
 <button class="nav-btn" onclick="abrirTela('auditoria')">
 🕓 Auditoria
 </button>
+
 <button class="nav-btn" onclick="abrirTela('historico')">
 📈 Histórico
 </button>
+
 <button class="nav-btn" onclick="abrirTela('riscos')">
 🔥 Riscos
 </button>
+
 <button class="nav-btn" onclick="abrirTela('workflow')">
 ✔ Workflow
 </button>
+
 <button class="nav-btn" onclick="abrirTela('executivo')">
 🏛 Executivo
 </button>
+
 <button class="nav-btn" onclick="abrirTela('central')">
 📂 Central
 </button>
+
 <button class="nav-btn" onclick="abrirTela('beneficios')">
 💎 Benefícios
 </button>
+
 </nav>
-<main class="conteudo-monitoramento">
-<section id="tela-dashboard" class="tela-monitoramento">
-<div id="painelAlertas" class="mb-4"></div>
+
+<!--=========================================================
+005 PAINEL KPI FIXO
+=========================================================-->
+<section class="painel-dashboard-topo">
+
 <div class="grid-cards">
+
 <div class="card-kpi glass-card">
 <div class="kpi-titulo">TOTAL</div>
 <div id="kpiTotal" class="kpi-valor">0</div>
 </div>
+
 <div class="card-kpi glass-card verde">
 <div class="kpi-titulo">EXECUTADAS</div>
 <div id="kpiExecutadas" class="kpi-valor">0</div>
 </div>
+
 <div class="card-kpi glass-card amarelo">
 <div class="kpi-titulo">PARCIAIS</div>
 <div id="kpiParciais" class="kpi-valor">0</div>
 </div>
+
 <div class="card-kpi glass-card vermelho">
 <div class="kpi-titulo">NÃO EXECUTADAS</div>
 <div id="kpiNaoExecutadas" class="kpi-valor">0</div>
 </div>
+
 <div class="card-kpi glass-card azul">
 <div class="kpi-titulo">EM ANDAMENTO</div>
 <div id="kpiAndamento" class="kpi-valor">0</div>
 </div>
+
 </div>
+
 <div class="painel-graficos">
+
 <div class="grafico-box animate-fade">
 <div class="grafico-header">
-<div class="grafico-titulo">Situação Geral</div>
+<div class="grafico-titulo">
+Situação Geral
+</div>
 </div>
 <canvas id="graficoStatus"></canvas>
 </div>
+
 <div class="grafico-box animate-fade">
 <div class="grafico-header">
-<div class="grafico-titulo">Evolução Mensal</div>
+<div class="grafico-titulo">
+Evolução Mensal
+</div>
 </div>
 <canvas id="graficoEvolucao"></canvas>
 </div>
+
 <div class="grafico-box animate-fade">
 <div class="grafico-header">
-<div class="grafico-titulo">Criticidade</div>
+<div class="grafico-titulo">
+Criticidade
+</div>
 </div>
 <canvas id="graficoCriticidade"></canvas>
 </div>
+
 <div class="grafico-box animate-fade">
 <div class="grafico-header">
-<div class="grafico-titulo">Benefícios Esperados</div>
+<div class="grafico-titulo">
+Benefícios Esperados
+</div>
 </div>
 <canvas id="graficoBeneficios"></canvas>
 </div>
+
 </div>
+
 </section>
+
+<!--=========================================================
+006 CONTEÚDO PRINCIPAL
+=========================================================-->
+<main class="conteudo-monitoramento">
+
+<!--=========================================================
+007 DASHBOARD
+=========================================================-->
+<section id="tela-dashboard" class="tela-monitoramento">
+<div id="painelAlertas" class="mb-4"></div>
+</section>
+
+<!--=========================================================
+008 MONITORAMENTOS
+=========================================================-->
 <section id="tela-monitoramentos" class="tela-monitoramento hidden">
+
 <div class="top-actions">
+
 <button class="btn-padrao verde admin-only" onclick="sincronizarTAGSedam()">
 🔄 Sincronizar TAGS/SEDAM
 </button>
+
 <button class="btn-padrao admin-only" onclick="novoMonitoramento()">
 ➕ Novo Monitoramento
 </button>
+
 <div class="filtros-monitoramento">
+
 <input type="text" id="buscaMonitoramento" placeholder="Pesquisar..." class="input-busca" onkeyup="filtrarMonitoramentos()">
+
 <select id="filtroStatus" class="select-monitoramento" onchange="filtrarMonitoramentos()">
 <option value="">Todos Status</option>
 <option>EXECUTADA</option>
@@ -192,15 +254,20 @@ Sair
 <option>NÃO EXECUTADA</option>
 <option>EM ANDAMENTO</option>
 </select>
+
 <select id="filtroCriticidade" class="select-monitoramento" onchange="filtrarMonitoramentos()">
 <option value="">Criticidade</option>
 <option>ALTA</option>
 <option>MÉDIA</option>
 <option>BAIXA</option>
 </select>
+
 </div>
+
 </div>
+
 <div id="listaMonitoramentos" class="lista-monitoramentos cards-grid-monitoramento"></div>
+
 </section>
 <section id="tela-matriz" class="tela-monitoramento hidden">
 <div class="top-actions">
