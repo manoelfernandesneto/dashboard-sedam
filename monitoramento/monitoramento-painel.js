@@ -475,62 +475,137 @@ renderizarMonitoramentos(data||[])
 function renderizarMonitoramentos(data){
 let html=''
 ;(data||[]).forEach(m=>{
-let percentual=0
-if(m.percentual){
-percentual=Number(m.percentual)
-}
+let percentual=Number(m.percentual||0)
 html+=`
 <div class="card-monitoramento" data-monitoramento="${m.id}">
 <div class="card-monitoramento-topo">
 <div>
-<div class="monitoramento-titulo">
-${m.titulo||'-'}
-</div>
+<input class="input-inline-monitoramento titulo-inline" value="${m.titulo||''}" onchange="alterarCampoMonitoramento(${m.id},'titulo',this.value)">
 <div class="monitoramento-subtitulo">
-${m.orgao||'-'} • ${m.processo||'-'}
+<input class="input-inline-monitoramento subtitulo-inline" value="${m.orgao||''}" onchange="alterarCampoMonitoramento(${m.id},'orgao',this.value)">
+•
+<input class="input-inline-monitoramento subtitulo-inline" value="${m.processo||''}" onchange="alterarCampoMonitoramento(${m.id},'processo',this.value)">
 </div>
 </div>
-<div class="badge-status ${getClasseStatus(m.status)}">
-${m.status||'-'}
+<select class="select-inline-monitoramento badge-status ${getClasseStatus(m.status)}" onchange="alterarCampoMonitoramento(${m.id},'status',this.value)">
+<option ${m.status==='EM ANDAMENTO'?'selected':''}>EM ANDAMENTO</option>
+<option ${m.status==='EXECUTADA'?'selected':''}>EXECUTADA</option>
+<option ${m.status==='PARCIALMENTE EXECUTADA'?'selected':''}>PARCIALMENTE EXECUTADA</option>
+<option ${m.status==='NÃO EXECUTADA'?'selected':''}>NÃO EXECUTADA</option>
+</select>
 </div>
-</div>
+
 <div class="monitoramento-info-grid">
+
 <div>
 <b>Acórdão:</b>
-${m.acordao||'-'}
+<input class="input-inline-monitoramento" value="${m.acordao||''}" onchange="alterarCampoMonitoramento(${m.id},'acordao',this.value)">
 </div>
+
 <div>
 <b>Relator:</b>
-${m.relator||'-'}
+<input class="input-inline-monitoramento" value="${m.relator||''}" onchange="alterarCampoMonitoramento(${m.id},'relator',this.value)">
 </div>
+
 <div>
 <b>Auditor:</b>
-${m.auditor_responsavel||'-'}
+<input class="input-inline-monitoramento" value="${m.auditor_responsavel||''}" onchange="alterarCampoMonitoramento(${m.id},'auditor_responsavel',this.value)">
 </div>
+
 <div>
 <b>Criticidade:</b>
-${m.criticidade||'-'}
+<select class="select-inline-monitoramento" onchange="alterarCampoMonitoramento(${m.id},'criticidade',this.value)">
+<option ${m.criticidade==='ALTA'?'selected':''}>ALTA</option>
+<option ${m.criticidade==='MÉDIA'?'selected':''}>MÉDIA</option>
+<option ${m.criticidade==='BAIXA'?'selected':''}>BAIXA</option>
+</select>
 </div>
+
+<div>
+<b>Percentual:</b>
+<input type="number" min="0" max="100" class="input-inline-monitoramento" value="${percentual}" onchange="alterarCampoMonitoramento(${m.id},'percentual',this.value)">
 </div>
+
+<div>
+<b>Origem:</b>
+<select class="select-inline-monitoramento" onchange="alterarCampoMonitoramento(${m.id},'origem',this.value)">
+<option value="SEDAM" ${m.origem==='SEDAM'?'selected':''}>SEDAM</option>
+<option value="SEPAT" ${m.origem==='SEPAT'?'selected':''}>SEPAT</option>
+<option value="QUEIMADAS" ${m.origem==='QUEIMADAS'?'selected':''}>QUEIMADAS</option>
+</select>
+</div>
+
+</div>
+
 <div class="progress-monitoramento">
 <div class="progress-monitoramento-bar" style="width:${percentual}%"></div>
 </div>
+
 <div class="monitoramento-actions">
+
 <button class="btn-padrao" onclick="abrirMonitoramento(${m.id})">
 Abrir
 </button>
-<button class="btn-padrao azul" onclick="editarMonitoramento(${m.id})">
-Editar
+
+<button class="btn-padrao verde" onclick="salvarMonitoramento(${m.id})">
+Salvar
 </button>
+
 <button class="btn-padrao vermelho" onclick="excluirMonitoramento(${m.id})">
 Excluir
 </button>
+
 </div>
+
 </div>
 `
 })
 document.getElementById('listaMonitoramentos').innerHTML=html
 }
+
+
+window.MONITORAMENTO_EDITANDO={}
+
+function alterarCampoMonitoramento(id,campo,valor){
+
+if(!window.MONITORAMENTO_EDITANDO[id]){
+window.MONITORAMENTO_EDITANDO[id]={}
+}
+
+window.MONITORAMENTO_EDITANDO[id][campo]=valor
+
+}
+
+async function salvarMonitoramento(id){
+
+let payload=window.MONITORAMENTO_EDITANDO[id]
+
+if(!payload){
+alert('Nenhuma alteração encontrada')
+return
+}
+
+let{error}=await client
+.from('monitoramentos')
+.update(payload)
+.eq('id',id)
+
+if(error){
+console.log(error)
+alert('Erro ao salvar')
+return
+}
+
+alert('Monitoramento salvo com sucesso')
+
+window.MONITORAMENTO_EDITANDO[id]={}
+
+await carregarListaMonitoramentos()
+
+}
+
+
+
 
 async function carregarTimeline(){
 let{data,error}=await client
