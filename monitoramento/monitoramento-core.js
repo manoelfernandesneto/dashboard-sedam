@@ -1,6 +1,9 @@
 let MONITORAMENTO_ATUAL=null
 let USER_MONITORAMENTO=null
 let ORIGEM_ATUAL='TODAS'
+/*=========================================================
+001 MONITORAMENTO CORE FUNCTION ABRIRTELA
+=========================================================*/
 function abrirTela(nome){
 if(typeof USER_MONITORAMENTO==='undefined'||!USER_MONITORAMENTO){
 return
@@ -16,6 +19,14 @@ if(b.getAttribute('onclick')===`abrirTela('${nome}')`){
 b.classList.add('nav-active')
 }
 })
+let painelDashboard=document.getElementById('painelDashboardTopo')
+if(painelDashboard){
+if(nome==='dashboard'){
+painelDashboard.style.display='block'
+}else{
+painelDashboard.style.display='none'
+}
+}
 if(nome==='dashboard'){
 carregarDashboard()
 }
