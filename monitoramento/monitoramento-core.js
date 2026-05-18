@@ -259,126 +259,85 @@ return(data||[]).filter(i=>
 (i.origem||'').toUpperCase()===
 ORIGEM_ATUAL.toUpperCase()
 )
-
 }
+/*=========================================================
+001 MONITORAMENTO CORE LOGIN
+=========================================================*/
 async function loginMonitoramento(){
-
-let usuario=
-document.getElementById('usuario').value
-.trim()
-.toLowerCase()
-
-let senha=
-document.getElementById('senha').value
-.trim()
-
+let usuario=document.getElementById('usuario').value.trim().toLowerCase()
+let senha=document.getElementById('senha').value.trim()
 if(!usuario||!senha){
 alert('Informe usuário e senha')
 return
 }
-
 let{data,error}=await client
 .from('perfistce')
 .select('*')
 .eq('username',usuario)
 .eq('senha',senha)
 .limit(1)
-
 if(error){
 console.log(error)
 alert('Erro no login')
 return
 }
-
 if(!data||data.length===0){
 alert('Usuário inválido')
 return
 }
-
 let perfil=data[0]
-
-let permitidos=[
-'manoel',
-'jane'
-]
-
-if(
-!permitidos.includes(
-String(perfil.username||'')
-.toLowerCase()
-)
-){
+let permitidos=['manoel','jane']
+if(!permitidos.includes(String(perfil.username||'').toLowerCase())){
 alert('Sem permissão para o Monitoramento Técnico')
 return
 }
-
-USER_MONITORAMENTO=perfil
-
-localStorage.setItem(
-'user_monitoramento',
-JSON.stringify(perfil)
-)
-
-document.getElementById(
-'nomeUsuario'
-).innerHTML=
-perfil.nome_completo||
-perfil.username||
-'USUÁRIO'
-
-document.getElementById(
-'loginMonitoramento'
-).style.display='none'
-
-document.getElementById(
-'appMonitoramento'
-).style.display='block'
-
-await carregarDashboard()
-
+window.USER_MONITORAMENTO=perfil
+localStorage.setItem('user_monitoramento',JSON.stringify(perfil))
+let boxUsuario=document.getElementById('usuarioLogado')
+if(boxUsuario){
+boxUsuario.innerHTML=perfil.nome_completo||perfil.username||'USUÁRIO'
 }
-
-
-
+let login=document.getElementById('loginMonitoramento')
+if(login){
+login.style.display='none'
+}
+let app=document.getElementById('appMonitoramento')
+if(app){
+app.style.display='block'
+}
+await carregarDashboard()
+}
+/*=========================================================
+002 MONITORAMENTO CORE AUTOLOGIN
+=========================================================*/
 document.addEventListener('DOMContentLoaded',async()=>{
-
-let salvo=
-localStorage.getItem('user_monitoramento')
-
-if(salvo){
-
-USER_MONITORAMENTO=
-JSON.parse(salvo)
-
-document.getElementById(
-'nomeUsuario'
-).innerHTML=
-USER_MONITORAMENTO.nome_completo||
-USER_MONITORAMENTO.username||
-'USUÁRIO'
-
-document.getElementById(
-'loginMonitoramento'
-).style.display='none'
-
-document.getElementById(
-'appMonitoramento'
-).style.display='block'
-
+let salvo=localStorage.getItem('user_monitoramento')
+if(!salvo){
+let app=document.getElementById('appMonitoramento')
+if(app){
+app.style.display='none'
+}
+return
+}
+window.USER_MONITORAMENTO=JSON.parse(salvo)
+let boxUsuario=document.getElementById('usuarioLogado')
+if(boxUsuario){
+boxUsuario.innerHTML=USER_MONITORAMENTO.nome_completo||USER_MONITORAMENTO.username||'USUÁRIO'
+}
+let login=document.getElementById('loginMonitoramento')
+if(login){
+login.style.display='none'
+}
+let app=document.getElementById('appMonitoramento')
+if(app){
+app.style.display='block'
+}
 await carregarDashboard()
-
-}
-
 })
-
+/*=========================================================
+003 MONITORAMENTO CORE LOGOUT
+=========================================================*/
 function logoutMonitoramento(){
-
-localStorage.removeItem(
-'user_monitoramento'
-)
-
+localStorage.removeItem('user_monitoramento')
 location.reload()
-
 }
-
-
