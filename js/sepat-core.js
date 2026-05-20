@@ -201,9 +201,8 @@ document.getElementById('sepat-user-info').innerText=
 aplicarPermissoesSepat()
 
 await carregarSepatDados()
-
 controlarMesesSepat()
-
+aplicarAcessoMonitoramentoSepat()
 switchSepatTab('dashboard')
 
 }
@@ -1673,5 +1672,44 @@ a.href=URL.createObjectURL(blob)
 a.download='backup_sepat_'+new Date().toISOString().slice(0,10)+'.json'
 
 a.click()
+
+}
+/*=========================================================
+029 SEPAT CORE ACESSO MONITORAMENTO
+=========================================================*/
+function aplicarAcessoMonitoramentoSepat(){
+
+let btn=document.getElementById('btn-monitoramento')
+
+if(!btn)return
+
+let username=String(sepatUser?.username||'')
+.toLowerCase()
+.trim()
+
+let nome=String(sepatUser?.nome_completo||'')
+.toLowerCase()
+.trim()
+
+const usuariosPermitidos=[
+'manoel',
+'jane'
+]
+
+const liberado=
+usuariosPermitidos.includes(username)||
+nome.includes('manoel')||
+nome.includes('jane')
+
+if(liberado){
+
+btn.style.display='flex'
+btn.style.alignItems='center'
+
+}else{
+
+btn.style.display='none'
+
+}
 
 }
